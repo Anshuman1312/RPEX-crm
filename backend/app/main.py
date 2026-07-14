@@ -24,6 +24,7 @@ async def lifespan(_: FastAPI):
         yield
     finally:
         await redis_client.aclose()
+        
 
 
 app = FastAPI(title=settings.app_name, debug=settings.app_debug, default_response_class=ORJSONResponse, lifespan=lifespan)
