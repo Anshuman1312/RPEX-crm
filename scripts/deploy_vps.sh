@@ -20,7 +20,9 @@ cd "$APP_DIR"
 echo "Deploying branch: $BRANCH"
 
 git fetch --all --prune
-git checkout -B "$BRANCH" "origin/$BRANCH"
+git reset --hard
+git clean -fd
+git checkout -f "$BRANCH" || git checkout -f -B "$BRANCH" "origin/$BRANCH"
 git reset --hard "origin/$BRANCH"
 
 docker compose -f "$COMPOSE_FILE" up -d --build --force-recreate --remove-orphans
