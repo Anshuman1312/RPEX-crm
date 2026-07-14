@@ -35,3 +35,42 @@ Enterprise-grade CRM and analytics platform for collecting and managing SEO inqu
 ## Phases
 - Phase 1 is implemented as foundation + auth/RBAC.
 - Core modules are scaffolded and wired for progressive hardening.
+
+## CI/CD to Hostinger VPS (Direct SSH Deploy)
+
+This repository includes:
+- Workflow: `.github/workflows/ci-cd-hostinger-vps.yml`
+- Server deploy script: `scripts/deploy_vps.sh`
+
+### 1) One-time VPS bootstrap
+Run these commands on your VPS:
+
+```bash
+mkdir -p /opt/rpex-crm
+cd /opt/rpex-crm
+git clone <YOUR_GITHUB_REPO_URL> .
+cp .env.example .env
+# Edit .env with production values
+docker compose up -d --build
+```
+
+### 2) Add GitHub Actions secrets
+In your GitHub repository settings, add:
+- `VPS_HOST` (example: `200.97.170.226`)
+- `VPS_USER` (example: `root`)
+- `VPS_PASSWORD` (VPS SSH password)
+- `VPS_APP_DIR` (example: `/opt/rpex-crm`)
+
+If your SSH server does not run on port `22`, update the workflow file accordingly.
+
+### 3) Deployment flow
+- Push to `main` or `master`.
+- GitHub Actions runs backend + frontend CI checks.
+- On success, it SSHes into VPS and runs:
+	- `git pull --ff-only origin <branch>`
+	- `docker compose up -d --build --remove-orphans`
+
+### 4) Recommended hardening
+- Prefer SSH key auth over password auth for production.
+- Restrict VPS firewall to allow SSH only from trusted IPs.
+- Use strong values for all secrets in `.env`.
