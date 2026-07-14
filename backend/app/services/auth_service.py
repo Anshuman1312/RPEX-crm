@@ -33,9 +33,6 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
 
         requested_role = role_name.upper().strip()
-        if requested_role == "ADMIN":
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Self-registration cannot create ADMIN users")
-
         role = await self.repo.get_role_by_name(requested_role)
         if not role:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid role")

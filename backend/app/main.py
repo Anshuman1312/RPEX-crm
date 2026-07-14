@@ -10,6 +10,7 @@ from slowapi.util import get_remote_address
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.redis import redis_client
+from app.database.init_db import initialize_sqlite_schema_if_needed
 
 settings = get_settings()
 limiter = Limiter(key_func=get_remote_address, default_limits=[f"{settings.rate_limit_per_minute}/minute"])
@@ -17,6 +18,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=[f"{settings.rate_
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    await initialize_sqlite_schema_if_needed()
     await redis_client.ping()
     try:
         yield

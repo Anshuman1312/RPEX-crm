@@ -7,11 +7,11 @@ export default {
         body: ["Manrope", "sans-serif"]
       },
       colors: {
-        ink: "#0f172a",
-        cloud: "#f8fafc",
-        steel: "#334155",
-        mint: "#0ea5a4",
-        amber: "#f59e0b"
+        ink: "#e6edf7",
+        cloud: "#050b16",
+        steel: "#9ba8bd",
+        mint: "#2dd4bf",
+        amber: "#fbbf24"
       }
     }
   },

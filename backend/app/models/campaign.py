@@ -3,10 +3,10 @@ from datetime import date
 from decimal import Decimal
 
 from sqlalchemy import Date, ForeignKey, Numeric, String
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.postgres import Base
+from app.database.types import GUID
 from app.models.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 
@@ -19,7 +19,7 @@ class Campaign(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     budget: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=0, nullable=False)
     start_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
-    created_by: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
+    created_by: Mapped[uuid.UUID] = mapped_column(GUID(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
 
     leads = relationship("Lead", back_populates="campaign")
     keywords = relationship("SEOKeyword", back_populates="campaign")

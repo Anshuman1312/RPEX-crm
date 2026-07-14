@@ -1,10 +1,10 @@
 import uuid
 
 from sqlalchemy import ForeignKey, Integer, String
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.postgres import Base
+from app.database.types import GUID
 from app.models.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 
@@ -18,6 +18,6 @@ class SEOKeyword(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     traffic: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     clicks: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     impressions: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    campaign_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False)
+    campaign_id: Mapped[uuid.UUID] = mapped_column(GUID(), ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False)
 
     campaign = relationship("Campaign", back_populates="keywords")

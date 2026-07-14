@@ -5,18 +5,68 @@
 @tailwind utilities;
 
 :root {
-  color: #0f172a;
-  background: radial-gradient(circle at 15% 10%, rgba(14, 165, 164, 0.2), transparent 35%),
-    radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.2), transparent 35%),
-    linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #e6edf7;
+  background: radial-gradient(circle at 14% 8%, rgba(45, 212, 191, 0.2), transparent 35%),
+    radial-gradient(circle at 86% 18%, rgba(251, 191, 36, 0.18), transparent 33%),
+    radial-gradient(circle at 48% 85%, rgba(37, 99, 235, 0.16), transparent 40%),
+    linear-gradient(180deg, #050b16 0%, #0b1220 100%);
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   font-family: "Manrope", sans-serif;
   min-height: 100vh;
+  color: #e6edf7;
+  background: transparent;
 }
 
 .card {
-  @apply rounded-2xl bg-white/85 shadow-lg border border-white backdrop-blur;
+  @apply rounded-2xl bg-slate-900/65 shadow-2xl border border-slate-800/90 backdrop-blur-xl;
+}
+
+.btn-primary {
+  @apply rounded-xl bg-slate-100 text-slate-950 font-semibold shadow-lg transition hover:bg-white focus-visible:ring-2 focus-visible:ring-cyan-300;
+}
+
+.btn-secondary {
+  @apply rounded-xl bg-slate-900 text-slate-100 font-semibold shadow-lg ring-1 ring-slate-700 transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-cyan-300;
+}
+
+.btn-accent {
+  @apply rounded-xl bg-mint text-slate-950 font-semibold shadow-lg transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-cyan-300;
+}
+
+.btn-warm {
+  @apply rounded-xl bg-amber text-slate-950 font-semibold shadow-lg transition hover:brightness-110 focus-visible:ring-2 focus-visible:ring-cyan-300;
+}
+
+.crm-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 280px) 1fr;
+}
+
+.sidebar {
+  @apply bg-slate-950/75 border-r border-slate-800/80;
+}
+
+input,
+select,
+textarea {
+  @apply bg-slate-900/70 border-slate-700 text-slate-100 placeholder:text-slate-400;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.35);
+}
+
+@media (max-width: 900px) {
+  .crm-grid {
+    grid-template-columns: 1fr;
+  }
 }

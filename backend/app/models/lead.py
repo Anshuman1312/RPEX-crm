@@ -1,10 +1,10 @@
 import uuid
 
 from sqlalchemy import ForeignKey, Index, String
-from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.postgres import Base
+from app.database.types import GUID, JSONType
 from app.models.mixins import TimestampMixin, UUIDPrimaryKeyMixin
 
 
@@ -22,16 +22,16 @@ class Lead(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         Index("ix_leads_extra_data_gin", "extra_data", postgresql_using="gin"),
     )
 
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="RESTRICT"), nullable=False)
+    website_id: Mapped[uuid.UUID] = mapped_column(GUID(), ForeignKey("websites.id", ondelete="RESTRICT"), nullable=False)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     phone: Mapped[str] = mapped_column(String(30), nullable=False)
     source: Mapped[str | None] = mapped_column(String(64), nullable=True)
     medium: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    campaign_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("campaigns.id", ondelete="SET NULL"), nullable=True)
+    campaign_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("campaigns.id", ondelete="SET NULL"), nullable=True)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="NEW")
-    assigned_to: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    extra_data: Mapped[dict] = mapped_column(JSONB, default=dict, nullable=False)
+    assigned_to: Mapped[uuid.UUID | None] = mapped_column(GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    extra_data: Mapped[dict] = mapped_column(JSONType, default=dict, nullable=False)
 
     website = relationship("Website", back_populates="leads")
     campaign = relationship("Campaign", back_populates="leads")

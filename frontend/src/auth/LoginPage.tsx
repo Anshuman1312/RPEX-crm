@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { api } from "../services/api";
 import { setTokens } from "./authSlice";
@@ -57,9 +57,13 @@ export default function LoginPage() {
 
         {error ? <p className="text-red-600 text-sm mt-4">{error}</p> : null}
 
-        <button className="mt-6 w-full rounded-xl bg-ink text-white py-3 font-semibold hover:bg-slate-800 transition">
+        <button className="btn-primary mt-6 w-full py-3">
           Login
         </button>
+
+        <p className="text-sm text-steel mt-4 text-center">
+          Need an account? <Link to="/register" className="text-ink font-semibold">Register User</Link>
+        </p>
       </form>
     </div>
   );

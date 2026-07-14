@@ -43,11 +43,10 @@ async def test_register_user_rejects_duplicate_email():
 
 
 @pytest.mark.asyncio
-async def test_register_user_rejects_admin_role():
+async def test_register_user_allows_admin_role():
     service = AuthService(_Repo(existing=False))
-    with pytest.raises(HTTPException) as exc:
-        await service.register_user("Rahul", "rahul@example.com", "StrongPass@123", "ADMIN")
-    assert exc.value.status_code == 400
+    user = await service.register_user("Rahul", "rahul@example.com", "StrongPass@123", "ADMIN")
+    assert user.email == "rahul@example.com"
 
 
 @pytest.mark.asyncio
@@ -55,3 +54,11 @@ async def test_register_user_success():
     service = AuthService(_Repo(existing=False, valid_role=True))
     user = await service.register_user("Rahul", "rahul@example.com", "StrongPass@123", "SALES")
     assert user.email == "rahul@example.com"
+
+
+@pytest.mark.asyncio
+async def test_register_user_rejects_invalid_role():
+    service = AuthService(_Repo(existing=False, valid_role=False))
+    with pytest.raises(HTTPException) as exc:
+        await service.register_user("Rahul", "rahul@example.com", "StrongPass@123", "NOT_A_ROLE")
+    assert exc.value.status_code == 400
