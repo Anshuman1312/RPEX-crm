@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     app_debug: bool = Field(default=True, alias="APP_DEBUG")
     api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
 
-    database_url: str = Field(default="sqlite+aiosqlite:///./rpex_crm.db", alias="DATABASE_URL")
+    database_url: str = Field(default="postgresql+asyncpg://rpex:rpex@postgres:5432/rpex_crm", alias="DATABASE_URL")
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
 
     jwt_secret_key: str = Field(default="dev-only-change-me", alias="JWT_SECRET_KEY")
