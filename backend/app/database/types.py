@@ -6,6 +6,7 @@ from sqlalchemy.engine import Dialect
 from sqlalchemy.types import CHAR, TypeDecorator
 
 
+
 class GUID(TypeDecorator):
     """Platform-independent GUID type.
 
