@@ -24,6 +24,5 @@ git checkout "$BRANCH"
 git pull --ff-only origin "$BRANCH"
 
 docker compose -f "$COMPOSE_FILE" up -d --build --force-recreate --remove-orphans
-docker compose -f "$COMPOSE_FILE" restart
 
 echo "Deployment finished successfully."
