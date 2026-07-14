@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     app_env: str = Field(default="development", alias="APP_ENV")
     app_debug: bool = Field(default=True, alias="APP_DEBUG")
     api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
+    supabase_url: Optional[str] = Field(default=None, alias="SUPABASE_URL")
+    supabase_api_key: Optional[str] = Field(default=None, alias="SUPABASE_API_KEY")
 
     database_url: str = Field(default="postgresql+asyncpg://rpex:rpex@postgres:5432/rpex_crm", alias="DATABASE_URL")
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
