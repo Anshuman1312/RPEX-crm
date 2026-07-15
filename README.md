@@ -77,3 +77,29 @@ If your SSH server does not run on port `22`, update the workflow file according
 - Prefer SSH key auth over password auth for production.
 - Restrict VPS firewall to allow SSH only from trusted IPs.
 - Use strong values for all secrets in `.env`.
+
+## HTTPS Setup (Let's Encrypt + Certbot)
+
+This repository includes a Certbot workflow for `srv1829331.hstgr.cloud`.
+
+### Prerequisites
+- DNS A record for `srv1829331.hstgr.cloud` must point to your VPS public IP.
+- Ports `80` and `443` must be open in the VPS firewall/security group.
+
+### Step 1: Start services in HTTP mode
+```bash
+docker compose up -d --build
+```
+
+### Step 2: Issue certificate and enable HTTPS
+```bash
+chmod +x scripts/enable_https_letsencrypt.sh
+DOMAIN=srv1829331.hstgr.cloud EMAIL=you@example.com ./scripts/enable_https_letsencrypt.sh
+```
+
+### Step 3: Keep cert renewal running
+```bash
+docker compose up -d certbot
+```
+
+The script switches Nginx to `infra/nginx/nginx.ssl.conf` after certificate issuance.
