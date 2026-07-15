@@ -14,6 +14,8 @@ frontend/dist/
 # Env
 .env
 .env.*
+.env.production
+.env.prod
 
 # IDE
 .vscode/
@@ -26,3 +28,10 @@ Thumbs.db
 # Build
 backend/htmlcov/
 backend/.coverage
+
+# Production/SSL
+infra/nginx/letsencrypt/
+infra/nginx/certbot/
+*.pem
+*.key
+*.crt
