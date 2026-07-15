@@ -36,6 +36,9 @@ Enterprise-grade CRM and analytics platform for collecting and managing SEO inqu
 - Phase 1 is implemented as foundation + auth/RBAC.
 - Core modules are scaffolded and wired for progressive hardening.
 
+## Production Expansion Blueprint
+- Detailed module-wise production roadmap: `docs/production-crm-blueprint.md`
+
 ## CI/CD to Hostinger VPS (Direct SSH Deploy)
 
 This repository includes:

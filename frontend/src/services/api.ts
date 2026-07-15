@@ -4,8 +4,10 @@ import { Store } from "@reduxjs/toolkit";
 import { clearTokens, setTokens } from "../auth/authSlice";
 import { RootState } from "../store";
 
+const API_BASE_URL = "http://localhost:8000/api/v1";
+
 export const api = axios.create({
-  baseURL: "/api/v1"
+  baseURL: API_BASE_URL
 });
 
 let interceptorsReady = false;
@@ -47,7 +49,7 @@ export function setupApiInterceptors(store: Store<RootState>) {
       if (!refreshRequest) {
         refreshRequest = (async () => {
           try {
-            const refreshResponse = await axios.post("/api/v1/auth/refresh", {
+            const refreshResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, {
               refresh_token: currentState.refreshToken
             });
             const nextRole = (refreshResponse.data.role ?? currentState.role ?? "ANALYST") as NonNullable<RootState["auth"]["role"]>;

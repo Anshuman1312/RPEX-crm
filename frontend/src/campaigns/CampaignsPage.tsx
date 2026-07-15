@@ -88,7 +88,7 @@ export default function CampaignsPage() {
         </form>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {(data ?? []).map((campaign) => (
           <article key={campaign.id} className="card p-5">
             <h2 className="font-display text-xl text-ink">{campaign.name}</h2>

@@ -21,6 +21,10 @@ body {
   background: transparent;
 }
 
+#root {
+  min-height: 100vh;
+}
+
 .card {
   @apply rounded-2xl bg-slate-900/65 shadow-2xl border border-slate-800/90 backdrop-blur-xl;
 }
@@ -50,6 +54,20 @@ body {
   @apply bg-slate-950/75 border-r border-slate-800/80;
 }
 
+.stack-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.responsive-table {
+  width: 100%;
+}
+
+.responsive-table th,
+.responsive-table td {
+  vertical-align: top;
+}
+
 input,
 select,
 textarea {
@@ -68,5 +86,43 @@ a:focus-visible {
 @media (max-width: 900px) {
   .crm-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    width: min(84vw, 280px);
+    height: 100vh;
+  }
+
+  .responsive-table thead {
+    display: none;
+  }
+
+  .responsive-table,
+  .responsive-table tbody,
+  .responsive-table tr,
+  .responsive-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .responsive-table tr {
+    border-top: 1px solid rgba(148, 163, 184, 0.14);
+    padding: 0.75rem 1rem;
+  }
+
+  .responsive-table td {
+    border: 0;
+    padding: 0.35rem 0;
+  }
+
+  .responsive-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
   }
 }

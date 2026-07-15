@@ -6,7 +6,9 @@ export type CurrentUserProfile = {
   email: string;
   role_id: string;
   role: string | null;
+  role_description: string | null;
   is_active: boolean;
+  permissions: string[];
 };
 
 export async function fetchCurrentUserProfile() {

@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     celery_broker_url: str = Field(default="redis://localhost:6379/1", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(default="redis://localhost:6379/2", alias="CELERY_RESULT_BACKEND")
 
+    cloudinary_cloud_name: str = Field(default="", alias="CLOUDINARY_CLOUD_NAME")
+    cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
+    cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
+    cloudinary_folder: str = Field(default="rpex-crm", alias="CLOUDINARY_FOLDER")
+
     @property
     def cors_origins_list(self) -> List[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

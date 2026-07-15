@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.deps import CurrentUser
+from app.core.deps import CurrentUser, get_current_permissions
 from app.database.postgres import get_db
 from app.models.role import Role
 from app.repositories.audit_repository import AuditRepository
@@ -94,12 +94,14 @@ async def logout(
 
 
 @router.get("/me")
-async def me(current_user: CurrentUser):
+async def me(current_user: CurrentUser, permissions: set[str] = Depends(get_current_permissions)):
     return {
         "id": str(current_user.id),
         "name": current_user.name,
         "email": current_user.email,
         "role_id": str(current_user.role_id),
         "role": current_user.role.name if current_user.role else None,
+        "role_description": current_user.role.description if current_user.role else None,
         "is_active": current_user.is_active,
+        "permissions": sorted(permissions),
     }

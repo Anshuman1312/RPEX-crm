@@ -74,7 +74,7 @@ export default function FollowupsPage() {
 
       <section className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="responsive-table w-full text-sm">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-4 py-3">Lead ID</th>
@@ -86,10 +86,10 @@ export default function FollowupsPage() {
             <tbody>
               {(data ?? []).map((row) => (
                 <tr key={row.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3">{row.lead_id}</td>
-                  <td className="px-4 py-3">{new Date(row.followup_date).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-steel">{row.remark}</td>
-                  <td className="px-4 py-3">{row.status}</td>
+                  <td className="px-4 py-3" data-label="Lead ID">{row.lead_id}</td>
+                  <td className="px-4 py-3" data-label="Date">{new Date(row.followup_date).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-steel" data-label="Remark">{row.remark}</td>
+                  <td className="px-4 py-3" data-label="Status">{row.status}</td>
                 </tr>
               ))}
             </tbody>

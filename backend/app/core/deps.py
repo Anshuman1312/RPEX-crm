@@ -54,6 +54,10 @@ async def get_current_permissions(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> set[str]:
+    if current_user.role and current_user.role.name in {"ADMIN", "SUPER_ADMIN"}:
+        rows = await db.execute(select(Permission.name))
+        return set(rows.scalars().all())
+
     stmt = (
         select(Permission.name)
         .join(RolePermission, RolePermission.permission_id == Permission.id)

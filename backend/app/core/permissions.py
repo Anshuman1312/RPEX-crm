@@ -13,6 +13,11 @@ class PermissionNames:
     SCHEDULE_REPORTS: str = "schedule_reports"
     MANAGE_CAMPAIGNS: str = "manage_campaigns"
     MANAGE_KEYWORDS: str = "manage_keywords"
+    MANAGE_CUSTOMERS: str = "manage_customers"
+    MANAGE_SALES: str = "manage_sales"
+    MANAGE_FINANCE: str = "manage_finance"
+    MANAGE_DOCUMENTS: str = "manage_documents"
+    ACCESS_PARTNER_PORTAL: str = "access_partner_portal"
 
 
 PERMISSIONS = PermissionNames()

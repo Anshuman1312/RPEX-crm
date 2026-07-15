@@ -94,7 +94,7 @@ export default function KeywordsPage() {
 
       <section className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="responsive-table w-full text-sm">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-4 py-3">Keyword</th>
@@ -107,11 +107,11 @@ export default function KeywordsPage() {
             <tbody>
               {(keywords ?? []).map((keyword) => (
                 <tr key={keyword.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 font-semibold text-ink">{keyword.keyword}</td>
-                  <td className="px-4 py-3 text-steel">{keyword.url}</td>
-                  <td className="px-4 py-3">{keyword.target_position ?? "-"}</td>
-                  <td className="px-4 py-3">{keyword.current_position ?? "-"}</td>
-                  <td className="px-4 py-3">{keyword.traffic}</td>
+                  <td className="px-4 py-3 font-semibold text-ink" data-label="Keyword">{keyword.keyword}</td>
+                  <td className="px-4 py-3 text-steel" data-label="URL">{keyword.url}</td>
+                  <td className="px-4 py-3" data-label="Target">{keyword.target_position ?? "-"}</td>
+                  <td className="px-4 py-3" data-label="Current">{keyword.current_position ?? "-"}</td>
+                  <td className="px-4 py-3" data-label="Traffic">{keyword.traffic}</td>
                 </tr>
               ))}
             </tbody>

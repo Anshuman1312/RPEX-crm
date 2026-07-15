@@ -15,7 +15,14 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to="/login" replace />;
   }
 
+  if (role === "ADMIN" || role === "SUPER_ADMIN") {
+    return children;
+  }
+
   if (allowedRoles && !allowedRoles.includes(role)) {
+    if (role === "CHANNEL_PARTNER") {
+      return <Navigate to="/partner" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 

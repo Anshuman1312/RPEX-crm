@@ -23,7 +23,7 @@ export default function ReportsPage() {
         <h1 className="font-display text-3xl text-ink">Reporting Studio</h1>
         <p className="text-steel mt-2">Schedule recurring exports and trigger on-demand reporting actions.</p>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           <button className="btn-primary px-4 py-3" onClick={exportLeads}>
             Export Leads CSV
           </button>

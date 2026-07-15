@@ -1,6 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type RoleName = "ADMIN" | "SEO_MANAGER" | "SALES" | "ANALYST" | null;
+export type RoleName =
+  | "ADMIN"
+  | "SEO_MANAGER"
+  | "SALES"
+  | "ANALYST"
+  | "SUPER_ADMIN"
+  | "DIRECTOR"
+  | "PROJECT_HEAD"
+  | "MARKETING_MANAGER"
+  | "SALES_MANAGER"
+  | "SALES_EXECUTIVE"
+  | "TELECALLER"
+  | "CRM_EXECUTIVE"
+  | "FINANCE"
+  | "LEGAL"
+  | "HR"
+  | "RECEPTIONIST"
+  | "CHANNEL_PARTNER"
+  | "DEVELOPER"
+  | "CUSTOMER_PORTAL"
+  | null;
 
 type AuthState = {
   accessToken: string | null;

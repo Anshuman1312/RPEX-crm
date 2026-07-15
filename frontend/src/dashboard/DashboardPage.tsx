@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <p className="text-steel mt-2">Real-time visibility for lead flow, campaign health, and conversion momentum.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           ["Total Leads", data?.total_leads ?? 0],
           ["Today's Leads", data?.today_leads ?? 0],
@@ -83,7 +83,7 @@ export default function DashboardPage() {
             Top campaign: <span className="font-semibold text-ink">{data?.top_campaign ?? "N/A"}</span>
           </div>
         </div>
-        <div className="h-72">
+        <div className="h-64 sm:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -98,7 +98,7 @@ export default function DashboardPage() {
 
         <div className="card p-6">
           <h2 className="font-display text-2xl text-ink">Conversion Split</h2>
-          <div className="h-72 mt-3">
+          <div className="h-64 sm:h-72 mt-3">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={splitData} dataKey="value" nameKey="name" outerRadius={95} fill="#0ea5a4" label />
@@ -116,7 +116,7 @@ export default function DashboardPage() {
             Top keyword: <span className="font-semibold text-ink">{data?.top_keyword ?? "N/A"}</span>
           </div>
         </div>
-        <div className="h-64">
+        <div className="h-56 sm:h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />

@@ -61,7 +61,7 @@ export default function LeadsPage() {
 
       <section className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="responsive-table w-full text-sm">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-4 py-3">Name</th>
@@ -82,17 +82,17 @@ export default function LeadsPage() {
               ) : (
                 (data?.items ?? []).map((lead) => (
                   <tr key={lead.id} className="border-t border-slate-100">
-                    <td className="px-4 py-3 font-semibold text-ink">{lead.name}</td>
-                    <td className="px-4 py-3 text-steel">
+                    <td className="px-4 py-3 font-semibold text-ink" data-label="Name">{lead.name}</td>
+                    <td className="px-4 py-3 text-steel" data-label="Contact">
                       <div>{lead.email}</div>
                       <div>{lead.phone}</div>
                     </td>
-                    <td className="px-4 py-3 text-steel">{lead.source ?? "-"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-steel" data-label="Source">{lead.source ?? "-"}</td>
+                    <td className="px-4 py-3" data-label="Status">
                       <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold">{lead.status}</span>
                     </td>
-                    <td className="px-4 py-3 text-steel">{new Date(lead.created_at).toLocaleDateString()}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-steel" data-label="Created">{new Date(lead.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3" data-label="Action">
                       <select
                         className="rounded-lg border border-slate-200 px-2 py-1"
                         value={lead.status}
