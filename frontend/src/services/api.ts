@@ -4,7 +4,7 @@ import { Store } from "@reduxjs/toolkit";
 import { clearTokens, setTokens } from "../auth/authSlice";
 import { RootState } from "../store";
 
-const API_BASE_URL = "http://localhost:8000/api/v1";
+const API_BASE_URL = "http://srv1829331.hstgr.cloud:8000/api/v1";
 
 export const api = axios.create({
   baseURL: API_BASE_URL
