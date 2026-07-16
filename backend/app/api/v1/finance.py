@@ -6,7 +6,7 @@ from app.core.permissions import PERMISSIONS
 from app.database.postgres import get_db
 from app.repositories.audit_repository import AuditRepository
 from app.repositories.finance_repository import FinanceRepository
-from app.schemas.finance import CustomerPaymentCreate, InvoiceCreate
+from app.schemas.finance import CustomerPaymentCreate, FinanceLedgerEntryCreate, InvoiceCreate
 from app.services.finance_service import FinanceService
 
 router = APIRouter()
@@ -83,3 +83,49 @@ async def list_invoices(_: CurrentUser, db: AsyncSession = Depends(get_db), limi
         }
         for row in rows
     ]
+
+
+@router.post("/ledger", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_FINANCE}))])
+async def create_ledger_entry(payload: FinanceLedgerEntryCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+    service = FinanceService(FinanceRepository(db), AuditRepository(db))
+    row = await service.create_ledger_entry(
+        {
+            **payload.model_dump(),
+            "created_by": current_user.id,
+        },
+        str(current_user.id),
+    )
+    return {
+        "id": str(row.id),
+        "entry_type": row.entry_type,
+        "amount": row.amount,
+        "status": row.status,
+    }
+
+
+@router.get("/ledger", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_FINANCE}))])
+async def list_ledger_entries(
+    _: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+    entry_type: str | None = Query(default=None),
+    limit: int = Query(default=200, ge=1, le=500),
+):
+    rows = await FinanceRepository(db).list_ledger_entries(entry_type=entry_type, limit=limit)
+    return [
+        {
+            "id": str(row.id),
+            "entry_type": row.entry_type,
+            "entry_date": row.entry_date,
+            "amount": row.amount,
+            "reference_no": row.reference_no,
+            "status": row.status,
+            "notes": row.notes,
+            "extra_data": row.extra_data,
+        }
+        for row in rows
+    ]
+
+
+@router.get("/profit-report", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_FINANCE, PERMISSIONS.EXPORT_REPORTS}))])
+async def get_profit_report(_: CurrentUser, db: AsyncSession = Depends(get_db)):
+    return await FinanceRepository(db).finance_snapshot()

@@ -20,3 +20,16 @@ class FollowUpRepository:
         if user_id:
             stmt = stmt.where(FollowUp.assigned_to == user_id)
         return list((await self.db.execute(stmt)).scalars().all())
+
+    async def get_by_id(self, followup_id: str) -> FollowUp | None:
+        return await self.db.get(FollowUp, followup_id)
+
+    async def update(self, followup: FollowUp, payload: dict) -> FollowUp:
+        for key, value in payload.items():
+            if value is not None and hasattr(followup, key):
+                setattr(followup, key, value)
+
+        self.db.add(followup)
+        await self.db.commit()
+        await self.db.refresh(followup)
+        return followup

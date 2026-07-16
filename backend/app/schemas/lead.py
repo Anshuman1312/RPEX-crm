@@ -5,6 +5,32 @@ from pydantic import BaseModel, EmailStr, Field
 
 from app.schemas.common import TimestampSchema
 
+LEAD_SOURCE_OPTIONS = [
+    "FACEBOOK",
+    "INSTAGRAM",
+    "GOOGLE_ADS",
+    "WEBSITE",
+    "WHATSAPP",
+    "REFERRAL",
+    "WALK_IN",
+    "CALL",
+    "MAGICBRICKS",
+    "99ACRES",
+    "HOUSING_COM",
+]
+
+LEAD_STATUS_OPTIONS = [
+    "NEW",
+    "CONTACTED",
+    "FOLLOW_UP",
+    "INTERESTED",
+    "SITE_VISIT",
+    "NEGOTIATION",
+    "BOOKING",
+    "LOST",
+    "FUTURE",
+]
+
 
 class WebhookLeadIn(BaseModel):
     name: str
@@ -18,7 +44,7 @@ class WebhookLeadIn(BaseModel):
 
 
 class LeadCreate(BaseModel):
-    website_id: str
+    website_id: str | None = None
     name: str
     email: EmailStr
     phone: str
@@ -27,6 +53,13 @@ class LeadCreate(BaseModel):
     campaign_id: str | None = None
     status: str = "NEW"
     assigned_to: str | None = None
+    budget: str | None = None
+    preferred_location: str | None = None
+    property_type: str | None = None
+    notes: str | None = None
+    interested_project: str | None = None
+    assigned_to_name: str | None = None
+    lead_score: int | None = Field(default=None, ge=0, le=100)
     extra_data: dict[str, Any] = Field(default_factory=dict)
 
 

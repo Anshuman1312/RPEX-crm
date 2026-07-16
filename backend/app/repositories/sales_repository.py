@@ -29,3 +29,6 @@ class SalesRepository:
             .limit(limit)
         )
         return list((await self.db.execute(stmt)).scalars().all())
+
+    async def get_by_id(self, booking_id: str) -> Booking | None:
+        return await self.db.get(Booking, booking_id)

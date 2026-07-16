@@ -19,6 +19,25 @@ Enterprise-grade CRM and analytics platform for collecting and managing SEO inqu
 - Async database operations and Redis-backed real-time notifications.
 - Celery for scheduled report generation.
 
+## Automation Engine (Implemented)
+- Auto lead assignment
+- Duplicate lead detection
+- Missed follow-up alerts
+- WhatsApp reminders (queue events)
+- Email automation (queue events)
+- Booking confirmation notifications (queue events)
+- Invoice auto-generation from bookings
+- Payment reminders
+- Anniversary and birthday wishes (queue events)
+- Daily performance reports
+- Manager approval workflow support
+- Commission calculation
+- AI lead scoring refresh (heuristic v1)
+
+### On-demand automation API
+- List workflows: GET /api/v1/automation/workflows
+- Run workflow: POST /api/v1/automation/run/{workflow_name}
+
 ## Authorization
 - Permission-driven RBAC backed by `permissions` + `role_permissions`.
 - Route guards validate permissions from DB mappings (not hardcoded role checks).

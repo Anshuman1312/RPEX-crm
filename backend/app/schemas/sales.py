@@ -13,6 +13,13 @@ class BookingCreate(BaseModel):
     unit_code: str | None = Field(default=None, max_length=64)
     booking_value: Decimal = Field(gt=0)
     booking_date: date
+    payment_method: str | None = Field(default=None, max_length=64)
+    receipt: str | None = Field(default=None, max_length=1024)
+    plot_number: str | None = Field(default=None, max_length=64)
+    agreement_date: date | None = None
+    emi_details: str | None = None
+    loan_required: bool | None = False
+    kyc_documents: list[str] = Field(default_factory=list)
     status: str = Field(default="BOOKED", max_length=32)
     sales_executive_id: str | None = None
     partner_user_id: str | None = None

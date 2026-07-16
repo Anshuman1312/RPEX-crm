@@ -27,6 +27,7 @@ async def create_customer(payload: CustomerCreate, current_user: CurrentUser, db
         "full_name": row.full_name,
         "email": row.email,
         "phone": row.phone,
+        "extra_data": row.extra_data or {},
         "partner_user_id": str(row.partner_user_id) if row.partner_user_id else None,
     }
 
@@ -41,6 +42,9 @@ async def list_customers(_: CurrentUser, db: AsyncSession = Depends(get_db), lim
             "email": row.email,
             "phone": row.phone,
             "city": row.city,
+            "birth_date": row.birth_date,
+            "anniversary_date": row.anniversary_date,
+            "extra_data": row.extra_data or {},
             "created_at": row.created_at,
             "partner_user_id": str(row.partner_user_id) if row.partner_user_id else None,
         }

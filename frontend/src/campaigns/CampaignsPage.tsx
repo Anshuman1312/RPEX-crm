@@ -3,13 +3,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { createCampaign, fetchCampaigns } from "../services/crm";
 
+const CHANNELS = ["META_ADS", "GOOGLE_ADS", "YOUTUBE", "SMS", "EMAIL", "WHATSAPP", "INFLUENCERS"] as const;
+
 export default function CampaignsPage() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     name: "",
-    type: "Google Ads",
-    platform: "Google",
+    type: "Performance",
+    platform: "Meta",
+    channel: "META_ADS",
     budget: 0,
+    reach: 0,
+    leads: 0,
+    roas: 0,
+    conversion: 0,
     start_date: "",
     end_date: ""
   });
@@ -20,7 +27,19 @@ export default function CampaignsPage() {
     mutationFn: createCampaign,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["campaigns"] });
-      setForm({ name: "", type: "Google Ads", platform: "Google", budget: 0, start_date: "", end_date: "" });
+      setForm({
+        name: "",
+        type: "Performance",
+        platform: "Meta",
+        channel: "META_ADS",
+        budget: 0,
+        reach: 0,
+        leads: 0,
+        roas: 0,
+        conversion: 0,
+        start_date: "",
+        end_date: ""
+      });
     }
   });
 
@@ -30,7 +49,12 @@ export default function CampaignsPage() {
       name: form.name,
       type: form.type,
       platform: form.platform,
+      channel: form.channel,
       budget: Number(form.budget),
+      reach: Number(form.reach),
+      leads: Number(form.leads),
+      roas: Number(form.roas),
+      conversion: Number(form.conversion),
       start_date: form.start_date || null,
       end_date: form.end_date || null
     });
@@ -40,7 +64,7 @@ export default function CampaignsPage() {
     <div className="space-y-6">
       <section className="card p-6">
         <h1 className="font-display text-3xl text-ink">Campaign Control Center</h1>
-        <p className="text-steel mt-2">Configure budgeted channels and monitor active acquisition streams.</p>
+        <p className="text-steel mt-2">Meta Ads, Google Ads, YouTube, SMS, Email, WhatsApp, Influencers with live campaign KPI tracking.</p>
 
         <form onSubmit={handleSubmit} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
           <input
@@ -64,6 +88,13 @@ export default function CampaignsPage() {
             onChange={(e) => setForm((current) => ({ ...current, type: e.target.value }))}
             required
           />
+          <select
+            className="rounded-xl border border-slate-200 px-3 py-2"
+            value={form.channel}
+            onChange={(e) => setForm((current) => ({ ...current, channel: e.target.value }))}
+          >
+            {CHANNELS.map((channel) => <option key={channel} value={channel}>{channel}</option>)}
+          </select>
           <input
             className="rounded-xl border border-slate-200 px-3 py-2"
             type="number"
@@ -71,6 +102,36 @@ export default function CampaignsPage() {
             value={form.budget}
             onChange={(e) => setForm((current) => ({ ...current, budget: Number(e.target.value) }))}
             required
+          />
+          <input
+            className="rounded-xl border border-slate-200 px-3 py-2"
+            type="number"
+            placeholder="Reach"
+            value={form.reach}
+            onChange={(e) => setForm((current) => ({ ...current, reach: Number(e.target.value) }))}
+          />
+          <input
+            className="rounded-xl border border-slate-200 px-3 py-2"
+            type="number"
+            placeholder="Leads"
+            value={form.leads}
+            onChange={(e) => setForm((current) => ({ ...current, leads: Number(e.target.value) }))}
+          />
+          <input
+            className="rounded-xl border border-slate-200 px-3 py-2"
+            type="number"
+            step="0.01"
+            placeholder="ROAS"
+            value={form.roas}
+            onChange={(e) => setForm((current) => ({ ...current, roas: Number(e.target.value) }))}
+          />
+          <input
+            className="rounded-xl border border-slate-200 px-3 py-2"
+            type="number"
+            step="0.01"
+            placeholder="Conversion %"
+            value={form.conversion}
+            onChange={(e) => setForm((current) => ({ ...current, conversion: Number(e.target.value) }))}
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2"
@@ -92,9 +153,16 @@ export default function CampaignsPage() {
         {(data ?? []).map((campaign) => (
           <article key={campaign.id} className="card p-5">
             <h2 className="font-display text-xl text-ink">{campaign.name}</h2>
-            <p className="text-steel mt-1">{campaign.type} | {campaign.platform}</p>
+            <p className="text-steel mt-1">{campaign.type} | {campaign.platform} | {campaign.channel}</p>
             <p className="mt-3 text-sm">Budget: <span className="font-semibold">{campaign.budget}</span></p>
             <p className="text-sm text-steel">{campaign.start_date ?? "-"} to {campaign.end_date ?? "-"}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="rounded-lg border border-slate-100 px-2 py-1">Reach: {campaign.reach}</div>
+              <div className="rounded-lg border border-slate-100 px-2 py-1">Leads: {campaign.leads}</div>
+              <div className="rounded-lg border border-slate-100 px-2 py-1">CPL: {campaign.cpl}</div>
+              <div className="rounded-lg border border-slate-100 px-2 py-1">ROAS: {campaign.roas}</div>
+              <div className="rounded-lg border border-slate-100 px-2 py-1 col-span-2">Conversion: {campaign.conversion}%</div>
+            </div>
           </article>
         ))}
       </section>

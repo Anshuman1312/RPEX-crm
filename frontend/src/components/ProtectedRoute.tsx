@@ -20,7 +20,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (allowedRoles && !allowedRoles.includes(role)) {
-    if (role === "CHANNEL_PARTNER") {
+    if (role === "CHANNEL_PARTNER" || role === "CUSTOMER_PORTAL") {
       return <Navigate to="/partner" replace />;
     }
     return <Navigate to="/dashboard" replace />;

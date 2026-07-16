@@ -10,18 +10,23 @@ import CustomersPage from "./customers/CustomersPage";
 import DashboardPage from "./dashboard/DashboardPage";
 import DocumentsPage from "./documents/DocumentsPage";
 import FinancePage from "./finance/FinancePage";
+import InventoryPage from "./inventory/InventoryPage";
 import FollowupsPage from "./leads/FollowupsPage";
 import LeadsPage from "./leads/LeadsPage";
 import PartnerPortalPage from "./partner/PartnerPortalPage";
+import ProjectsPage from "./projects/ProjectsPage";
 import KeywordsPage from "./reports/KeywordsPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ReportsPage from "./reports/ReportsPage";
 import SalesPage from "./sales/SalesPage";
+import SalesTeamPage from "./sales/SalesTeamPage";
+import SiteVisitsPage from "./sales/SiteVisitsPage";
+import TelecallingPage from "./telecalling/TelecallingPage";
 import { api } from "./services/api";
 import { RootState } from "./store";
 
 function getDefaultRoute(role: RootState["auth"]["role"]) {
-  if (role === "CHANNEL_PARTNER") {
+  if (role === "CHANNEL_PARTNER" || role === "CUSTOMER_PORTAL") {
     return "/partner";
   }
 
@@ -72,9 +77,25 @@ export default function App() {
           }
         />
         <Route
+          path="/projects"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "DIRECTOR", "PROJECT_HEAD", "MARKETING_MANAGER", "SALES_MANAGER", "CRM_EXECUTIVE"]}>
+              <ProjectsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "DIRECTOR", "PROJECT_HEAD", "MARKETING_MANAGER", "SALES_MANAGER", "SALES_EXECUTIVE", "CRM_EXECUTIVE"]}>
+              <InventoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/campaigns"
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "SEO_MANAGER"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "SEO_MANAGER", "SUPER_ADMIN", "MARKETING_MANAGER", "DIRECTOR"]}>
               <CampaignsPage />
             </ProtectedRoute>
           }
@@ -90,8 +111,16 @@ export default function App() {
         <Route
           path="/followups"
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "SALES"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "SALES", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "TELECALLER", "CRM_EXECUTIVE"]}>
               <FollowupsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/telecalling"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "TELECALLER", "SALES_MANAGER", "CRM_EXECUTIVE"]}>
+              <TelecallingPage />
             </ProtectedRoute>
           }
         />
@@ -120,6 +149,22 @@ export default function App() {
           }
         />
         <Route
+          path="/sales-team"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "SALES_MANAGER", "DIRECTOR", "PROJECT_HEAD"]}>
+              <SalesTeamPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/site-visits"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "PROJECT_HEAD", "DIRECTOR", "CRM_EXECUTIVE"]}>
+              <SiteVisitsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/finance"
           element={
             <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "FINANCE", "DIRECTOR"]}>
@@ -138,7 +183,7 @@ export default function App() {
         <Route
           path="/partner"
           element={
-            <ProtectedRoute allowedRoles={["CHANNEL_PARTNER", "ADMIN", "SUPER_ADMIN"]}>
+            <ProtectedRoute allowedRoles={["CHANNEL_PARTNER", "CUSTOMER_PORTAL", "ADMIN", "SUPER_ADMIN"]}>
               <PartnerPortalPage />
             </ProtectedRoute>
           }

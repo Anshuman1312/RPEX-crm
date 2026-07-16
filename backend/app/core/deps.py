@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload  # 1. Import selectinload
 
 from app.core.redis import redis_client
 from app.core.security import TokenError, decode_token
@@ -39,7 +40,13 @@ async def get_current_user(
     if is_blacklisted:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token revoked")
 
-    stmt = select(User).where(User.id == payload.get("sub"), User.is_active.is_(True))
+    # 2. Update query to eagerly load the 'role' relationship
+    stmt = (
+        select(User)
+        .options(selectinload(User.role))  # This ensures current_user.role is available
+        .where(User.id == payload.get("sub"), User.is_active.is_(True))
+    )
+    
     user = (await db.execute(stmt)).scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
@@ -54,6 +61,7 @@ async def get_current_permissions(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> set[str]:
+    # 3. This line will now work because current_user.role is already loaded
     if current_user.role and current_user.role.name in {"ADMIN", "SUPER_ADMIN"}:
         rows = await db.execute(select(Permission.name))
         return set(rows.scalars().all())

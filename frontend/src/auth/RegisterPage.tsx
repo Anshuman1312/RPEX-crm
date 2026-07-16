@@ -4,6 +4,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 
 export default function RegisterPage() {
+  const roleOptions = [
+    "SUPER_ADMIN",
+    "DIRECTOR",
+    "PROJECT_HEAD",
+    "MARKETING_MANAGER",
+    "SALES_MANAGER",
+    "SALES_EXECUTIVE",
+    "TELECALLER",
+    "CRM_EXECUTIVE",
+    "FINANCE",
+    "LEGAL",
+    "HR",
+    "RECEPTIONIST",
+    "CHANNEL_PARTNER",
+    "DEVELOPER",
+    "CUSTOMER_PORTAL",
+    "ADMIN",
+    "SEO_MANAGER",
+    "SALES",
+    "ANALYST"
+  ] as const;
+
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,10 +68,11 @@ export default function RegisterPage() {
             required
           />
           <select className="w-full rounded-xl border border-slate-200 px-4 py-3" value={roleName} onChange={(e) => setRoleName(e.target.value)}>
-            <option value="ADMIN">ADMIN</option>
-            <option value="SEO_MANAGER">SEO_MANAGER</option>
-            <option value="SALES">SALES</option>
-            <option value="ANALYST">ANALYST</option>
+            {roleOptions.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
           </select>
           <input
             className="w-full rounded-xl border border-slate-200 px-4 py-3 md:col-span-2"

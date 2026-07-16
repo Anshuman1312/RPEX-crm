@@ -104,10 +104,10 @@ class LeadRepository:
             await self.db.execute(select(func.count()).select_from(Lead).where(func.date(Lead.created_at) == today))
         ).scalar_one()
         converted = (
-            await self.db.execute(select(func.count()).select_from(Lead).where(Lead.status == "CONVERTED"))
+            await self.db.execute(select(func.count()).select_from(Lead).where(Lead.status == "BOOKING"))
         ).scalar_one()
         pending = (
-            await self.db.execute(select(func.count()).select_from(Lead).where(and_(Lead.status != "CONVERTED", Lead.status != "LOST")))
+            await self.db.execute(select(func.count()).select_from(Lead).where(and_(Lead.status != "BOOKING", Lead.status != "LOST")))
         ).scalar_one()
         conversion_rate = round((converted / total) * 100, 2) if total else 0.0
         return {

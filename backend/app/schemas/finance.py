@@ -56,3 +56,13 @@ class InvoiceOut(TimestampSchema):
     notes: str | None
     created_by: str
     partner_user_id: str | None
+
+
+class FinanceLedgerEntryCreate(BaseModel):
+    entry_type: str = Field(min_length=2, max_length=64)
+    entry_date: date
+    amount: Decimal = Field(gt=0)
+    reference_no: str | None = Field(default=None, max_length=128)
+    status: str = Field(default="POSTED", max_length=32)
+    notes: str | None = None
+    extra_data: dict = Field(default_factory=dict)

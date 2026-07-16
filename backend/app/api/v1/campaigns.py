@@ -29,6 +29,14 @@ async def list_campaigns(_: CurrentUser, db: AsyncSession = Depends(get_db)):
             "budget": str(c.budget),
             "start_date": c.start_date,
             "end_date": c.end_date,
+            "channel": (c.extra_data or {}).get("channel") or c.type,
+            "reach": int((c.extra_data or {}).get("reach") or 0),
+            "leads": int((c.extra_data or {}).get("leads") or 0),
+            "cpl": round(float(c.budget) / int((c.extra_data or {}).get("leads") or 0), 2)
+            if int((c.extra_data or {}).get("leads") or 0)
+            else 0,
+            "roas": float((c.extra_data or {}).get("roas") or 0),
+            "conversion": float((c.extra_data or {}).get("conversion") or 0),
         }
         for c in campaigns
     ]

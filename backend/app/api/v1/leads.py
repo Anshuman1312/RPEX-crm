@@ -1,6 +1,7 @@
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import CurrentUser, require_permissions
@@ -9,10 +10,73 @@ from app.database.postgres import get_db
 from app.repositories.audit_repository import AuditRepository
 from app.repositories.lead_repository import LeadRepository
 from app.repositories.lead_saved_view_repository import LeadSavedViewRepository
-from app.schemas.lead import LeadQueryFilters, LeadSavedViewCreate, LeadUpdateStatus
+from app.schemas.lead import LEAD_SOURCE_OPTIONS, LEAD_STATUS_OPTIONS, LeadCreate, LeadQueryFilters, LeadSavedViewCreate, LeadUpdateStatus
+from app.models.website import Website
 from app.services.lead_service import LeadService
 
 router = APIRouter()
+
+
+def _normalize_status(status_name: str | None) -> str:
+    normalized = (status_name or "NEW").strip().upper()
+    if normalized not in LEAD_STATUS_OPTIONS:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid lead status")
+    return normalized
+
+
+def _normalize_source(source_name: str | None) -> str | None:
+    if not source_name:
+        return None
+    normalized = source_name.strip().upper().replace(" ", "_")
+    if normalized not in LEAD_SOURCE_OPTIONS:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid lead source")
+    return normalized
+
+
+@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.EDIT_LEADS}))])
+async def create_lead(payload: LeadCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+    source = _normalize_source(payload.source)
+    status_name = _normalize_status(payload.status)
+
+    website_id = payload.website_id
+    if not website_id:
+        default_website = (await db.execute(select(Website).where(Website.status.is_(True)).limit(1))).scalar_one_or_none()
+        if not default_website:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No active website configured")
+        website_id = str(default_website.id)
+
+    extra_data = {
+        **(payload.extra_data or {}),
+        "budget": payload.budget,
+        "preferred_location": payload.preferred_location,
+        "property_type": payload.property_type,
+        "notes": payload.notes,
+        "interested_project": payload.interested_project,
+        "assigned_to_name": payload.assigned_to_name,
+        "lead_score": payload.lead_score,
+    }
+    sanitized_extra = {key: value for key, value in extra_data.items() if value is not None}
+
+    lead_payload = {
+        "website_id": website_id,
+        "name": payload.name,
+        "email": payload.email,
+        "phone": payload.phone,
+        "source": source,
+        "medium": payload.medium,
+        "campaign_id": payload.campaign_id,
+        "status": status_name,
+        "assigned_to": payload.assigned_to,
+        "extra_data": sanitized_extra,
+    }
+    service = LeadService(LeadRepository(db), AuditRepository(db))
+    lead = await service.create_lead(lead_payload, actor_user_id=str(current_user.id))
+    return {
+        "id": str(lead.id),
+        "name": lead.name,
+        "status": lead.status,
+        "source": lead.source,
+    }
 
 
 @router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_LEADS}))])
@@ -88,6 +152,7 @@ async def update_lead_status(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
+    _normalize_status(payload.status)
     service = LeadService(LeadRepository(db), AuditRepository(db))
     lead = await service.update_status(lead_id, str(current_user.id), payload.status, payload.description)
     if not lead:

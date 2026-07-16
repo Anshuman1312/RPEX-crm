@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cloudinary import signed_delivery_url
 from app.core.config import get_settings
-from app.core.deps import CurrentUser, require_permissions
+from app.core.deps import CurrentUser, get_current_permissions, require_permissions
 from app.core.permissions import PERMISSIONS
 from app.database.postgres import get_db
 from app.repositories.customer_repository import CustomerRepository
@@ -15,17 +15,22 @@ router = APIRouter()
 settings = get_settings()
 
 
-@router.get("/dashboard", dependencies=[Depends(require_permissions({PERMISSIONS.ACCESS_PARTNER_PORTAL}))])
-async def partner_dashboard(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
+@router.get("/dashboard", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_OWN_BOOKINGS_PAYMENTS}))])
+async def partner_dashboard(
+    current_user: CurrentUser,
+    permissions: set[str] = Depends(get_current_permissions),
+    db: AsyncSession = Depends(get_db),
+):
     customer_repo = CustomerRepository(db)
     sales_repo = SalesRepository(db)
     finance_repo = FinanceRepository(db)
     document_repo = DocumentRepository(db)
 
-    customers = await customer_repo.list_by_partner(str(current_user.id), limit=500)
+    has_partner_scope = PERMISSIONS.ACCESS_PARTNER_PORTAL in permissions
+    customers = await customer_repo.list_by_partner(str(current_user.id), limit=500) if has_partner_scope else []
     bookings = await sales_repo.list_bookings_by_partner(str(current_user.id), limit=500)
     payments = await finance_repo.list_payments_by_partner(str(current_user.id), limit=500)
-    documents = await document_repo.list_by_partner(str(current_user.id), limit=500)
+    documents = await document_repo.list_by_partner(str(current_user.id), limit=500) if has_partner_scope else []
 
     total_booking_value = sum(float(row.booking_value) for row in bookings)
     total_collections = sum(float(row.amount) for row in payments)
@@ -60,7 +65,7 @@ async def partner_customers(
     ]
 
 
-@router.get("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.ACCESS_PARTNER_PORTAL}))])
+@router.get("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_OWN_BOOKINGS_PAYMENTS}))])
 async def partner_bookings(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -80,7 +85,7 @@ async def partner_bookings(
     ]
 
 
-@router.get("/payments", dependencies=[Depends(require_permissions({PERMISSIONS.ACCESS_PARTNER_PORTAL}))])
+@router.get("/payments", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_OWN_BOOKINGS_PAYMENTS}))])
 async def partner_payments(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),

@@ -39,14 +39,19 @@ const MENU_ITEMS: MenuItem[] = [
   { label: "Dashboard", path: "/dashboard", group: "crm", roles: ["ADMIN", "SEO_MANAGER", "SALES", "ANALYST", "SUPER_ADMIN", "DIRECTOR", "PROJECT_HEAD"] },
   { label: "Leads", path: "/leads", group: "crm", roles: ["ADMIN", "SEO_MANAGER", "SALES", "ANALYST", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "TELECALLER", "CRM_EXECUTIVE", "RECEPTIONIST"] },
   { label: "Campaigns", path: "/campaigns", group: "crm", roles: ["ADMIN", "SEO_MANAGER", "SUPER_ADMIN", "MARKETING_MANAGER"] },
+  { label: "Projects", path: "/projects", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "DIRECTOR", "PROJECT_HEAD", "MARKETING_MANAGER", "SALES_MANAGER", "CRM_EXECUTIVE"] },
+  { label: "Inventory", path: "/inventory", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "DIRECTOR", "PROJECT_HEAD", "MARKETING_MANAGER", "SALES_MANAGER", "SALES_EXECUTIVE", "CRM_EXECUTIVE"] },
   { label: "Keywords", path: "/keywords", group: "crm", roles: ["ADMIN", "SEO_MANAGER", "ANALYST", "SUPER_ADMIN", "MARKETING_MANAGER"] },
   { label: "Follow-ups", path: "/followups", group: "crm", roles: ["ADMIN", "SALES", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "TELECALLER"] },
+  { label: "Telecalling", path: "/telecalling", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "TELECALLER", "SALES_MANAGER", "CRM_EXECUTIVE"] },
   { label: "Customers", path: "/customers", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "CRM_EXECUTIVE", "SALES_MANAGER", "RECEPTIONIST"] },
   { label: "Sales", path: "/sales", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "PROJECT_HEAD", "DIRECTOR"] },
+  { label: "Sales Team", path: "/sales-team", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "SALES_MANAGER", "DIRECTOR", "PROJECT_HEAD"] },
+  { label: "Site Visits", path: "/site-visits", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "SALES_MANAGER", "SALES_EXECUTIVE", "PROJECT_HEAD", "DIRECTOR", "CRM_EXECUTIVE"] },
   { label: "Finance", path: "/finance", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "FINANCE", "DIRECTOR"] },
   { label: "Documents", path: "/documents", group: "crm", roles: ["ADMIN", "SUPER_ADMIN", "LEGAL", "CRM_EXECUTIVE"] },
   { label: "Reports", path: "/reports", group: "crm", roles: ["ADMIN", "ANALYST", "SUPER_ADMIN", "DIRECTOR", "FINANCE", "HR"] },
-  { label: "Partner Portal", path: "/partner", group: "partner", roles: ["CHANNEL_PARTNER", "ADMIN", "SUPER_ADMIN"] }
+  { label: "Partner Portal", path: "/partner", group: "partner", roles: ["CHANNEL_PARTNER", "CUSTOMER_PORTAL", "ADMIN", "SUPER_ADMIN"] }
 ];
 
 export function AppShell() {

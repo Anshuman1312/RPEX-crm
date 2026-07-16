@@ -28,3 +28,14 @@ class FinanceService:
             {"id": str(row.id), "invoice_number": row.invoice_number, "amount": str(row.amount)},
         )
         return row
+
+    async def create_ledger_entry(self, payload: dict, actor_user_id: str):
+        row = await self.repo.create_ledger_entry(payload)
+        await self.audit_repo.log(
+            actor_user_id,
+            "finance",
+            "ledger_entry_create",
+            None,
+            {"id": str(row.id), "entry_type": row.entry_type, "amount": str(row.amount)},
+        )
+        return row
