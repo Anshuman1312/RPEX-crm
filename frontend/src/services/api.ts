@@ -4,10 +4,11 @@ import { Store } from "@reduxjs/toolkit";
 import { clearTokens, setTokens } from "../auth/authSlice";
 import { RootState } from "../store";
 
-const API_BASE_URL = "http://srv1829331.hstgr.cloud:8000/api/v1";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
 export const api = axios.create({
-  baseURL: API_BASE_URL
+  baseURL: API_BASE_URL,
 });
 
 let interceptorsReady = false;
@@ -31,10 +32,17 @@ export function setupApiInterceptors(store: Store<RootState>) {
   api.interceptors.response.use(
     (response) => response,
     async (error) => {
-      const originalRequest = error?.config as (typeof error.config & { _retry?: boolean }) | undefined;
+      const originalRequest = error?.config as
+        | (typeof error.config & { _retry?: boolean })
+        | undefined;
       const status = error?.response?.status as number | undefined;
 
-      if (!originalRequest || status !== 401 || originalRequest._retry || String(originalRequest.url).includes("/auth/refresh")) {
+      if (
+        !originalRequest ||
+        status !== 401 ||
+        originalRequest._retry ||
+        String(originalRequest.url).includes("/auth/refresh")
+      ) {
         return Promise.reject(error);
       }
 
@@ -49,16 +57,21 @@ export function setupApiInterceptors(store: Store<RootState>) {
       if (!refreshRequest) {
         refreshRequest = (async () => {
           try {
-            const refreshResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-              refresh_token: currentState.refreshToken
-            });
-            const nextRole = (refreshResponse.data.role ?? currentState.role ?? "ANALYST") as NonNullable<RootState["auth"]["role"]>;
+            const refreshResponse = await axios.post(
+              `${API_BASE_URL}/auth/refresh`,
+              {
+                refresh_token: currentState.refreshToken,
+              },
+            );
+            const nextRole = (refreshResponse.data.role ??
+              currentState.role ??
+              "ANALYST") as NonNullable<RootState["auth"]["role"]>;
             store.dispatch(
               setTokens({
                 accessToken: refreshResponse.data.access_token,
                 refreshToken: refreshResponse.data.refresh_token,
-                role: nextRole
-              })
+                role: nextRole,
+              }),
             );
             return refreshResponse.data.access_token as string;
           } catch {
@@ -78,6 +91,6 @@ export function setupApiInterceptors(store: Store<RootState>) {
       originalRequest.headers = originalRequest.headers ?? {};
       originalRequest.headers.Authorization = `Bearer ${refreshedToken}`;
       return api.request(originalRequest);
-    }
+    },
   );
 }

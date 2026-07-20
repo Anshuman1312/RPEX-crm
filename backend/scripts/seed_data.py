@@ -1,9 +1,10 @@
 import asyncio
 
+# pyrefly: ignore [missing-import]
 from sqlalchemy import select
 
 from app.core.security import hash_password
-from app.database.postgres import SessionLocal
+from app.database.postgres import Base, SessionLocal, engine
 from app.models.permission import Permission
 from app.models.role import Role
 from app.models.role_permission import RolePermission
@@ -75,6 +76,9 @@ ROLE_PERMISSION_MAP = {
 
 
 async def seed() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
     async with SessionLocal() as session:
         # 1. Seed Roles
         for name, description in DEFAULT_ROLES:
