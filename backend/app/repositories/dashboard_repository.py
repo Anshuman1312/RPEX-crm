@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone
 from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.lead import Lead
-from app.models.inventory import PlotInventory
+from app.models.inventory_unit import InventoryUnit
 from app.models.finance_ledger_entry import FinanceLedgerEntry, ExpenseLedger
 
 class DashboardRepository:
@@ -13,9 +13,9 @@ class DashboardRepository:
     async def get_overview_metrics(self):
         # 1. Inventory Stats
         inventory_stmt = select(
-            PlotInventory.booking_status, 
-            func.count(PlotInventory.id)
-        ).group_by(PlotInventory.booking_status)
+            InventoryUnit.booking_status, 
+            func.count(InventoryUnit.id)
+        ).group_by(InventoryUnit.booking_status)
         inventory_res = await self.db.execute(inventory_stmt)
         inventory_stats = dict(inventory_res.all())
 
