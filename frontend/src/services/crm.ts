@@ -458,24 +458,24 @@ export async function fetchBookings() {
   }>;
 }
 
-export async function createBooking(payload: {
-  customer_id: string;
-  project_name: string;
-  unit_code: string | null;
-  booking_value: number;
-  booking_date: string;
-  payment_method: string | null;
-  receipt: string | null;
-  plot_number: string | null;
-  agreement_date: string | null;
-  emi_details: string | null;
-  loan_required: boolean;
-  kyc_documents: string[];
-  partner_user_id: string | null;
-}) {
-  const response = await api.post("/sales/bookings", payload);
-  return response.data;
-}
+// export async function createBooking(payload: {
+//   customer_id: string;
+//   project_name: string;
+//   unit_code: string | null;
+//   booking_value: number;
+//   booking_date: string;
+//   payment_method: string | null;
+//   receipt: string | null;
+//   plot_number: string | null;
+//   agreement_date: string | null;
+//   emi_details: string | null;
+//   loan_required: boolean;
+//   kyc_documents: string[];
+//   partner_user_id: string | null;
+// }) {
+//   const response = await api.post("/sales/bookings", payload);
+//   return response.data;
+// }
 
 export type BookingDocuments = {
   booking_receipt: Record<string, unknown>;
@@ -655,5 +655,16 @@ export async function createApprovalRequest(payload: {
 
 export async function decideApprovalRequest(requestId: string, status: "APPROVED" | "REJECTED", notes?: string) {
   const response = await api.post(`/approvals/${requestId}/decision`, { status, notes: notes ?? null });
+  return response.data;
+}
+
+
+export async function createBooking(payload: any) {
+  const response = await api.post("/sales/bookings", payload);
+  return response.data;
+}
+
+export async function fetchAvailablePlots() {
+  const response = await api.get("/inventory/available");
   return response.data;
 }

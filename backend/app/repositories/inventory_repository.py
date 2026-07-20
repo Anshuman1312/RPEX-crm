@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.inventory_unit import InventoryUnit
@@ -19,3 +19,11 @@ class InventoryRepository:
         if project_id:
             stmt = stmt.where(InventoryUnit.project_id == project_id)
         return list((await self.db.execute(stmt)).scalars().all())
+    
+    async def update_unit_status(self, unit_id: str, status: str, customer_data: dict = None):
+        stmt = update(InventoryUnit).where(InventoryUnit.id == unit_id).values(
+            booking_status=status,
+            ** (customer_data or {})
+        )
+        await self.db.execute(stmt)
+        await self.db.commit()

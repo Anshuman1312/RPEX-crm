@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, Index, String
+from sqlalchemy import ForeignKey, Index, String,Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.postgres import Base
@@ -38,3 +38,10 @@ class Lead(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     assignee = relationship("User", back_populates="assigned_leads", foreign_keys=[assigned_to])
     activities = relationship("LeadActivity", back_populates="lead", cascade="all, delete-orphan")
     followups = relationship("FollowUp", back_populates="lead", cascade="all, delete-orphan")
+    
+    budget: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    preferred_plot_size: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # Signature, Prestige, Premium, Classic
+    preferred_plot_type: Mapped[str | None] = mapped_column(String(32), nullable=True) 
+    preferred_location: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    remarks: Mapped[str | None] = mapped_column(Text, nullable=True)

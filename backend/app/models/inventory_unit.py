@@ -31,3 +31,9 @@ class InventoryUnit(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     booking_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     agreement_status: Mapped[str | None] = mapped_column(String(64), nullable=True)
     payment_status: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    plc_charges: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=0) # Preferential Location Charges
+    plot_facing: Mapped[str | None] = mapped_column(String(20)) # East, West, North, South
+    is_corner: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    # Ensure statuses match your list: Available, Blocked, Booked, Registered, Cancelled
+    booking_status: Mapped[str] = mapped_column(String(32), nullable=False, default="AVAILABLE")

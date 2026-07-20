@@ -28,6 +28,7 @@ from app.api.v1 import (
 	webhooks,
 	websites,
 	ws,
+	dashboard,
 )
 
 api_router = APIRouter()
@@ -58,3 +59,4 @@ api_router.include_router(vendors.router, prefix="/vendors", tags=["vendors"])
 api_router.include_router(whatsapp.router, prefix="/whatsapp", tags=["whatsapp"])
 api_router.include_router(automation.router, prefix="/automation", tags=["automation"])
 api_router.include_router(ws.router, tags=["websocket"])
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])

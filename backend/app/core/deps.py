@@ -13,6 +13,8 @@ from app.database.postgres import get_db
 from app.models.permission import Permission
 from app.models.role_permission import RolePermission
 from app.models.user import User
+from app.repositories.dashboard_repository import DashboardRepository
+from app.services.dashboard_service import DashboardService
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
@@ -85,3 +87,12 @@ def require_permissions(required_permissions: set[str]) -> Callable:
         return current_user
 
     return permission_guard
+
+async def get_dashboard_repository(db: AsyncSession = Depends(get_db)) -> DashboardRepository:
+    return DashboardRepository(db)
+
+# 2. Dependency to get the Service
+async def get_dashboard_service(
+    repo: DashboardRepository = Depends(get_dashboard_repository)
+) -> DashboardService:
+    return DashboardService(repo)

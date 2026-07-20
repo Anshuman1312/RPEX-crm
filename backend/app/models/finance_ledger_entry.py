@@ -27,3 +27,12 @@ class FinanceLedgerEntry(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     created_by: Mapped[uuid.UUID] = mapped_column(GUID(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False)
 
     creator = relationship("User")
+    
+class ExpenseLedger(Base, UUIDPrimaryKeyMixin, TimestampMixin):
+    __tablename__ = "expense_ledger"
+    
+    category: Mapped[str] = mapped_column(String(50)) # Marketing-Indoor, Salary, Legal, etc.
+    amount: Mapped[Decimal] = mapped_column(Numeric(14, 2))
+    reference_id: Mapped[uuid.UUID | None] = mapped_column(GUID(), nullable=True) # ID of Vendor or Employee
+    description: Mapped[str] = mapped_column(Text)
+    payment_mode: Mapped[str] = mapped_column(String(20)) # Cash, Bank
