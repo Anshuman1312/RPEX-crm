@@ -23,7 +23,7 @@ def _normalize_status(status: str) -> str:
     return normalized if normalized in STATUS_COLOR_MAP else "AVAILABLE"
 
 
-@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_PROJECTS}))])
+@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_INVENTORY}))])
 async def create_inventory_unit(payload: InventoryUnitCreate, _: CurrentUser, db: AsyncSession = Depends(get_db)):
     data = payload.model_dump()
     data["booking_status"] = _normalize_status(data.get("booking_status", "AVAILABLE"))
@@ -36,7 +36,7 @@ async def create_inventory_unit(payload: InventoryUnitCreate, _: CurrentUser, db
     }
 
 
-@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_PROJECTS}))])
+@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_INVENTORY}))])
 async def list_inventory_units(
     _: CurrentUser,
     db: AsyncSession = Depends(get_db),

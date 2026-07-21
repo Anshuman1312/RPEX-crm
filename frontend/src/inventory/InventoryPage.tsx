@@ -190,7 +190,7 @@ export default function InventoryPage() {
   const { data: units, isLoading } = useQuery({
     queryKey: ["inventory-units"],
     queryFn: async () => {
-      const res = await api.get("/inventory/units");
+      const res = await api.get("/inventory");
       return res.data;
     }
   });

@@ -11,7 +11,7 @@ from app.services.project_service import ProjectService
 router = APIRouter()
 
 
-@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_PROJECTS}))])
+@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_INVENTORY}))])
 async def create_project(payload: ProjectCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     project = await ProjectService(ProjectRepository(db)).create(payload.model_dump(), str(current_user.id))
     available_inventory = max(project.total_inventory - project.sold_inventory, 0)
@@ -23,7 +23,7 @@ async def create_project(payload: ProjectCreate, current_user: CurrentUser, db: 
     }
 
 
-@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_PROJECTS}))])
+@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_INVENTORY}))])
 async def list_projects(_: CurrentUser, db: AsyncSession = Depends(get_db)):
     projects = await ProjectRepository(db).list_all()
     response = []

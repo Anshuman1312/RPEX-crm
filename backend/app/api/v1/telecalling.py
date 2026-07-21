@@ -15,7 +15,7 @@ from app.services.telecalling_service import TelecallingService
 router = APIRouter()
 
 
-@router.post("/calls", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_TELECALLING}))])
+@router.post("/calls", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_TELECALLING}))])
 async def create_call(payload: TelecallingCallCreate, _: CurrentUser, db: AsyncSession = Depends(get_db)):
     row = await TelecallingService(TelecallingRepository(db)).create_call(payload.model_dump())
     return {
@@ -26,7 +26,7 @@ async def create_call(payload: TelecallingCallCreate, _: CurrentUser, db: AsyncS
     }
 
 
-@router.get("/calls", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_TELECALLING}))])
+@router.get("/calls", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_TELECALLING}))])
 async def list_calls(_: CurrentUser, db: AsyncSession = Depends(get_db), limit: int = Query(default=100, ge=1, le=500)):
     rows = await TelecallingRepository(db).list_calls(limit=limit)
     return [
@@ -47,7 +47,7 @@ async def list_calls(_: CurrentUser, db: AsyncSession = Depends(get_db), limit: 
     ]
 
 
-@router.get("/performance", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_TELECALLING}))])
+@router.get("/performance", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_TELECALLING}))])
 async def telecalling_performance(
     _: CurrentUser,
     db: AsyncSession = Depends(get_db),

@@ -11,13 +11,13 @@ from app.services.site_visit_service import SiteVisitService
 router = APIRouter()
 
 
-@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SALES}))])
+@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SITE_VISITS}))])
 async def create_site_visit(payload: SiteVisitCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     row = await SiteVisitService(SiteVisitRepository(db)).create(payload.model_dump(), str(current_user.id))
     return {"id": str(row.id), "customer_name": row.customer_name, "attendance": row.attendance}
 
 
-@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SALES}))])
+@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SITE_VISITS}))])
 async def list_site_visits(_: CurrentUser, db: AsyncSession = Depends(get_db), limit: int = Query(default=300, ge=1, le=1000)):
     rows = await SiteVisitRepository(db).list_all(limit=limit)
     return [

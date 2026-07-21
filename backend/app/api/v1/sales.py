@@ -13,7 +13,7 @@ from app.services.sales_service import SalesService
 router = APIRouter()
 
 
-@router.post("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SALES}))])
+@router.post("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_BOOKINGS}))])
 async def create_booking(payload: BookingCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     booking_data = payload.model_dump()
     booking_extra = {
@@ -43,7 +43,7 @@ async def create_booking(payload: BookingCreate, current_user: CurrentUser, db: 
     }
 
 
-@router.get("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SALES}))])
+@router.get("/bookings", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_SALES}))])
 async def list_bookings(_: CurrentUser, db: AsyncSession = Depends(get_db), limit: int = Query(default=100, ge=1, le=500)):
     rows = await SalesRepository(db).list_bookings(limit=limit)
     return [
@@ -67,7 +67,7 @@ async def list_bookings(_: CurrentUser, db: AsyncSession = Depends(get_db), limi
     ]
 
 
-@router.get("/bookings/{booking_id}/documents", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_SALES}))])
+@router.get("/bookings/{booking_id}/documents", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_SALES}))])
 async def generate_booking_documents(booking_id: str, _: CurrentUser, db: AsyncSession = Depends(get_db)):
     booking = await SalesRepository(db).get_by_id(booking_id)
     if not booking:
