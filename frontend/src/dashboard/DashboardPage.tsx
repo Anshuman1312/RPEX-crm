@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [comingSoonFeature, setComingSoonFeature] = useState("");
   const [activeAction, setActiveAction] = useState("");
-  const [progression, setProgession] = useState([]);
+  const [progression, setProgession] = useState(["lead", "saksham"]);
 
   // Generic Quick Action Handler
   const handleQuickAction = (actionName: string) => {
@@ -89,7 +89,7 @@ export default function DashboardPage() {
     );
 
   return (
-    <div className="max-w-[1600px] mx-auto space-y-8 pb-10">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-10">
       {/* Header Section */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
             Unified view of Plotting Inventory & Sales Pipeline.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-xs font-bold text-slate-600">
             Last Updated: {new Date().toLocaleTimeString()}
           </div>
@@ -172,9 +172,9 @@ export default function DashboardPage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-6 flex justify-around border-t border-slate-50 pt-6">
+          <div className="mt-6 flex flex-wrap justify-around gap-2 border-t border-slate-50 pt-6">
             {inventoryChartData.map((item, i) => (
-              <div key={item.name} className="text-center">
+              <div key={item.name} className="text-center min-w-[60px]">
                 <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">
                   {item.name}
                 </p>
@@ -273,20 +273,23 @@ export default function DashboardPage() {
                 icon={<Icons.Trends />}
               />
             ) : (
-              <div className="flex items-center gap-3">
-                {progression.map((step: any, i: number) => (
-                  <div
-                    key={typeof step === "string" ? step : step.name || i}
-                    className="flex-1 space-y-3"
-                  >
+              <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                {progression.map((step: any, i: number) => {
+                  const name = typeof step === "string" ? step : step.name;
+                  return (
                     <div
-                      className={`h-2.5 w-full rounded-full ${i < 3 ? "bg-cyan-500 shadow-sm shadow-cyan-100" : "bg-slate-100"}`}
-                    />
-                    <span className="text-[9px] block text-center font-bold text-slate-500 uppercase tracking-tighter">
-                      {typeof step === "string" ? step : step.name}
-                    </span>
-                  </div>
-                ))}
+                      key={name || i}
+                      className="flex-1 min-w-[80px] space-y-3"
+                    >
+                      <div
+                        className={`h-2.5 w-full rounded-full ${i < 3 ? "bg-cyan-500 shadow-sm shadow-cyan-100" : "bg-slate-100"}`}
+                      />
+                      <span className="text-[9px] block text-center font-bold text-slate-500 uppercase tracking-tighter truncate">
+                        {name}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

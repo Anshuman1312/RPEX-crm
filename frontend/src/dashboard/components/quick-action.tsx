@@ -22,7 +22,7 @@ export const QuickAction = ({
   return (
     <button
       onClick={onClick}
-      className={`border transition-all duration-200 p-4 rounded-2xl text-center group flex flex-col items-center justify-center min-h-[100px] active:scale-95 cursor-pointer ${activeClasses}`}
+      className={`border transition-all duration-200 p-3 sm:p-4 rounded-2xl text-center group flex flex-col items-center justify-center min-h-[80px] sm:min-h-[100px] active:scale-95 cursor-pointer ${activeClasses}`}
     >
       <p
         className={`text-sm font-bold group-hover:scale-105 transition-transform ${
