@@ -1,0 +1,30 @@
+export const appPaths = {
+  root: "/",
+  authBase: "/auth",
+  login: "/auth/login",
+  forbidden: "/forbidden",
+  dashboard: "/dashboard",
+  leads: "/leads",
+  campaigns: "/campaigns",
+  followups: "/followups",
+  customers: "/customers",
+  projects: "/projects",
+  inventory: "/inventory",
+  bookings: "/bookings",
+  payments: "/payments",
+  tasks: "/tasks",
+  meetings: "/meetings",
+  calendar: "/calendar",
+  notifications: "/notifications",
+  reports: "/reports",
+  employees: "/employees",
+  organization: "/organization",
+  roles: "/roles",
+  permissions: "/permissions",
+  profile: "/profile",
+  activityTimeline: "/activity-timeline",
+  workflow: "/workflow",
+  settings: "/settings"
+} as const;
+
+export type AppPath = (typeof appPaths)[keyof typeof appPaths];
