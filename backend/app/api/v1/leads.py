@@ -1,197 +1,262 @@
-import json
+from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.deps import CurrentUser, require_permissions
-from app.core.permissions import PERMISSIONS
-from app.database.postgres import get_db
-from app.repositories.audit_repository import AuditRepository
-from app.repositories.lead_repository import LeadRepository
-from app.repositories.lead_saved_view_repository import LeadSavedViewRepository
-from app.schemas.lead import LEAD_SOURCE_OPTIONS, LEAD_STATUS_OPTIONS, LeadCreate, LeadQueryFilters, LeadSavedViewCreate, LeadUpdateStatus
-from app.models.website import Website
+from app.database.postgres import get_db_session
+from app.dependencies.auth import get_current_user, require_permission
+from app.models.user import User
+from app.schemas.lead import (
+    LeadCreate,
+    LeadUpdate,
+    LeadResponse,
+    LeadListResponse,
+    LeadActivityCreate,
+    LeadActivityResponse,
+    LeadStatusUpdate,
+    LeadAssignRequest,
+)
 from app.services.lead_service import LeadService
+from app.utils.filters import LeadFilterParams, SortDirection
+from app.utils.pagination import PaginationParams, get_pagination_params
+from app.utils.response import ok, created, PaginatedResponse
+from loguru import logger
 
 router = APIRouter()
 
 
-def _normalize_status(status_name: str | None) -> str:
-    normalized = (status_name or "NEW").strip().upper()
-    if normalized not in LEAD_STATUS_OPTIONS:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid lead status")
-    return normalized
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=dict)
+async def create_lead(
+    request: LeadCreate,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.create")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Create new lead. Requires leads.create permission."""
+    lead_service = LeadService(session)
 
-
-def _normalize_source(source_name: str | None) -> str | None:
-    if not source_name:
-        return None
-    normalized = source_name.strip().upper().replace(" ", "_")
-    if normalized not in LEAD_SOURCE_OPTIONS:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid lead source")
-    return normalized
-
-
-@router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.EDIT_LEADS}))])
-async def create_lead(payload: LeadCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    source = _normalize_source(payload.source)
-    status_name = _normalize_status(payload.status)
-
-    website_id = payload.website_id
-    if not website_id:
-        default_website = (await db.execute(select(Website).where(Website.status.is_(True)).limit(1))).scalar_one_or_none()
-        if not default_website:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No active website configured")
-        website_id = str(default_website.id)
-
-    extra_data = {
-        **(payload.extra_data or {}),
-        "budget": payload.budget,
-        "preferred_location": payload.preferred_location,
-        "property_type": payload.property_type,
-        "notes": payload.notes,
-        "interested_project": payload.interested_project,
-        "assigned_to_name": payload.assigned_to_name,
-        "lead_score": payload.lead_score,
-    }
-    sanitized_extra = {key: value for key, value in extra_data.items() if value is not None}
-
-    lead_payload = {
-        "website_id": website_id,
-        "name": payload.name,
-        "email": payload.email,
-        "phone": payload.phone,
-        "source": source,
-        "medium": payload.medium,
-        "campaign_id": payload.campaign_id,
-        "status": status_name,
-        "assigned_to": payload.assigned_to,
-        "extra_data": sanitized_extra,
-    }
-    service = LeadService(LeadRepository(db), AuditRepository(db))
-    lead = await service.create_lead(lead_payload, actor_user_id=str(current_user.id))
-    return {
-        "id": str(lead.id),
-        "name": lead.name,
-        "status": lead.status,
-        "source": lead.source,
-    }
-
-
-@router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_LEADS}))])
-async def list_leads(
-    _: CurrentUser,
-    db: AsyncSession = Depends(get_db),
-    q: str | None = Query(default=None),
-    statuses: str | None = Query(default=None, description="Comma separated statuses"),
-    source: str | None = Query(default=None),
-    medium: str | None = Query(default=None),
-    campaign_id: str | None = Query(default=None),
-    assigned_to: str | None = Query(default=None),
-    created_from: str | None = Query(default=None),
-    created_to: str | None = Query(default=None),
-    extra_filters: str | None = Query(default=None, description='JSON object, example: {"city":"Delhi"}'),
-    sort_by: str = Query(default="created_at"),
-    sort_order: str = Query(default="desc"),
-    page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=50, ge=1, le=500),
-):
-    parsed_extra_filters = {}
-    if extra_filters:
-        try:
-            parsed_extra_filters = json.loads(extra_filters)
-        except json.JSONDecodeError as exc:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid JSON in extra_filters") from exc
-
-    filters = LeadQueryFilters(
-        q=q,
-        statuses=[s.strip() for s in statuses.split(",")] if statuses else [],
-        source=source,
-        medium=medium,
-        campaign_id=campaign_id,
-        assigned_to=assigned_to,
-        created_from=created_from,
-        created_to=created_to,
-        extra_field_filters=parsed_extra_filters,
-        sort_by=sort_by,
-        sort_order=sort_order,
-        page=page,
-        page_size=page_size,
+    lead = await lead_service.create_lead(
+        full_name=request.full_name,
+        email=request.email,
+        phone=request.phone,
+        source=request.source,
+        company_name=request.company_name,
+        designation=request.designation,
+        budget=request.budget,
+        notes=request.notes,
+        interested_in_project=request.interested_in_project,
+        preferred_unit_type=request.preferred_unit_type,
+        assigned_to_user_id=request.assigned_to_user_id,
+        created_by=str(current_user.id),
     )
 
-    repo = LeadRepository(db)
-    leads, total = await repo.search_leads(filters.model_dump())
-    return {
-        "items": [
-            {
-                "id": str(lead.id),
-                "name": lead.name,
-                "email": lead.email,
-                "phone": lead.phone,
-                "status": lead.status,
-                "source": lead.source,
-                "medium": lead.medium,
-                "campaign_id": str(lead.campaign_id) if lead.campaign_id else None,
-                "assigned_to": str(lead.assigned_to) if lead.assigned_to else None,
-                "extra_data": lead.extra_data,
-                "created_at": lead.created_at,
-            }
-            for lead in leads
-        ],
-        "total": total,
-        "page": page,
-        "page_size": page_size,
-    }
+    await session.commit()
+
+    logger.info(f"Lead created | lead_id={lead.id} | lead_number={lead.lead_number} | created_by={current_user.id}")
+
+    return created(
+        data=LeadResponse.model_validate(lead).__dict__,
+        message="Lead created successfully.",
+    )
 
 
-@router.patch("/{lead_id}/status", dependencies=[Depends(require_permissions({PERMISSIONS.EDIT_LEADS}))])
+@router.get("", status_code=status.HTTP_200_OK, response_model=PaginatedResponse)
+async def list_leads(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.view")),
+    pagination: PaginationParams = Depends(get_pagination_params),
+    search: str = Query(None),
+    statuses: str = Query(None, description="Comma-separated statuses"),
+    sources: str = Query(None, description="Comma-separated sources"),
+    sort_by: str = Query("created_at"),
+    sort_direction: str = Query("desc"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """List leads with filtering and pagination."""
+    lead_service = LeadService(session)
+
+    # Parse filter parameters
+    filters = LeadFilterParams(
+        search=search,
+        statuses=statuses.split(",") if statuses else None,
+        sources=sources.split(",") if sources else None,
+        sort_by=sort_by,
+        sort_direction=SortDirection(sort_direction),
+    )
+
+    leads, total = await lead_service.list_leads(filters, pagination.offset, pagination.limit)
+
+    data = [LeadListResponse.model_validate(l).__dict__ for l in leads]
+
+    return PaginatedResponse.build(
+        data=data,
+        total=total,
+        page=pagination.page,
+        page_size=pagination.page_size,
+    ).__dict__
+
+
+@router.get("/{lead_id}", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_lead(
+    lead_id: str,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.view")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get lead with all details."""
+    lead_service = LeadService(session)
+    lead = await lead_service.get_lead(lead_id)
+
+    return ok(data=LeadResponse.model_validate(lead).__dict__)
+
+
+@router.patch("/{lead_id}", status_code=status.HTTP_200_OK, response_model=dict)
+async def update_lead(
+    lead_id: str,
+    request: LeadUpdate,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.edit")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Update lead details."""
+    lead_service = LeadService(session)
+
+    lead = await lead_service.update_lead(lead_id, **request.model_dump(exclude_unset=True))
+
+    await session.commit()
+
+    logger.info(f"Lead updated | lead_id={lead.id} | updated_by={current_user.id}")
+
+    return ok(data=LeadResponse.model_validate(lead).__dict__)
+
+
+@router.post("/{lead_id}/status", status_code=status.HTTP_200_OK, response_model=dict)
 async def update_lead_status(
     lead_id: str,
-    payload: LeadUpdateStatus,
-    current_user: CurrentUser,
-    db: AsyncSession = Depends(get_db),
-):
-    _normalize_status(payload.status)
-    service = LeadService(LeadRepository(db), AuditRepository(db))
-    lead = await service.update_status(lead_id, str(current_user.id), payload.status, payload.description)
-    if not lead:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lead not found")
-    return {"id": str(lead.id), "status": lead.status}
+    request: LeadStatusUpdate,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.edit")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Update lead status (transition through workflow)."""
+    lead_service = LeadService(session)
+
+    lead = await lead_service.transition_status(lead_id, request.status, request.notes)
+
+    await session.commit()
+
+    logger.info(f"Lead status changed | lead_id={lead.id} | status={request.status} | changed_by={current_user.id}")
+
+    return ok(data=LeadResponse.model_validate(lead).__dict__)
 
 
-@router.post("/views", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_LEADS}))])
-async def create_saved_view(payload: LeadSavedViewCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    row = await LeadSavedViewRepository(db).create(
-        {
-            "user_id": current_user.id,
-            "name": payload.name,
-            "filters": payload.filters,
-            "is_public": payload.is_public,
-        }
+@router.post("/{lead_id}/assign", status_code=status.HTTP_200_OK, response_model=dict)
+async def assign_lead(
+    lead_id: str,
+    request: LeadAssignRequest,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.assign")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Assign lead to a user."""
+    lead_service = LeadService(session)
+
+    lead = await lead_service.assign_lead(
+        lead_id,
+        request.assigned_to_user_id,
+        assigned_by_user_id=str(current_user.id),
+        notes=request.notes,
     )
-    return {"id": str(row.id), "name": row.name, "is_public": row.is_public}
+
+    await session.commit()
+
+    logger.info(
+        f"Lead assigned | lead_id={lead.id} | assigned_to={request.assigned_to_user_id} | assigned_by={current_user.id}"
+    )
+
+    return ok(data=LeadResponse.model_validate(lead).__dict__)
 
 
-@router.get("/views", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_LEADS}))])
-async def list_saved_views(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    rows = await LeadSavedViewRepository(db).list_for_user(str(current_user.id))
-    return [
-        {
-            "id": str(row.id),
-            "user_id": str(row.user_id),
-            "name": row.name,
-            "filters": row.filters,
-            "is_public": row.is_public,
-            "updated_at": row.updated_at,
-        }
-        for row in rows
-    ]
+@router.post("/{lead_id}/activities", status_code=status.HTTP_201_CREATED, response_model=dict)
+async def add_lead_activity(
+    lead_id: str,
+    request: LeadActivityCreate,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.activity")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Add activity to lead."""
+    lead_service = LeadService(session)
+
+    activity = await lead_service.add_activity(
+        lead_id,
+        activity_type=request.activity_type,
+        subject=request.subject,
+        description=request.description,
+        outcome=request.outcome,
+        activity_date=request.activity_date,
+        next_followup=request.next_followup,
+        performed_by_user_id=str(current_user.id),
+    )
+
+    await session.commit()
+
+    logger.info(f"Lead activity added | lead_id={lead_id} | activity_type={request.activity_type} | by={current_user.id}")
+
+    return created(
+        data=LeadActivityResponse.model_validate(activity).__dict__,
+        message="Activity added successfully.",
+    )
 
 
-@router.delete("/views/{view_id}", dependencies=[Depends(require_permissions({PERMISSIONS.VIEW_LEADS}))])
-async def delete_saved_view(view_id: str, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    deleted = await LeadSavedViewRepository(db).delete_for_user(view_id, str(current_user.id))
-    if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Saved view not found")
-    return {"deleted": True}
+@router.get("/{lead_id}/activities", status_code=status.HTTP_200_OK, response_model=PaginatedResponse)
+async def get_lead_activities(
+    lead_id: str,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.view")),
+    pagination: PaginationParams = Depends(get_pagination_params),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get activities for a lead."""
+    from app.repositories.lead_repository import LeadActivityRepository
+
+    activity_repo = LeadActivityRepository(session)
+    activities, total = await activity_repo.get_lead_activities(lead_id, pagination.offset, pagination.limit)
+
+    data = [LeadActivityResponse.model_validate(a).__dict__ for a in activities]
+
+    return PaginatedResponse.build(
+        data=data,
+        total=total,
+        page=pagination.page,
+        page_size=pagination.page_size,
+    ).__dict__
+
+
+@router.get("/stats/overview", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_lead_statistics(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.view")),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get lead statistics (counts by status, source, etc.)."""
+    lead_service = LeadService(session)
+    stats = await lead_service.get_lead_statistics()
+
+    return ok(data=stats)
+
+
+@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+async def delete_lead(
+    lead_id: str,
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.delete")),
+    session: AsyncSession = Depends(get_db_session),
+) -> None:
+    """Soft delete a lead."""
+    lead_service = LeadService(session)
+    await lead_service.delete_lead(lead_id)
+
+    await session.commit()
+
+    logger.info(f"Lead deleted | lead_id={lead_id} | deleted_by={current_user.id}")

@@ -1,117 +1,141 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import Any
+from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
-from app.schemas.common import TimestampSchema
-
-LEAD_SOURCE_OPTIONS = [
-    "FACEBOOK",
-    "INSTAGRAM",
-    "GOOGLE_ADS",
-    "WEBSITE",
-    "WHATSAPP",
-    "REFERRAL",
-    "WALK_IN",
-    "CALL",
-    "MAGICBRICKS",
-    "99ACRES",
-    "HOUSING_COM",
-]
-
-LEAD_STATUS_OPTIONS = [
-    "NEW",
-    "CONTACTED",
-    "FOLLOW_UP",
-    "INTERESTED",
-    "SITE_VISIT",
-    "NEGOTIATION",
-    "BOOKING",
-    "LOST",
-    "FUTURE",
-]
+import uuid
 
 
-class WebhookLeadIn(BaseModel):
-    name: str
-    email: EmailStr
-    phone: str
-    source: str | None = None
-    campaign: str | None = None
-    landing_page: str | None = None
-    utm_source: str | None = None
-    utm_medium: str | None = None
+# ── Lead Activity ────────────────────────────────────────────────────────────
+
+class LeadActivityResponse(BaseModel):
+    """Lead activity response."""
+
+    id: uuid.UUID
+    activity_type: str
+    subject: str
+    description: Optional[str] = None
+    outcome: Optional[str] = None
+    performed_by_user_id: Optional[uuid.UUID] = None
+    activity_date: datetime
+    next_followup: Optional[datetime] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class LeadActivityCreate(BaseModel):
+    """Create lead activity."""
+
+    activity_type: str = Field(..., min_length=1, max_length=50)
+    subject: str = Field(..., min_length=1, max_length=255)
+    description: Optional[str] = Field(None, max_length=5000)
+    outcome: Optional[str] = Field(None, max_length=100)
+    activity_date: datetime
+    next_followup: Optional[datetime] = None
+
+
+# ── Lead ─────────────────────────────────────────────────────────────────────
+
+class LeadResponse(BaseModel):
+    """Full lead response."""
+
+    id: uuid.UUID
+    lead_number: str
+    full_name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    source: str
+    status: str
+    priority: str
+    assigned_to_user_id: Optional[uuid.UUID] = None
+    assignment_date: Optional[datetime] = None
+    company_name: Optional[str] = None
+    designation: Optional[str] = None
+    budget: Optional[int] = None
+    notes: Optional[str] = None
+    interested_in_project: Optional[uuid.UUID] = None
+    preferred_unit_type: Optional[str] = None
+    last_contacted_at: Optional[datetime] = None
+    last_activity_at: Optional[datetime] = None
+    next_followup_at: Optional[datetime] = None
+    conversion_date: Optional[datetime] = None
+    lost_reason: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    activities: list[LeadActivityResponse] = []
+
+    model_config = {"from_attributes": True}
+
+
+class LeadListResponse(BaseModel):
+    """Lead list item (less info than full response)."""
+
+    id: uuid.UUID
+    lead_number: str
+    full_name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    source: str
+    status: str
+    priority: str
+    assigned_to_user_id: Optional[uuid.UUID] = None
+    company_name: Optional[str] = None
+    last_contacted_at: Optional[datetime] = None
+    next_followup_at: Optional[datetime] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
 
 
 class LeadCreate(BaseModel):
-    website_id: str | None = None
-    name: str
-    email: EmailStr
-    phone: str
-    source: str | None = None
-    medium: str | None = None
-    campaign_id: str | None = None
-    status: str = "NEW"
-    assigned_to: str | None = None
-    budget: str | None = None
-    preferred_location: str | None = None
-    property_type: str | None = None
-    notes: str | None = None
-    interested_project: str | None = None
-    assigned_to_name: str | None = None
-    lead_score: int | None = Field(default=None, ge=0, le=100)
-    extra_data: dict[str, Any] = Field(default_factory=dict)
+    """Create lead."""
+
+    full_name: str = Field(..., min_length=2, max_length=200)
+    email: Optional[str] = Field(None, max_length=255)
+    phone: Optional[str] = Field(None, min_length=10, max_length=20)
+    source: str = Field(..., min_length=1, max_length=50)
+    status: Optional[str] = Field(None, max_length=50)
+    priority: Optional[str] = Field(None, max_length=50)
+    company_name: Optional[str] = Field(None, max_length=255)
+    designation: Optional[str] = Field(None, max_length=100)
+    budget: Optional[int] = None
+    notes: Optional[str] = Field(None, max_length=5000)
+    interested_in_project: Optional[str] = None
+    preferred_unit_type: Optional[str] = Field(None, max_length=50)
+    assigned_to_user_id: Optional[str] = None
 
 
-class LeadUpdateStatus(BaseModel):
-    status: str
-    description: str | None = None
+class LeadUpdate(BaseModel):
+    """Update lead."""
+
+    full_name: Optional[str] = Field(None, min_length=2, max_length=200)
+    email: Optional[str] = Field(None, max_length=255)
+    phone: Optional[str] = Field(None, min_length=10, max_length=20)
+    source: Optional[str] = Field(None, max_length=50)
+    status: Optional[str] = Field(None, max_length=50)
+    priority: Optional[str] = Field(None, max_length=50)
+    company_name: Optional[str] = Field(None, max_length=255)
+    designation: Optional[str] = Field(None, max_length=100)
+    budget: Optional[int] = None
+    notes: Optional[str] = Field(None, max_length=5000)
+    interested_in_project: Optional[str] = None
+    preferred_unit_type: Optional[str] = Field(None, max_length=50)
+    assigned_to_user_id: Optional[str] = None
+    next_followup_at: Optional[datetime] = None
 
 
-class LeadOut(TimestampSchema):
-    website_id: str
-    name: str
-    email: EmailStr
-    phone: str
-    source: str | None
-    medium: str | None
-    campaign_id: str | None
-    status: str
-    assigned_to: str | None
-    extra_data: dict[str, Any]
+class LeadStatusUpdate(BaseModel):
+    """Update lead status."""
+
+    status: str = Field(..., min_length=1, max_length=50)
+    notes: Optional[str] = Field(None, max_length=5000)
 
 
-class LeadSearchResponse(BaseModel):
-    items: list[dict[str, Any]]
-    total: int
-    page: int
-    page_size: int
+class LeadAssignRequest(BaseModel):
+    """Assign lead to user."""
 
-
-class LeadSavedViewCreate(BaseModel):
-    name: str = Field(min_length=2, max_length=128)
-    filters: dict[str, Any]
-    is_public: bool = False
-
-
-class LeadSavedViewOut(TimestampSchema):
-    user_id: str
-    name: str
-    filters: dict[str, Any]
-    is_public: bool
-
-
-class LeadQueryFilters(BaseModel):
-    q: str | None = None
-    statuses: list[str] = Field(default_factory=list)
-    source: str | None = None
-    medium: str | None = None
-    campaign_id: str | None = None
-    assigned_to: str | None = None
-    created_from: datetime | None = None
-    created_to: datetime | None = None
-    extra_field_filters: dict[str, str] = Field(default_factory=dict)
-    sort_by: str = "created_at"
-    sort_order: str = "desc"
-    page: int = 1
-    page_size: int = 50
+    assigned_to_user_id: str
+    notes: Optional[str] = Field(None, max_length=5000)

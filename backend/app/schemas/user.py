@@ -1,17 +1,36 @@
-from pydantic import BaseModel, EmailStr, Field
+from __future__ import annotations
 
-from app.schemas.common import TimestampSchema
+from datetime import datetime
+from typing import Optional
 
+from pydantic import BaseModel
 
-class UserCreate(BaseModel):
-    name: str = Field(min_length=2, max_length=128)
-    email: EmailStr
-    password: str = Field(min_length=8)
-    role_name: str
+import uuid
 
 
-class UserOut(TimestampSchema):
+class DepartmentResponse(BaseModel):
+    """Department response."""
+
+    id: uuid.UUID
     name: str
-    email: EmailStr
-    role_id: str
+    code: str
+    parent_id: Optional[uuid.UUID] = None
     is_active: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class DesignationResponse(BaseModel):
+    """Designation response."""
+
+    id: uuid.UUID
+    name: str
+    code: str
+    level: int
+    is_active: bool
+    department_id: uuid.UUID
+    department: Optional[DepartmentResponse] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}

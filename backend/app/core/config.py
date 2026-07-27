@@ -1,44 +1,150 @@
-from functools import lru_cache
-from typing import List, Optional
+from __future__ import annotations
 
-from pydantic import Field
+from functools import lru_cache
+from typing import Any, Literal
+
+from pydantic import computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="ignore",
+    )
 
-    app_name: str = Field(default="RPEX SEO CRM", alias="APP_NAME")
-    app_env: str = Field(default="development", alias="APP_ENV")
-    app_debug: bool = Field(default=True, alias="APP_DEBUG")
-    api_v1_prefix: str = Field(default="/api/v1", alias="API_V1_PREFIX")
-    supabase_url: Optional[str] = Field(default=None, alias="SUPABASE_URL")
-    supabase_api_key: Optional[str] = Field(default=None, alias="SUPABASE_API_KEY")
+    # ── Application ───────────────────────────────────────────────────────────
+    APP_NAME: str = "RPEX CRM"
+    APP_ENV: Literal["development", "staging", "production"] = "development"
+    APP_VERSION: str = "1.0.0"
+    APP_DEBUG: bool = False
+    APP_HOST: str = "0.0.0.0"
+    APP_PORT: int = 8000
+    SECRET_KEY: str = "dev-secret-key-please-change-in-production-min-32!!"
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]
 
-    database_url: str = Field(default="postgresql+asyncpg://rpex:rpex@postgres:5432/rpex_crm", alias="DATABASE_URL")
-    redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
+    # ── Database ──────────────────────────────────────────────────────────────
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/rpex_crm"
+    DATABASE_POOL_SIZE: int = 20
+    DATABASE_MAX_OVERFLOW: int = 40
+    DATABASE_POOL_TIMEOUT: int = 30
+    DATABASE_POOL_RECYCLE: int = 3600
 
-    jwt_secret_key: str = Field(default="dev-only-change-me", alias="JWT_SECRET_KEY")
-    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
-    access_token_expire_minutes: int = Field(default=15, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
-    refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")
+    # ── Redis ─────────────────────────────────────────────────────────────────
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_CACHE_DB: int = 1
+    REDIS_SESSION_DB: int = 2
+    REDIS_CELERY_DB: int = 3
+    REDIS_RATE_LIMIT_DB: int = 4
+    REDIS_MAX_CONNECTIONS: int = 50
 
-    rate_limit_per_minute: int = Field(default=120, alias="RATE_LIMIT_PER_MINUTE")
-    cors_origins: str = Field(default="http://localhost:5173", alias="CORS_ORIGINS")
+    # ── JWT ───────────────────────────────────────────────────────────────────
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    REFRESH_TOKEN_ROTATE: bool = True
 
-    celery_broker_url: str = Field(default="redis://localhost:6379/1", alias="CELERY_BROKER_URL")
-    celery_result_backend: str = Field(default="redis://localhost:6379/2", alias="CELERY_RESULT_BACKEND")
+    # ── Celery ────────────────────────────────────────────────────────────────
+    CELERY_BROKER_URL: str = "redis://localhost:6379/3"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/3"
+    CELERY_TASK_ALWAYS_EAGER: bool = False
 
-    cloudinary_cloud_name: str = Field(default="", alias="CLOUDINARY_CLOUD_NAME")
-    cloudinary_api_key: str = Field(default="", alias="CLOUDINARY_API_KEY")
-    cloudinary_api_secret: str = Field(default="", alias="CLOUDINARY_API_SECRET")
-    cloudinary_folder: str = Field(default="rpex-crm", alias="CLOUDINARY_FOLDER")
+    # ── Rate Limiting ─────────────────────────────────────────────────────────
+    RATE_LIMIT_PER_MINUTE: int = 60
+    RATE_LIMIT_BURST: int = 100
+    AUTH_RATE_LIMIT_PER_MINUTE: int = 10
+    ENABLE_RATE_LIMITING: bool = True
 
+    # ── Field Encryption (AES-256 for Aadhaar, etc.) ─────────────────────────
+    FIELD_ENCRYPTION_KEY: str = "dev-field-encryption-key-change-in-production!!"
+
+    # ── Logging ───────────────────────────────────────────────────────────────
+    LOG_LEVEL: str = "INFO"
+    LOG_FILE_PATH: str = "logs/app.log"
+
+    # ── Email (SMTP) ──────────────────────────────────────────────────────────
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_NAME: str = "RPEX CRM"
+    SMTP_FROM_EMAIL: str = "noreply@rpex.com"
+    SMTP_USE_TLS: bool = True
+
+    # ── SMS ───────────────────────────────────────────────────────────────────
+    SMS_PROVIDER: str = "twilio"
+    SMS_API_KEY: str = ""
+    SMS_API_SECRET: str = ""
+    SMS_FROM_NUMBER: str = ""
+
+    # ── Pagination ────────────────────────────────────────────────────────────
+    DEFAULT_PAGE_SIZE: int = 20
+    MAX_PAGE_SIZE: int = 100
+
+    # ── Feature Flags ─────────────────────────────────────────────────────────
+    ENABLE_SMS_NOTIFICATIONS: bool = False
+    ENABLE_EMAIL_NOTIFICATIONS: bool = False
+    ENABLE_AUDIT_LOG: bool = True
+
+    # ── Validators ────────────────────────────────────────────────────────────
+
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def parse_allowed_origins(cls, v: Any) -> list[str]:
+        if isinstance(v, str):
+            return [o.strip() for o in v.split(",") if o.strip()]
+        return v
+
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def validate_secret_key(cls, v: str) -> str:
+        if len(v) < 32:
+            raise ValueError("SECRET_KEY must be at least 32 characters long.")
+        return v
+
+    @field_validator("FIELD_ENCRYPTION_KEY")
+    @classmethod
+    def validate_encryption_key(cls, v: str) -> str:
+        if len(v) < 32:
+            raise ValueError("FIELD_ENCRYPTION_KEY must be at least 32 characters long.")
+        return v
+
+    # ── Computed Properties ───────────────────────────────────────────────────
+
+    @computed_field
     @property
-    def cors_origins_list(self) -> List[str]:
-        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+    def is_production(self) -> bool:
+        return self.APP_ENV == "production"
+
+    @computed_field
+    @property
+    def is_development(self) -> bool:
+        return self.APP_ENV == "development"
+
+    @computed_field
+    @property
+    def redis_cache_url(self) -> str:
+        base = self.REDIS_URL.rsplit("/", 1)[0]
+        return f"{base}/{self.REDIS_CACHE_DB}"
+
+    @computed_field
+    @property
+    def redis_session_url(self) -> str:
+        base = self.REDIS_URL.rsplit("/", 1)[0]
+        return f"{base}/{self.REDIS_SESSION_DB}"
+
+    @computed_field
+    @property
+    def redis_rate_limit_url(self) -> str:
+        base = self.REDIS_URL.rsplit("/", 1)[0]
+        return f"{base}/{self.REDIS_RATE_LIMIT_DB}"
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+
+settings: Settings = get_settings()
