@@ -1,49 +1,117 @@
+from __future__ import annotations
+
+import hashlib
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from uuid import uuid4
 
-import bcrypt
-from jose import JWTError, jwt
+from jose import JWTError, ExpiredSignatureError, jwt
+from passlib.context import CryptContext
 
-from app.core.config import get_settings
+from app.core.config import settings
 
-settings = get_settings()
-
-
-class TokenError(Exception):
-    pass
+# bcrypt with cost factor 12 — good balance of security vs latency
+_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+# ── Password utilities ─────────────────────────────────────────────────────────
+
+def hash_password(plain_password: str) -> str:
+    """Return bcrypt hash of the given plaintext password."""
+    return _pwd_context.hash(plain_password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
+    """Constant-time comparison of plaintext against a stored bcrypt hash."""
+    return _pwd_context.verify(plain_password, hashed_password)
 
 
-def create_token(subject: str, token_type: str, expires_delta: timedelta) -> str:
+# ── JWT utilities ──────────────────────────────────────────────────────────────
+
+def create_access_token(
+    subject: str | Any,
+    extra_claims: dict[str, Any] | None = None,
+) -> str:
+    """Create a short-lived JWT access token."""
     now = datetime.now(timezone.utc)
     payload: dict[str, Any] = {
-        "sub": subject,
-        "type": token_type,
-        "iat": int(now.timestamp()),
-        "exp": int((now + expires_delta).timestamp()),
-        "jti": str(uuid4()),
+        "sub": str(subject),
+        "iat": now,
+        "exp": now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "type": "access",
     }
-    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+    if extra_claims:
+        payload.update(extra_claims)
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
-def create_access_token(subject: str) -> str:
-    return create_token(subject, "access", timedelta(minutes=settings.access_token_expire_minutes))
+def create_refresh_token(subject: str | Any) -> str:
+    """Create a long-lived JWT refresh token with a unique JTI for revocation."""
+    now = datetime.now(timezone.utc)
+    payload: dict[str, Any] = {
+        "sub": str(subject),
+        "iat": now,
+        "exp": now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        "type": "refresh",
+        "jti": secrets.token_hex(32),   # unique identifier — stored in Redis for revocation
+    }
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
-def create_refresh_token(subject: str) -> str:
-    return create_token(subject, "refresh", timedelta(days=settings.refresh_token_expire_days))
+def decode_access_token(token: str) -> dict[str, Any]:
+    """
+    Decode and validate a JWT access token.
 
+    Raises:
+        app.core.exceptions.TokenExpiredException: if the token has expired.
+        app.core.exceptions.InvalidTokenException: if the token is invalid.
+    """
+    from app.core.exceptions import TokenExpiredException, InvalidTokenException
 
-def decode_token(token: str) -> dict[str, Any]:
     try:
-        return jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
-    except JWTError as exc:
-        raise TokenError("Invalid or expired token") from exc
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        if payload.get("type") != "access":
+            raise InvalidTokenException()
+        return payload
+    except ExpiredSignatureError:
+        raise TokenExpiredException()
+    except JWTError:
+        raise InvalidTokenException()
+
+
+def decode_refresh_token(token: str) -> dict[str, Any]:
+    """
+    Decode and validate a JWT refresh token.
+
+    Raises:
+        app.core.exceptions.TokenExpiredException: if the token has expired.
+        app.core.exceptions.InvalidTokenException: if the token is invalid.
+    """
+    from app.core.exceptions import TokenExpiredException, InvalidTokenException
+
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        if payload.get("type") != "refresh":
+            raise InvalidTokenException()
+        return payload
+    except ExpiredSignatureError:
+        raise TokenExpiredException()
+    except JWTError:
+        raise InvalidTokenException()
+
+
+# ── Token storage helpers ──────────────────────────────────────────────────────
+
+def hash_token(token: str) -> str:
+    """SHA-256 hash of a token — safe to store in the database."""
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def generate_secure_token(nbytes: int = 32) -> str:
+    """Cryptographically secure URL-safe random token (e.g. for password reset)."""
+    return secrets.token_urlsafe(nbytes)
+
+
+def generate_otp(length: int = 6) -> str:
+    """Cryptographically secure numeric OTP."""
+    return "".join(str(secrets.randbelow(10)) for _ in range(length))

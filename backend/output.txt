@@ -1,0 +1,212 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.90kB done
+#1 DONE 0.0s
+
+#2 [frontend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 240B done
+#2 DONE 0.0s
+
+#3 [celery_beat internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.08kB done
+#3 DONE 0.1s
+
+#4 [celery_worker internal] load metadata for docker.io/library/python:3.13-slim
+#4 ...
+
+#5 [frontend internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 1.0s
+
+#4 [celery_beat internal] load metadata for docker.io/library/python:3.13-slim
+#4 DONE 1.0s
+
+#6 [frontend internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#7 [backend internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.1s
+
+#8 [backend internal] load build context
+#8 DONE 0.0s
+
+#9 [frontend internal] load build context
+#9 transferring context: 6.49kB 0.0s done
+#9 DONE 0.1s
+
+#10 [backend 1/8] FROM docker.io/library/python:3.13-slim@sha256:6771159cd4fa5d9bba1258caf0b82e6b73458c694d178ad97c5e925c2d0e1a91
+#10 resolve docker.io/library/python:3.13-slim@sha256:6771159cd4fa5d9bba1258caf0b82e6b73458c694d178ad97c5e925c2d0e1a91
+#10 resolve docker.io/library/python:3.13-slim@sha256:6771159cd4fa5d9bba1258caf0b82e6b73458c694d178ad97c5e925c2d0e1a91 0.1s done
+#10 DONE 0.1s
+
+#11 [frontend 1/5] FROM docker.io/library/node:22-alpine@sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2
+#11 resolve docker.io/library/node:22-alpine@sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2 0.1s done
+#11 DONE 0.1s
+
+#12 [frontend 2/5] WORKDIR /frontend
+#12 CACHED
+
+#13 [frontend 3/5] COPY package.json /frontend/package.json
+#13 CACHED
+
+#14 [frontend 4/5] RUN npm install
+#14 CACHED
+
+#15 [frontend 5/5] COPY . /frontend
+#15 CACHED
+
+#8 [backend internal] load build context
+#8 ...
+
+#16 [frontend] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:f614aeff5ba59a72f3b21ee6807e53d6a8c30657b0099123c0387ac679818a73 done
+#16 exporting config sha256:8ac3919ec420f69dc132571a97ac43dfe2dfcc47d5d88aadb3087a62e3f51ee9 done
+#16 exporting attestation manifest sha256:4a33fd9c175c707b44cb4fe3d80f8fb60bb5e61fa71125efebb427bfa7c03d24 0.1s done
+#16 exporting manifest list sha256:c843b9b8fc919a1c3583671fbbab5608088f680484e1d30ab8388e6c3fd9a7df 0.0s done
+#16 naming to docker.io/library/rpex-crm-frontend:latest done
+#16 unpacking to docker.io/library/rpex-crm-frontend:latest 0.0s done
+#16 DONE 0.3s
+
+#8 [backend internal] load build context
+#8 transferring context: 828.31kB 0.6s done
+#8 DONE 0.6s
+
+#17 [celery_worker 2/8] RUN groupadd -r appuser && useradd -r -g appuser appuser
+#17 CACHED
+
+#18 [celery_worker 3/8] WORKDIR /app
+#18 CACHED
+
+#19 [celery_worker 4/8] RUN apt-get update && apt-get install -y --no-install-recommends     build-essential     libpq-dev     curl     && rm -rf /var/lib/apt/lists/*
+#19 CACHED
+
+#20 [celery_worker 5/8] COPY requirements.txt .
+#20 CACHED
+
+#21 [celery_worker 6/8] RUN pip install --no-cache-dir -r requirements.txt
+#21 CACHED
+
+#19 [backend 4/8] RUN apt-get update && apt-get install -y --no-install-recommends     build-essential     libpq-dev     curl     && rm -rf /var/lib/apt/lists/*
+#19 CACHED
+
+#20 [backend 5/8] COPY requirements.txt .
+#20 CACHED
+
+#17 [backend 2/8] RUN groupadd -r appuser && useradd -r -g appuser appuser
+#17 CACHED
+
+#18 [backend 3/8] WORKDIR /app
+#18 CACHED
+
+#22 [frontend] resolving provenance for metadata file
+#22 DONE 0.0s
+
+#23 [backend 7/8] COPY . .
+#23 DONE 3.4s
+
+#24 [backend 8/8] RUN mkdir -p logs && chown -R appuser:appuser /app
+#24 DONE 1.2s
+
+#25 [celery_worker] exporting to image
+#25 exporting layers
+#25 ...
+
+#26 [celery_beat] exporting to image
+#26 exporting layers 10.0s done
+#26 exporting manifest sha256:7a563262d205b511d65db7048e9873380d4f003f4d43d717bf1feac1fef6c442 0.1s done
+#26 exporting config sha256:61d8ba272179c2ed5512d06ed77c28a78e1139872959afc9f6ddb40144f42270 0.1s done
+#26 ...
+
+#27 [backend] exporting to image
+#27 exporting layers 10.0s done
+#27 exporting manifest sha256:6e172ae3edad6c4f1835326f550f6a3d2b3d0dd7928427b1fc9cc04347e7a636 0.1s done
+#27 exporting config sha256:cf60fb46b09b984243ae2692add4b5b312ae9a31fbc4eafc278f92d2afe4d7bd
+#27 exporting config sha256:cf60fb46b09b984243ae2692add4b5b312ae9a31fbc4eafc278f92d2afe4d7bd 0.1s done
+#27 exporting attestation manifest sha256:4d0a29761fe01b8fdda8babc88baf42b621cab533f28e8b2546ba71330ee0061
+#27 ...
+
+#26 [celery_beat] exporting to image
+#26 exporting attestation manifest sha256:87bced3f71a53ab75196992660b7cfc1e7a8a8f7a2db646153b1fafc64143471
+#26 exporting attestation manifest sha256:87bced3f71a53ab75196992660b7cfc1e7a8a8f7a2db646153b1fafc64143471 0.2s done
+#26 exporting manifest list sha256:c2b98b7cf3398b2723d560c0640d233d2034526dde8f4cd23becc99995198c87
+#26 exporting manifest list sha256:c2b98b7cf3398b2723d560c0640d233d2034526dde8f4cd23becc99995198c87 0.1s done
+#26 naming to docker.io/library/rpex-crm-celery_beat:latest
+#26 naming to docker.io/library/rpex-crm-celery_beat:latest 0.0s done
+#26 unpacking to docker.io/library/rpex-crm-celery_beat:latest
+#26 ...
+
+#25 [celery_worker] exporting to image
+#25 exporting layers 10.0s done
+#25 exporting manifest sha256:994a1f3d94813b125aa33a0c256e4dd4a8b95bce332b6b89c939314439a53481 0.1s done
+#25 exporting config sha256:12a3e433d587f99d850c784efb2f4440a5aee60379e5bd8eabe91ab997865df1 0.1s done
+#25 exporting attestation manifest sha256:3750bb2a2090a4ee00cd08ebd2d9a2cb7e8312cb359a737805986cd4c8db2376 0.2s done
+#25 exporting manifest list sha256:ecf6a6f6c3bd5ff8156f7800408a857e47d3d4bcbc54ed5674f39e05f5be86db 0.1s done
+#25 naming to docker.io/library/rpex-crm-celery_worker:latest 0.0s done
+#25 unpacking to docker.io/library/rpex-crm-celery_worker:latest
+#25 ...
+
+#27 [backend] exporting to image
+#27 exporting attestation manifest sha256:4d0a29761fe01b8fdda8babc88baf42b621cab533f28e8b2546ba71330ee0061 0.2s done
+#27 exporting manifest list sha256:e59131a5220661b2045e552a09f45c7bb0a4ae4368431f31447dadcbb338679b 0.1s done
+#27 naming to docker.io/library/rpex-crm-backend:latest 0.0s done
+#27 unpacking to docker.io/library/rpex-crm-backend:latest
+#27 unpacking to docker.io/library/rpex-crm-backend:latest 9.9s done
+#27 DONE 20.5s
+
+#26 [celery_beat] exporting to image
+#26 unpacking to docker.io/library/rpex-crm-celery_beat:latest 9.9s done
+#26 DONE 20.5s
+
+#25 [celery_worker] exporting to image
+#25 unpacking to docker.io/library/rpex-crm-celery_worker:latest 9.9s done
+#25 DONE 20.5s
+
+#28 [celery_beat] resolving provenance for metadata file
+#28 DONE 0.4s
+
+#29 [backend] resolving provenance for metadata file
+#29 DONE 0.2s
+
+#30 [celery_worker] resolving provenance for metadata file
+#30 DONE 0.0s
+Attaching to rpex_backend, rpex_celery_beat, rpex_celery_worker, rpex_certbot, rpex_frontend, rpex_nginx, rpex_postgres, rpex_redis
+rpex_frontend  | 
+rpex_frontend  | > rpex-seo-crm-frontend@1.0.0 dev
+rpex_frontend  | > vite --host 0.0.0.0 --port 5173
+rpex_frontend  | 
+rpex_frontend  | 
+rpex_frontend  |   VITE v6.4.3  ready in 710 ms
+rpex_frontend  | 
+rpex_frontend  |   ➜  Local:   http://localhost:5173/
+rpex_frontend  |   ➜  Network: http://172.18.0.7:5173/
+rpex_celery_worker  |  
+rpex_celery_worker  |  -------------- celery@526b7da0400e v5.4.0 (opalescent)
+rpex_celery_worker  | --- ***** ----- 
+rpex_celery_worker  | -- ******* ---- Linux-7.1.4-204.fc44.x86_64-x86_64-with-glibc2.41 2026-07-25 17:59:33
+rpex_celery_worker  | - *** --- * --- 
+rpex_celery_worker  | - ** ---------- [config]
+rpex_celery_worker  | - ** ---------- .> app:         rpex:0x7f46eb932a50
+rpex_celery_worker  | - ** ---------- .> transport:   redis://redis:6379/1
+rpex_celery_worker  | - ** ---------- .> results:     redis://redis:6379/2
+rpex_celery_worker  | - *** --- * --- .> concurrency: 4 (prefork)
+rpex_celery_worker  | -- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+rpex_celery_worker  | --- ***** ----- 
+rpex_celery_worker  |  -------------- [queues]
+rpex_celery_worker  |                 .> celery           exchange=celery(direct) key=celery
+rpex_celery_worker  |                 
+rpex_celery_worker  | 
+rpex_celery_worker  | [tasks]
+rpex_celery_worker  | 
+rpex_celery_worker  | 
+rpex_celery_beat    | celery beat v5.4.0 (opalescent) is starting.
+rpex_celery_beat    | __    -    ... __   -        _
+rpex_celery_beat    | LocalTime -> 2026-07-25 17:59:33
+rpex_celery_beat    | Configuration ->
+rpex_celery_beat    |     . broker -> redis://redis:6379/1
+rpex_celery_beat    |     . loader -> celery.loaders.app.AppLoader
+rpex_celery_beat    |     . scheduler -> celery.beat.PersistentScheduler
+rpex_celery_beat    |     . db -> celerybeat-schedule
+rpex_celery_beat    |     . logfile -> [stderr]@%INFO
+rpex_celery_beat    |     . maxinterval -> 5.00 minutes (300s)
+[Krpex_celery_beat exited with code 1

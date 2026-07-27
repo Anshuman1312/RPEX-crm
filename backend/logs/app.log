@@ -1,0 +1,126 @@
+2026-07-25 16:50:46.606 | ERROR    | uvicorn.lifespan.on:send:121 | N/A | Traceback (most recent call last):
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 382, in connect_check_health
+    await self._connect()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 974, in _connect
+    reader, writer = await asyncio.open_connection(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **self._connection_arguments()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib64/python3.14/asyncio/streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 2043, in create_connection
+  File "uvloop/loop.pyx", line 2020, in uvloop.loop.Loop.create_connection
+    await waiter
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/starlette/routing.py", line 638, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib64/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/fastapi/routing.py", line 238, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib64/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/app/main.py", line 33, in lifespan
+    await RedisManager.init()
+  File "/home/rsi/Projects/RPEX-crm/backend/app/core/redis.py", line 38, in init
+    await cls._default_client.ping()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/client.py", line 823, in execute_command
+    conn = self.connection or await pool.get_connection()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/utils.py", line 249, in async_wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 1591, in get_connection
+    await self.ensure_connection(connection)
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 1632, in ensure_connection
+    await connection.connect()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 351, in connect
+    await self.retry.call_with_retry(
+    ...<7 lines>...
+    )
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/retry.py", line 81, in call_with_retry
+    raise error
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/retry.py", line 69, in call_with_retry
+    return await do()
+           ^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 408, in connect_check_health
+    raise e
+redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.
+
+2026-07-25 16:50:46.607 | ERROR    | uvicorn.lifespan.on:startup:59 | N/A | Application startup failed. Exiting.
+2026-07-25 16:53:55.748 | ERROR    | uvicorn.lifespan.on:send:121 | N/A | Traceback (most recent call last):
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 382, in connect_check_health
+    await self._connect()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 974, in _connect
+    reader, writer = await asyncio.open_connection(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **self._connection_arguments()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/lib64/python3.14/asyncio/streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 2043, in create_connection
+  File "uvloop/loop.pyx", line 2020, in uvloop.loop.Loop.create_connection
+    await waiter
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/starlette/routing.py", line 638, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib64/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/fastapi/routing.py", line 238, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib64/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/app/main.py", line 33, in lifespan
+    await RedisManager.init()
+  File "/home/rsi/Projects/RPEX-crm/backend/app/core/redis.py", line 38, in init
+    await cls._default_client.ping()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/client.py", line 823, in execute_command
+    conn = self.connection or await pool.get_connection()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/utils.py", line 249, in async_wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 1591, in get_connection
+    await self.ensure_connection(connection)
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 1632, in ensure_connection
+    await connection.connect()
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 351, in connect
+    await self.retry.call_with_retry(
+    ...<7 lines>...
+    )
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/retry.py", line 81, in call_with_retry
+    raise error
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/retry.py", line 69, in call_with_retry
+    return await do()
+           ^^^^^^^^^^
+  File "/home/rsi/Projects/RPEX-crm/backend/.venv/lib64/python3.14/site-packages/redis/asyncio/connection.py", line 408, in connect_check_health
+    raise e
+redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.
+
+2026-07-25 16:53:55.749 | ERROR    | uvicorn.lifespan.on:startup:59 | N/A | Application startup failed. Exiting.
