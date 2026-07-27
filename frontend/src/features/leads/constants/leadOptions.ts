@@ -6,7 +6,7 @@ export const leadStageOptions: Array<LeadStage | "All"> = [
   "Qualified",
   "Negotiation",
   "Won",
-  "Lost"
+  "Future Perspective"
 ];
 
 export const leadSourceOptions: Array<LeadSource | "All"> = [

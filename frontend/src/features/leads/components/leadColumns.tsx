@@ -7,7 +7,7 @@ const stageToneMap: Record<LeadStage, "info" | "success" | "warning" | "neutral"
   Qualified: "warning",
   Negotiation: "neutral",
   Won: "success",
-  Lost: "danger"
+  "Future Perspective": "danger"
 };
 
 export function buildLeadColumns(
@@ -41,7 +41,13 @@ export function buildLeadColumns(
             onChange={event => onStageChange(row.original.id, event.target.value as LeadStage)}
             value={row.original.stage}
           >
-            {(["New", "Qualified", "Negotiation", "Won", "Lost"] as LeadStage[]).map(stage => (
+            {([
+              "New",
+              "Qualified",
+              "Negotiation",
+              "Won",
+              "Future Perspective"
+            ] as LeadStage[]).map(stage => (
               <option key={stage} value={stage}>
                 {stage}
               </option>

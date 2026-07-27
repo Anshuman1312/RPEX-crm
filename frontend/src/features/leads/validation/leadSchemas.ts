@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { leadPriorityOptions, leadSourceOptions } from "@/features/leads/constants/leadOptions";
+import { leadPriorityOptions, leadSourceOptions, leadStageOptions } from "@/features/leads/constants/leadOptions";
 
 export const createLeadSchema = z.object({
   name: z.string().min(2, "Name must have at least 2 characters"),
@@ -22,7 +22,14 @@ export const createLeadSchema = z.object({
   priority: z.enum(leadPriorityOptions.filter(option => option !== "All") as ["Hot", "Warm", "Cold"]),
   owner: z.string().min(2, "Owner is required"),
   budget: z.coerce.number().min(1, "Budget must be greater than 0"),
-  nextFollowUp: z.string().min(1, "Next follow-up date is required")
+  nextFollowUp: z.string().min(1, "Next follow-up date is required"),
+  stage: z.enum(leadStageOptions.filter(option => option !== "All") as [
+    "New",
+    "Qualified",
+    "Negotiation",
+    "Won",
+    "Future Perspective"
+  ])
 });
 
 export type CreateLeadFormValues = z.infer<typeof createLeadSchema>;

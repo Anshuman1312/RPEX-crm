@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, FormField, FormSection, Input } from "@/components";
-import { leadPriorityOptions, leadSourceOptions } from "@/features/leads/constants/leadOptions";
+import { leadPriorityOptions, leadSourceOptions, leadStageOptions } from "@/features/leads/constants/leadOptions";
 import {
   CreateLeadFormValues,
   createLeadSchema
@@ -28,7 +28,8 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
       priority: "Warm",
       owner: "",
       budget: 0,
-      nextFollowUp: ""
+      nextFollowUp: "",
+      stage: "New"
     }
   });
 
@@ -66,6 +67,18 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
         <FormField error={errors.priority?.message} id="lead-priority" label="Priority" required>
           <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" id="lead-priority" {...register("priority")}>
             {leadPriorityOptions
+              .filter(option => option !== "All")
+              .map(option => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+          </select>
+        </FormField>
+
+        <FormField error={errors.stage?.message} id="lead-stage" label="Stage" required>
+          <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" id="lead-stage" {...register("stage")}>
+            {leadStageOptions
               .filter(option => option !== "All")
               .map(option => (
                 <option key={option} value={option}>

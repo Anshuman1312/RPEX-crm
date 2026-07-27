@@ -1,4 +1,4 @@
-export type LeadStage = "New" | "Qualified" | "Negotiation" | "Won" | "Lost";
+export type LeadStage = "New" | "Qualified" | "Negotiation" | "Won" | "Future Perspective";
 export type LeadSource =
   | "Facebook"
   | "Instagram"
@@ -56,4 +56,5 @@ export interface CreateLeadInput {
   owner: string;
   budget: number;
   nextFollowUp: string;
+  stage: LeadStage;
 }

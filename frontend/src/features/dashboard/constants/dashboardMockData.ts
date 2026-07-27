@@ -8,7 +8,7 @@ export const dashboardOverviewMock: DashboardOverviewData = {
     { id: "visit-scheduled", label: "Visit Scheduled", value: "92", change: "+15% this week", positive: true },
     { id: "total-visited-leads", label: "Total Visited Leads", value: "145", change: "+8% conversion", positive: true },
     { id: "total-booking-leads", label: "Total Booking Leads", value: "317", change: "+4.0% week-on-week", positive: true },
-    { id: "total-lost-leads", label: "Total Lost Leads", value: "102", change: "-2.1% decrease", positive: true },
+    { id: "total-lost-leads", label: "Total Future Perspective Leads", value: "102", change: "-2.1% decrease", positive: true },
     { id: "total-duplicate-leads", label: "Total Duplicate Leads", value: "43", change: "+1.5% increase", positive: false }
   ],
   leadTrend: [
