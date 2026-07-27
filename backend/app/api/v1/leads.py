@@ -246,13 +246,13 @@ async def get_lead_statistics(
     return ok(data=stats)
 
 
-@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_lead(
     lead_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("leads.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+): # Remove '-> None' or keep it, but return a Response object
     """Soft delete a lead."""
     lead_service = LeadService(session)
     await lead_service.delete_lead(lead_id)
@@ -260,3 +260,6 @@ async def delete_lead(
     await session.commit()
 
     logger.info(f"Lead deleted | lead_id={lead_id} | deleted_by={current_user.id}")
+    
+    # Return an empty Response object explicitly
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

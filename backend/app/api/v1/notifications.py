@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, Response, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.postgres import get_db_session
@@ -141,13 +141,13 @@ async def delete_notification(
     notification_id: str,
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+) -> Response:
     """Delete a notification."""
     service = NotificationService(session)
     await service.delete_notification(notification_id, current_user.id)
     await session.commit()
 
-
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 # ── Preferences ───────────────────────────────────────────────────────
 
 @router.get("/me/preferences", status_code=status.HTTP_200_OK, response_model=dict)

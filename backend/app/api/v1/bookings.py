@@ -151,13 +151,13 @@ async def update_booking(
     return ok(data=BookingResponse.model_validate(booking).__dict__)
 
 
-@router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_booking(
     booking_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("bookings.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+): # Removed "-> None"
     """Soft delete a booking."""
     service = BookingService(session)
     await service.delete_booking(booking_id)
@@ -165,6 +165,9 @@ async def delete_booking(
     await session.commit()
 
     logger.info(f"Booking deleted | id={booking_id} | deleted_by={current_user.id}")
+    
+    # ADD THIS LINE:
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ── Booking Status ────────────────────────────────────────────────────

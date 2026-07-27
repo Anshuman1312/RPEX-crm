@@ -159,20 +159,23 @@ async def change_customer_status(
     return ok(data=CustomerResponse.model_validate(customer).__dict__)
 
 
-@router.delete("/{customer_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-async def delete_customer(
-    customer_id: str,
+@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_lead(
+    lead_id: str,
     current_user: User = Depends(get_current_user),
-    _=Depends(require_permission("customers.delete")),
+    _=Depends(require_permission("leads.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
-    """Soft delete a customer."""
-    service = CustomerService(session)
-    await service.delete_customer(customer_id)
+): # Remove '-> None' or keep it, but return a Response object
+    """Soft delete a lead."""
+    lead_service = LeadService(session)
+    await lead_service.delete_lead(lead_id)
 
     await session.commit()
 
-    logger.info(f"Customer deleted | id={customer_id} | deleted_by={current_user.id}")
+    logger.info(f"Lead deleted | lead_id={lead_id} | deleted_by={current_user.id}")
+    
+    # Return an empty Response object explicitly
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ── Address Management ────────────────────────────────────────────────────
@@ -244,19 +247,22 @@ async def update_customer_address(
     return ok(data=CustomerAddressResponse.model_validate(address).__dict__)
 
 
-@router.delete("/{customer_id}/addresses/{address_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{customer_id}/addresses/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_customer_address(
     customer_id: str,
     address_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("customers.edit")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+): # Removed "-> None"
     """Delete customer address."""
     service = CustomerService(session)
     await service.delete_address(address_id)
 
     await session.commit()
+    
+    # Crucial fix:
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ── KYC Management ────────────────────────────────────────────────────

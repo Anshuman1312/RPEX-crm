@@ -43,7 +43,7 @@ api_router.include_router(reports_router,       prefix="/reports",       tags=["
 api_router.include_router(notifications_router, prefix="/notifications",  tags=["Notifications"])
 api_router.include_router(dashboard_router,      prefix="/dashboard",     tags=["Dashboard"])
 api_router.include_router(audit_router,          prefix="/audit",         tags=["Audit"])
-api_router.include_router(communications_router, prefix="",               tags=["Communications"])
+api_router.include_router(communications_router, prefix="/communications", tags=["Communications"])
 # api_router.include_router(customers_router,     prefix="/customers",     tags=["Customers"])
 # api_router.include_router(projects_router,      prefix="/projects",      tags=["Projects"])
 # api_router.include_router(inventory_router,     prefix="/inventory",     tags=["Inventory"])

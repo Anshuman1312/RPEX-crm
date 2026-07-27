@@ -160,14 +160,13 @@ async def update_followup(
 
     return ok(data=FollowUpResponse.model_validate(followup).__dict__)
 
-
-@router.delete("/{followup_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{followup_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_followup(
     followup_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("followups.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+):
     """Soft delete follow-up."""
     service = FollowUpService(session)
     await service.delete_followup(followup_id)
@@ -176,7 +175,8 @@ async def delete_followup(
 
     logger.info(f"Follow-up deleted | id={followup_id} | deleted_by={current_user.id}")
 
-
+    # FIX: Return the Response object to ensure there is no body
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 # ── Follow-Up Status ─────────────────────────────────────────────────
 
 @router.post("/{followup_id}/status", status_code=status.HTTP_200_OK, response_model=dict)

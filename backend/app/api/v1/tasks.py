@@ -170,13 +170,13 @@ async def update_task(
     return ok(data=TaskResponse.model_validate(task).__dict__)
 
 
-@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
     task_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("tasks.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+) -> Response:
     """Soft delete task."""
     service = TaskService(session)
     await service.delete_task(task_id)
@@ -184,6 +184,7 @@ async def delete_task(
     await session.commit()
 
     logger.info(f"Task deleted | id={task_id} | deleted_by={current_user.id}")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ── Task Status ───────────────────────────────────────────────────────

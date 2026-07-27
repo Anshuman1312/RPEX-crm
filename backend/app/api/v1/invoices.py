@@ -143,13 +143,13 @@ async def update_invoice(
     return ok(data=InvoiceResponse.model_validate(invoice).__dict__)
 
 
-@router.delete("/{invoice_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{invoice_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_invoice(
     invoice_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("invoices.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+):
     """Soft delete invoice (draft only)."""
     service = InvoiceService(session)
     await service.delete_invoice(invoice_id)
@@ -157,6 +157,9 @@ async def delete_invoice(
     await session.commit()
 
     logger.info(f"Invoice deleted | id={invoice_id} | deleted_by={current_user.id}")
+
+    # FIX: You must return the Response object directly
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ── Invoice Status ────────────────────────────────────────────────────

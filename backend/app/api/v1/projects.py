@@ -166,13 +166,13 @@ async def change_project_status(
     return ok(data=ProjectResponse.model_validate(project).__dict__)
 
 
-@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_project(
     project_id: str,
     current_user: User = Depends(get_current_user),
     _=Depends(require_permission("projects.delete")),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
+):
     """Soft delete a project."""
     service = ProjectService(session)
     await service.delete_project(project_id)
@@ -181,7 +181,8 @@ async def delete_project(
 
     logger.info(f"Project deleted | id={project_id} | deleted_by={current_user.id}")
 
-
+    # FIX: Explicitly return an empty Response
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 # ── Block Management ──────────────────────────────────────────────────
 
 @router.post("/{project_id}/blocks", status_code=status.HTTP_201_CREATED, response_model=dict)

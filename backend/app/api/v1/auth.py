@@ -16,6 +16,7 @@ from app.schemas.auth import (
 )
 from app.services.auth_service import AuthService, UserService
 from app.utils.response import ok, created
+
 from loguru import logger
 
 router = APIRouter()
@@ -68,16 +69,14 @@ async def refresh_token(
     }
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db_session),
-) -> None:
-    """Logout user (invalidate all sessions)."""
+):
     auth_service = AuthService(session)
     await auth_service.logout(str(current_user.id))
-
-    logger.info(f"User logged out | user_id={current_user.id}")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
