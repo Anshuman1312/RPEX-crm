@@ -51,14 +51,10 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
-        description=(
-            "Enterprise Real Estate CRM API — "
-            "manages leads, customers, projects, inventory, bookings and payments."
-        ),
-        # Disable interactive docs in production
-        docs_url="/api/docs" if not settings.is_production else None,
-        redoc_url="/api/redoc" if not settings.is_production else None,
-        openapi_url="/api/openapi.json" if not settings.is_production else None,
+        # ...
+        docs_url="/docs",           # Change from /api/docs to /docs
+        redoc_url="/redoc",         # Change from /api/redoc to /redoc
+        openapi_url="/openapi.json",# Change from /api/openapi.json to /openapi.json
         lifespan=lifespan,
     )
 
@@ -78,7 +74,7 @@ def create_app() -> FastAPI:
     app.add_middleware(CorrelationIDMiddleware)
 
     # ── Security hardening ────────────────────────────────────────────────────
-    setup_security(app)
+    # setup_security(app)
 
     # ── Exception handlers ────────────────────────────────────────────────────
     app.add_exception_handler(CRMException, crm_exception_handler)          # type: ignore[arg-type]
