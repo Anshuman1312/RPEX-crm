@@ -196,3 +196,8 @@ class AuditLogRepository:
             "by_entity_type": by_entity,
             "by_user": by_user,
         }
+
+
+class AuditRepository(AuditLogRepository):
+    """Backward-compatible alias for older imports."""
+

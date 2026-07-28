@@ -255,3 +255,53 @@ redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connec
 2026-07-28 12:07:35.989 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
 2026-07-28 12:07:36.014 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [8]
 2026-07-28 12:08:03.004 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:16:39.009 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:16:39.010 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:17:54.121 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:18:00.441 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:18:00.442 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:20:05.209 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:20:05.310 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:20:05.311 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:20:21.029 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:20:21.030 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:20:32.728 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:20:32.729 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:31:01.828 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:31:01.950 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:31:01.963 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:31:02.016 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-07-28 19:31:02.019 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [42]
+2026-07-28 19:31:24.548 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:31:24.549 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:31:54.797 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:31:54.899 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:31:54.900 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:31:54.905 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-07-28 19:31:54.907 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [58]
+2026-07-28 19:32:27.120 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:32:27.121 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:36:12.933 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:36:13.036 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:36:13.037 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:36:20.983 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:36:20.984 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:39:59.838 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:39:59.939 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:40:09.969 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:40:09.971 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:40:32.352 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:40:32.454 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:40:32.456 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:40:32.464 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-07-28 19:40:32.465 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [96]
+2026-07-28 19:40:40.276 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:40:40.277 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:41:14.702 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:41:24.729 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:41:24.731 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 19:57:11.400 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 19:57:11.502 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 19:57:11.504 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 19:57:34.849 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 19:57:34.850 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.

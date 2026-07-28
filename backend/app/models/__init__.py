@@ -37,3 +37,11 @@ from app.models.system import SystemSetting
 from app.models.campaign import Campaign
 from app.models.seo_keyword import SEOKeyword
 from app.models.customer_payment import CustomerPayment
+from app.models.document import DocumentAsset
+from app.models.hr import HREmployee, HRRecord
+from app.models.inventory import InventoryUnit
+from app.models.website import Website
+from app.models.vendor import Vendor
+from app.models.sales import SalesBooking
+from app.models.sales_team import SalesTeamReport
+from app.models.site_visit import SiteVisit

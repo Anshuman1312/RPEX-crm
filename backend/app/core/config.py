@@ -79,6 +79,12 @@ class Settings(BaseSettings):
     SMS_API_SECRET: str = ""
     SMS_FROM_NUMBER: str = ""
 
+    # ── Cloudinary (Optional) ────────────────────────────────────────────────
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY: str = ""
+    CLOUDINARY_API_SECRET: str = ""
+    CLOUDINARY_FOLDER: str = "rpex_documents"
+
     # ── Pagination ────────────────────────────────────────────────────────────
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
@@ -160,6 +166,26 @@ class Settings(BaseSettings):
     def redis_rate_limit_url(self) -> str:
         base = self.REDIS_URL.rsplit("/", 1)[0]
         return f"{base}/{self.REDIS_RATE_LIMIT_DB}"
+
+    @computed_field
+    @property
+    def cloudinary_cloud_name(self) -> str:
+        return self.CLOUDINARY_CLOUD_NAME
+
+    @computed_field
+    @property
+    def cloudinary_api_key(self) -> str:
+        return self.CLOUDINARY_API_KEY
+
+    @computed_field
+    @property
+    def cloudinary_api_secret(self) -> str:
+        return self.CLOUDINARY_API_SECRET
+
+    @computed_field
+    @property
+    def cloudinary_folder(self) -> str:
+        return self.CLOUDINARY_FOLDER
 
 
 @lru_cache

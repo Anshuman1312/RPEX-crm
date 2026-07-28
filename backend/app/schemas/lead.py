@@ -139,3 +139,14 @@ class LeadAssignRequest(BaseModel):
 
     assigned_to_user_id: str
     notes: Optional[str] = Field(None, max_length=5000)
+
+
+class WebhookLeadIn(BaseModel):
+    """Inbound website/webhook lead payload."""
+
+    name: str = Field(min_length=1, max_length=200)
+    email: Optional[str] = Field(default=None, max_length=255)
+    phone: Optional[str] = Field(default=None, max_length=20)
+    source: str = Field(default="website", max_length=50)
+    utm_medium: Optional[str] = Field(default=None, max_length=100)
+    campaign: Optional[str] = Field(default=None, max_length=128)
