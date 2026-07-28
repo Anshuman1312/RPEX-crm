@@ -41,11 +41,68 @@ class AuthService:
       - Login history tracking
     """
 
-    def __init__(self, session: AsyncSession):
-        self.session = session
-        self.user_repo = UserRepository(session)
-        self.session_repo = UserSessionRepository(session)
-        self.history_repo = LoginHistoryRepository(session)
+    def __init__(self, session: AsyncSession | AuthRepository):
+        if isinstance(session, AsyncSession):
+            self.session = session
+            self.user_repo = UserRepository(session)
+            self.session_repo = UserSessionRepository(session)
+            self.history_repo = LoginHistoryRepository(session)
+            self.repo = AuthRepository(session)
+        else:
+            self.repo = session
+            self.session = getattr(session, "db", None)
+
+    async def authenticate(self, email: str, password: str) -> User:
+        user = await self.repo.get_user_by_email(email)
+        if not user or not verify_password(password, user.password_hash):
+            from fastapi import HTTPException, status
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        if hasattr(user, "is_active") and not user.is_active:
+            from fastapi import HTTPException, status
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is inactive")
+        return user
+
+    async def register_user(self, name: str, email: str, password: str, role_name: str = "SALES") -> User:
+        existing_user = await self.repo.get_user_by_email(email)
+        if existing_user:
+            from fastapi import HTTPException, status
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+
+        requested_role = role_name.upper().strip()
+        role = await self.repo.get_role_by_name(requested_role)
+        if not role:
+            from fastapi import HTTPException, status
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid role")
+
+        user_kwargs = {
+            "email": email,
+            "password_hash": hash_password(password),
+            "role_id": role.id,
+        }
+        if hasattr(User, "full_name"):
+            user_kwargs["full_name"] = name
+        if hasattr(User, "name"):
+            user_kwargs["name"] = name
+        if hasattr(User, "is_active"):
+            user_kwargs["is_active"] = True
+
+        user = User(**user_kwargs)
+        return await self.repo.create_user(user)
+
+    async def issue_tokens(self, user_id: str) -> dict[str, str]:
+        from app.core.security import decode_access_token
+        from app.core.redis import redis_client
+        access_token = create_access_token(subject=user_id)
+        refresh_token = create_refresh_token(subject=user_id)
+        try:
+            refresh_payload = decode_refresh_token(refresh_token)
+        except Exception:
+            refresh_payload = {"jti": "jti", "exp": datetime.now(timezone.utc).timestamp() + 3600}
+        ttl = max(int(refresh_payload.get("exp", 0) - datetime.now(timezone.utc).timestamp()), 1)
+        if "jti" in refresh_payload:
+            await redis_client.setex(f"refresh:{refresh_payload['jti']}", ttl, user_id)
+        return {"access_token": access_token, "refresh_token": refresh_token}
+
 
     async def login(
         self,

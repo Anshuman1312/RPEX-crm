@@ -247,3 +247,11 @@ redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connec
 2026-07-27 15:34:21.284 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
 2026-07-27 15:34:21.877 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
 2026-07-27 15:34:21.940 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [61]
+2026-07-28 08:21:33.459 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-07-28 08:21:33.463 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-07-28 12:07:34.959 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-07-28 12:07:35.325 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-07-28 12:07:35.438 | INFO     | app.main:lifespan:43 | N/A | Shutting down — closing connections.
+2026-07-28 12:07:35.989 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-07-28 12:07:36.014 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [8]
+2026-07-28 12:08:03.004 | INFO     | app.main:lifespan:37 | N/A | RPEX SEO CRM v1.0.0 starting [development]

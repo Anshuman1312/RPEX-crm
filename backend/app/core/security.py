@@ -10,6 +10,13 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
+
+# ── Token exceptions ───────────────────────────────────────────────────────────
+
+class TokenError(Exception):
+    """Raised when a JWT token is invalid or expired."""
+    pass
+
 # bcrypt with cost factor 12 — good balance of security vs latency
 _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 
@@ -115,3 +122,18 @@ def generate_secure_token(nbytes: int = 32) -> str:
 def generate_otp(length: int = 6) -> str:
     """Cryptographically secure numeric OTP."""
     return "".join(str(secrets.randbelow(10)) for _ in range(length))
+
+
+# ── Unified decode (used by deps.py / main-branch auth) ───────────────────────
+
+def decode_token(token: str) -> dict[str, Any]:
+    """
+    Decode and validate any JWT token (access or refresh).
+
+    Raises:
+        TokenError: if the token is invalid or expired.
+    """
+    try:
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+    except JWTError as exc:
+        raise TokenError("Invalid or expired token") from exc

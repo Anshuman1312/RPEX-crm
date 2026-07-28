@@ -1,58 +1,75 @@
 from fastapi import APIRouter
 
-# ── Module routers are registered here as each step is implemented ─────────────
-# Uncomment and add imports as modules are built in subsequent steps.
-
-from app.api.v1.auth import router as auth_router
-from app.api.v1.users import router as users_router
-from app.api.v1.leads import router as leads_router
-from app.api.v1.customers import router as customers_router
-from app.api.v1.projects import router as projects_router
-from app.api.v1.bookings import router as bookings_router
-from app.api.v1.invoices import router as invoices_router
-from app.api.v1.followups import router as followups_router
-from app.api.v1.tasks import router as tasks_router
-from app.api.v1.reports import router as reports_router
-from app.api.v1.notifications import router as notifications_router
-from app.api.v1.dashboard import router as dashboard_router
-from app.api.v1.audit import router as audit_router
-from app.api.v1.communications import router as communications_router
-# from app.api.v1.inventory import router as inventory_router
-# from app.api.v1.bookings import router as bookings_router
-# from app.api.v1.payments import router as payments_router
-# from app.api.v1.followups import router as followups_router
-# from app.api.v1.meetings import router as meetings_router
-# from app.api.v1.tasks import router as tasks_router
-# from app.api.v1.notifications import router as notifications_router
-# from app.api.v1.dashboard import router as dashboard_router
-# from app.api.v1.reports import router as reports_router
-# from app.api.v1.settings import router as settings_router
+from app.api.v1 import (
+    ai,
+    analytics,
+    approvals,
+    audit,
+    auth,
+    automation,
+    bookings,
+    campaigns,
+    communications,
+    customers,
+    dashboard,
+    documents,
+    finance,
+    followups,
+    hr,
+    inventory,
+    invoices,
+    keywords,
+    leads,
+    notifications,
+    partner,
+    projects,
+    reports,
+    sales,
+    sales_team,
+    site_visits,
+    tasks,
+    telecalling,
+    users,
+    vendors,
+    webhooks,
+    websites,
+    whatsapp,
+    ws,
+)
 
 api_router = APIRouter()
 
-api_router.include_router(auth_router,          prefix="/auth",          tags=["Authentication"])
-api_router.include_router(users_router,         prefix="/users",         tags=["Users"])
-api_router.include_router(leads_router,         prefix="/leads",         tags=["Leads"])
-api_router.include_router(customers_router,     prefix="/customers",     tags=["Customers"])
-api_router.include_router(projects_router,      prefix="/projects",      tags=["Projects"])
-api_router.include_router(bookings_router,      prefix="/bookings",      tags=["Bookings"])
-api_router.include_router(invoices_router,      prefix="/invoices",      tags=["Invoices"])
-api_router.include_router(followups_router,     prefix="/followups",     tags=["Follow-ups"])
-api_router.include_router(tasks_router,         prefix="/tasks",         tags=["Tasks"])
-api_router.include_router(reports_router,       prefix="/reports",       tags=["Reports"])
-api_router.include_router(notifications_router, prefix="/notifications",  tags=["Notifications"])
-api_router.include_router(dashboard_router,      prefix="/dashboard",     tags=["Dashboard"])
-api_router.include_router(audit_router,          prefix="/audit",         tags=["Audit"])
-api_router.include_router(communications_router, prefix="/communications", tags=["Communications"])
-# api_router.include_router(customers_router,     prefix="/customers",     tags=["Customers"])
-# api_router.include_router(projects_router,      prefix="/projects",      tags=["Projects"])
-# api_router.include_router(inventory_router,     prefix="/inventory",     tags=["Inventory"])
-# api_router.include_router(bookings_router,      prefix="/bookings",      tags=["Bookings"])
-# api_router.include_router(payments_router,      prefix="/payments",      tags=["Payments"])
-# api_router.include_router(followups_router,     prefix="/followups",     tags=["Follow-ups"])
-# api_router.include_router(meetings_router,      prefix="/meetings",      tags=["Meetings"])
-# api_router.include_router(tasks_router,         prefix="/tasks",         tags=["Tasks"])
-# api_router.include_router(notifications_router, prefix="/notifications", tags=["Notifications"])
-# api_router.include_router(dashboard_router,     prefix="/dashboard",     tags=["Dashboard"])
-# api_router.include_router(reports_router,       prefix="/reports",       tags=["Reports"])
-# api_router.include_router(settings_router,      prefix="/settings",      tags=["Settings"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(websites.router, prefix="/websites", tags=["websites"])
+api_router.include_router(webhooks.router, prefix="/webhooks", tags=["webhooks"])
+api_router.include_router(leads.router, prefix="/leads", tags=["leads"])
+api_router.include_router(followups.router, prefix="/followups", tags=["followups"])
+api_router.include_router(campaigns.router, prefix="/campaigns", tags=["campaigns"])
+api_router.include_router(keywords.router, prefix="/keywords", tags=["keywords"])
+api_router.include_router(approvals.router, prefix="/approvals", tags=["approvals"])
+api_router.include_router(customers.router, prefix="/customers", tags=["customers"])
+api_router.include_router(sales.router, prefix="/sales", tags=["sales"])
+api_router.include_router(finance.router, prefix="/finance", tags=["finance"])
+api_router.include_router(inventory.router, prefix="/inventory", tags=["inventory"])
+api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
+api_router.include_router(partner.router, prefix="/partner", tags=["partner"])
+api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
+api_router.include_router(reports.router, prefix="/reports", tags=["reports"])
+api_router.include_router(site_visits.router, prefix="/site-visits", tags=["site-visits"])
+api_router.include_router(telecalling.router, prefix="/telecalling", tags=["telecalling"])
+api_router.include_router(sales_team.router, prefix="/sales-team", tags=["sales-team"])
+api_router.include_router(hr.router, prefix="/hr", tags=["hr"])
+api_router.include_router(vendors.router, prefix="/vendors", tags=["vendors"])
+api_router.include_router(whatsapp.router, prefix="/whatsapp", tags=["whatsapp"])
+api_router.include_router(automation.router, prefix="/automation", tags=["automation"])
+api_router.include_router(ws.router, tags=["websocket"])
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])
+api_router.include_router(audit.router, prefix="/audit", tags=["audit"])
+api_router.include_router(bookings.router, prefix="/bookings", tags=["bookings"])
+api_router.include_router(communications.router, prefix="/communications", tags=["communications"])
+api_router.include_router(invoices.router, prefix="/invoices", tags=["invoices"])
+api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
+api_router.include_router(tasks.router, prefix="/tasks", tags=["tasks"])

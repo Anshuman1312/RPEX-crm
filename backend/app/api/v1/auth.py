@@ -1,121 +1,140 @@
-from __future__ import annotations
+from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
-from app.database.postgres import get_db_session
-from app.dependencies.auth import get_current_user
-from app.models.user import User
+from app.core.deps import CurrentUser, get_current_permissions
+from app.database.postgres import get_db
+from app.models.user import Role
+from app.repositories.audit_repository import AuditLogRepository
+from app.repositories.auth_repository import AuthRepository
 from app.schemas.auth import (
-    LoginRequest,
-    TokenResponse,
-    RefreshTokenRequest,
-    UserResponse,
     ChangePasswordRequest,
+    LoginRequest,
+    LogoutRequest,
+    RefreshRequest,
+    RefreshTokenRequest,
+    RegisterRequest,
+    RegisterResponse,
+    TokenResponse,
 )
 from app.services.auth_service import AuthService, UserService
-from app.utils.response import ok, created
-
-from loguru import logger
+from app.utils.response import ok
 
 router = APIRouter()
 
 
-@router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-async def login(
-    request: LoginRequest,
-    session: AsyncSession = Depends(get_db_session),
-) -> dict:
-    """
-    Login with email and password.
-
-    Returns access token and refresh token.
-    """
-    auth_service = AuthService(session)
-
-    access_token, refresh_token = await auth_service.login(
-        email=request.email,
-        password=request.password,
-    )
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    }
-
-
-@router.post("/refresh", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-async def refresh_token(
-    request: RefreshTokenRequest,
-    session: AsyncSession = Depends(get_db_session),
-) -> dict:
-    """
-    Refresh access token using refresh token.
-
-    If token rotation is enabled, a new refresh token is also issued.
-    """
-    auth_service = AuthService(session)
-
-    access_token = await auth_service.refresh_access_token(request.refresh_token)
-
-    return {
-        "access_token": access_token,
-        "refresh_token": request.refresh_token,
-        "token_type": "bearer",
-        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-    }
-
-
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
-async def logout(
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db_session),
+@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+async def register(
+    payload: RegisterRequest = Body(
+        ...,
+        openapi_examples={
+            "sales": {
+                "summary": "Register a sales user",
+                "value": {
+                    "name": "Rahul Sharma",
+                    "email": "rahul@company.com",
+                    "password": "StrongPass@123",
+                    "role_name": "SALES",
+                },
+            }
+        },
+    ),
+    db: AsyncSession = Depends(get_db),
 ):
-    auth_service = AuthService(session)
-    await auth_service.logout(str(current_user.id))
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    auth_service = AuthService(AuthRepository(db))
+    user = await auth_service.register_user(payload.name, payload.email, payload.password, payload.role_name)
+    role = await db.get(Role, user.role_id) if hasattr(user, "role_id") and user.role_id else None
+    if hasattr(AuditLogRepository, "log"):
+        await AuditLogRepository(db).log(str(user.id), "auth", "register", None, {"email": user.email, "role": role.name if role else None})
+    return RegisterResponse(user_id=str(user.id), email=user.email, role=role.name if role else "UNKNOWN")
 
 
-@router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
-async def get_current_user_info(
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db_session),
-) -> dict:
-    """Get current logged-in user info."""
-    # Reload user with permissions
-    user_service = UserService(session)
-    user = await user_service.get_user_with_permissions(str(current_user.id))
+@router.post("/login", response_model=TokenResponse)
+async def login(
+    payload: LoginRequest = Body(
+        ...,
+        openapi_examples={
+            "default": {"summary": "Email/password login", "value": {"email": "admin@rpex.local", "password": "admin12345"}}
+        },
+    ),
+    db: AsyncSession = Depends(get_db),
+):
+    auth_service = AuthService(AuthRepository(db))
+    user = await auth_service.authenticate(payload.email, payload.password)
+    tokens = await auth_service.issue_tokens(str(user.id))
 
-    if not user:
-        from app.core.exceptions import NotFoundException
-
-        raise NotFoundException("User")
-
-    return UserResponse.model_validate(user).__dict__
+    if hasattr(AuditLogRepository, "log"):
+        await AuditLogRepository(db).log(str(user.id), "auth", "login", None, {"email": payload.email, "at": datetime.now(timezone.utc).isoformat()})
+    role = await db.get(Role, user.role_id) if hasattr(user, "role_id") and user.role_id else None
+    return TokenResponse(**tokens, role=role.name if role else None)
 
 
-@router.post("/change-password", status_code=status.HTTP_200_OK)
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh(
+    payload: RefreshRequest = Body(
+        ...,
+        openapi_examples={"default": {"summary": "Rotate refresh token", "value": {"refresh_token": "<refresh-token>"}}},
+    ),
+    db: AsyncSession = Depends(get_db),
+):
+    auth_service = AuthService(AuthRepository(db))
+    tokens = await auth_service.issue_tokens(payload.refresh_token)
+    return TokenResponse(**tokens)
+
+
+@router.post("/logout")
+async def logout(
+    current_user: CurrentUser,
+    payload: LogoutRequest = Body(
+        ...,
+        openapi_examples={
+            "default": {"summary": "Logout and revoke tokens", "value": {"refresh_token": "<refresh-token>"}}
+        },
+    ),
+    authorization: str | None = Header(default=None),
+    db: AsyncSession = Depends(get_db),
+):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing access token")
+
+    access_token = authorization.split(" ", 1)[1]
+    auth_service = AuthService(AuthRepository(db))
+    if hasattr(auth_service, "revoke_tokens"):
+        await auth_service.revoke_tokens(access_token, payload.refresh_token)
+    if hasattr(AuditLogRepository, "log"):
+        await AuditLogRepository(db).log(str(current_user.id), "auth", "logout", None, {"user_id": str(current_user.id)})
+    return {"message": "Logged out"}
+
+
+@router.get("/me")
+async def me(current_user: CurrentUser, permissions: set[str] = Depends(get_current_permissions)):
+    user_name = getattr(current_user, "name", getattr(current_user, "full_name", current_user.email))
+    is_active = getattr(current_user, "is_active", getattr(current_user, "status", None) == "active")
+    role_name = current_user.role.name if getattr(current_user, "role", None) else None
+    role_desc = current_user.role.description if getattr(current_user, "role", None) and hasattr(current_user.role, "description") else None
+    role_id = str(current_user.role_id) if getattr(current_user, "role_id", None) else None
+
+    return {
+        "id": str(current_user.id),
+        "name": user_name,
+        "email": current_user.email,
+        "role_id": role_id,
+        "role": role_name,
+        "role_description": role_desc,
+        "is_active": is_active,
+        "permissions": sorted(permissions),
+    }
+
+
+@router.post("/change-password")
 async def change_password(
     request: ChangePasswordRequest,
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db_session),
-) -> dict:
-    """Change password for current user."""
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
     if not request.validate_passwords_match():
-        from app.core.exceptions import ValidationException
-
-        raise ValidationException("New password and confirmation do not match.", field="confirm_password")
-
-    user_service = UserService(session)
-    await user_service.change_password(
-        str(current_user.id),
-        request.old_password,
-        request.new_password,
-    )
-
-    logger.info(f"User changed password | user_id={current_user.id}")
-
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
+    user_service = UserService(db)
+    await user_service.change_password(str(current_user.id), request.old_password, request.new_password)
     return ok(message="Password changed successfully.")

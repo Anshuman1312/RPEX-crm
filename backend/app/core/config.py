@@ -125,6 +125,26 @@ class Settings(BaseSettings):
 
     @computed_field
     @property
+    def jwt_secret_key(self) -> str:
+        return self.SECRET_KEY
+
+    @computed_field
+    @property
+    def jwt_algorithm(self) -> str:
+        return self.JWT_ALGORITHM
+
+    @computed_field
+    @property
+    def access_token_expire_minutes(self) -> int:
+        return self.ACCESS_TOKEN_EXPIRE_MINUTES
+
+    @computed_field
+    @property
+    def refresh_token_expire_days(self) -> int:
+        return self.REFRESH_TOKEN_EXPIRE_DAYS
+
+    @computed_field
+    @property
     def redis_cache_url(self) -> str:
         base = self.REDIS_URL.rsplit("/", 1)[0]
         return f"{base}/{self.REDIS_CACHE_DB}"

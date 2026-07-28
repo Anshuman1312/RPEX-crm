@@ -95,3 +95,19 @@ class RedisManager:
 async def get_redis() -> AsyncGenerator[Redis, None]:
     """FastAPI dependency that yields the default Redis client."""
     yield RedisManager.get_client()
+
+
+# ── Module-level redis_client alias ───────────────────────────────────────────
+# Provides a `redis_client` name that delegates all attribute access to
+# RedisManager.get_client() at call time, so imports like:
+#   from app.core.redis import redis_client
+# work correctly after RedisManager.init() is called on startup.
+
+class _RedisClientProxy:
+    """Lazy proxy — forwards every attribute access to the live RedisManager client."""
+
+    def __getattr__(self, name: str):
+        return getattr(RedisManager.get_client(), name)
+
+
+redis_client = _RedisClientProxy()

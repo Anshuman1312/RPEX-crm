@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 def _utcnow() -> datetime:
+    """Helper to get timezone-aware UTC datetime."""
     return datetime.now(timezone.utc)
 
 
@@ -54,39 +55,38 @@ class SoftDeleteMixin:
 
 
 class VersionMixin:
-    """
-    Optimistic locking via a monotonically incrementing version counter.
-
-    The service layer must pass the client-supplied version when updating;
-    the repository checks `WHERE id = :id AND version = :version` before
-    issuing the UPDATE and increments the counter on success.
-    """
+    """Optimistic locking via a monotonically incrementing version counter."""
 
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
 
-class PrimaryKeyMixin:
+# --- FIXED SECTION: Renamed to match your model imports ---
+
+class UUIDPrimaryKeyMixin:
     """UUID primary key — generated at the application layer."""
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
+        index=True,
     )
 
+# Alias for backward compatibility if other models use 'PrimaryKeyMixin'
+PrimaryKeyMixin = UUIDPrimaryKeyMixin
 
-class BaseModelMixin(PrimaryKeyMixin, TimestampMixin, AuditUserMixin, SoftDeleteMixin):
+# --- END FIXED SECTION ---
+
+
+class BaseModelMixin(UUIDPrimaryKeyMixin, TimestampMixin, AuditUserMixin, SoftDeleteMixin):
     """
     Full base mixin applied to every business entity table.
-
-    Provides: id, created_at, updated_at, created_by, updated_by,
-              is_deleted, deleted_at.
+    Provides: id, created_at, updated_at, created_by, updated_by, is_deleted, deleted_at.
     """
 
 
 class VersionedModelMixin(BaseModelMixin, VersionMixin):
     """
     Base mixin for entities that require optimistic locking.
-
     Applied to: Unit, Booking, Payment.
     """

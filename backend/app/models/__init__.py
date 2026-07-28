@@ -34,3 +34,6 @@ from app.models.whatsapp_telecalling import (
 # from app.models.notification import Notification, NotificationTemplate, NotificationLog
 # from app.models.audit import AuditLog
 from app.models.system import SystemSetting
+from app.models.campaign import Campaign
+from app.models.seo_keyword import SEOKeyword
+from app.models.customer_payment import CustomerPayment

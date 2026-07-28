@@ -17,19 +17,42 @@ class LoginRequest(BaseModel):
     password: str = Field(..., min_length=8, max_length=255)
 
 
+class RegisterRequest(BaseModel):
+    name: str = Field(default="User", min_length=2, max_length=128)
+    email: EmailStr
+    password: str = Field(min_length=8)
+    role_name: str = Field(default="SALES")
+
+
+class RegisterResponse(BaseModel):
+    user_id: str
+    email: EmailStr
+    role: str
+
+
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+
+class LogoutRequest(BaseModel):
+    refresh_token: str
+
+
 class TokenResponse(BaseModel):
     """JWT token pair response."""
 
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
-    expires_in: int  # seconds until access token expires
+    expires_in: Optional[int] = 1800
+    role: Optional[str] = None
 
 
 class RefreshTokenRequest(BaseModel):
     """Request to refresh the access token."""
 
     refresh_token: str
+
 
 
 class PermissionDetail(BaseModel):
