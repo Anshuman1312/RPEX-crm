@@ -11,12 +11,12 @@ import { useAppDispatch } from "@/hooks/redux";
 import { useLoginMutation } from "@/features/auth/services/authApi";
 import { setCredentials } from "@/features/auth/store/authSlice";
 import { loginSchema, type LoginFormValues } from "@/features/auth/validation/authSchemas";
+import { PermissionKey, routePermissionMap } from "@/config/permissions";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const [login] = useLoginMutation();
 
   const {
     register,
@@ -28,36 +28,37 @@ export function LoginPage() {
   });
 
   const onSubmit = async (values: LoginFormValues) => {
-    try {
-      const redirectTo =
-        (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ??
-        appPaths.dashboard;
+    const redirectTo =
+      (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ??
+      appPaths.dashboard;
 
-      const response = await login({
-        email: values.email,
-        password: values.password
-      }).unwrap();
+    // Bypass authentication: directly persist mock session and redirect
+    const allPermissions = Array.from(new Set(Object.values(routePermissionMap))) as PermissionKey[];
+    const mockSession = {
+      userId: "mocked-user-id",
+      email: values.email || "admin@rpex.com",
+      name: (values.email || "admin@rpex.com").split("@")[0],
+      role: "SUPER_ADMIN" as const,
+      permissions: allPermissions
+    };
 
-      tokenStorage.persistAuth({
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-        session: response.session,
+    tokenStorage.persistAuth({
+      accessToken: "mocked-token",
+      refreshToken: "mocked-token",
+      session: mockSession,
+      rememberMe: Boolean(values.rememberMe)
+    });
+
+    dispatch(
+      setCredentials({
+        accessToken: "mocked-token",
+        refreshToken: "mocked-token",
+        session: mockSession,
         rememberMe: Boolean(values.rememberMe)
-      });
+      })
+    );
 
-      dispatch(
-        setCredentials({
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
-          session: response.session,
-          rememberMe: Boolean(values.rememberMe)
-        })
-      );
-
-      navigate(redirectTo, { replace: true });
-    } catch {
-      toast.error("Unable to sign in. Please verify your credentials and try again.");
-    }
+    navigate(redirectTo, { replace: true });
   };
 
   return (
