@@ -6,12 +6,14 @@ from uuid import UUID
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Text, Boolean, Numeric, Integer
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
+from app.database.base import Base
 from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin
 from app.utils.enums import ProjectStatus, UnitStatus, UnitType
 
 
-class Project(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Project(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Real estate project entity.
     
@@ -60,7 +62,7 @@ class Project(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     longitude = Column(Numeric(11, 8), nullable=True)
     
     # ── Developer & Timeline ──────────────────────────────────────────────
-    developer_id = Column(String(36), ForeignKey("vendors.id", ondelete="SET NULL"), nullable=True)
+    developer_id = Column(PG_UUID(as_uuid=True), ForeignKey("vendors.id", ondelete="SET NULL"), nullable=True)
     launch_date = Column(DateTime, nullable=True)
     completion_date = Column(DateTime, nullable=True)
     
@@ -101,7 +103,7 @@ class Project(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Project {self.project_number}: {self.name}>"
 
 
-class Block(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Block(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Block/Wing within a project.
     
@@ -120,7 +122,7 @@ class Block(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "blocks"
 
-    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    project_id = Column(PG_UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
     
     block_name = Column(String(50), nullable=False)
     description = Column(Text, nullable=True)
@@ -143,7 +145,7 @@ class Block(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Block {self.block_name}>"
 
 
-class Building(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Building(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Building within a block.
     
@@ -160,7 +162,7 @@ class Building(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "buildings"
 
-    block_id = Column(String(36), ForeignKey("blocks.id", ondelete="CASCADE"), nullable=False, index=True)
+    block_id = Column(PG_UUID(as_uuid=True), ForeignKey("blocks.id", ondelete="CASCADE"), nullable=False, index=True)
     
     building_name = Column(String(50), nullable=False)
     total_floors = Column(Integer, default=0)
@@ -180,7 +182,7 @@ class Building(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Building {self.building_name}>"
 
 
-class Floor(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Floor(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Floor within a building.
     
@@ -196,7 +198,7 @@ class Floor(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "floors"
 
-    building_id = Column(String(36), ForeignKey("buildings.id", ondelete="CASCADE"), nullable=False, index=True)
+    building_id = Column(PG_UUID(as_uuid=True), ForeignKey("buildings.id", ondelete="CASCADE"), nullable=False, index=True)
     
     floor_number = Column(Integer, nullable=False)
     total_units = Column(Integer, default=0)
@@ -215,7 +217,7 @@ class Floor(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Floor {self.floor_number}>"
 
 
-class Unit(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Unit(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Individual property unit.
     
@@ -246,8 +248,8 @@ class Unit(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     __tablename__ = "units"
 
     # ── Foreign Keys ───────────────────────────────────────────────────────
-    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
-    floor_id = Column(String(36), ForeignKey("floors.id", ondelete="CASCADE"), nullable=False, index=True)
+    project_id = Column(PG_UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    floor_id = Column(PG_UUID(as_uuid=True), ForeignKey("floors.id", ondelete="CASCADE"), nullable=False, index=True)
     
     # ── Identifiers ────────────────────────────────────────────────────────
     unit_number = Column(String(50), nullable=False)
@@ -284,12 +286,18 @@ class Unit(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         cascade="all, delete-orphan",
         lazy="select"
     )
+    bookings = relationship(
+        "Booking",
+        back_populates="unit",
+        foreign_keys="Booking.unit_id",
+        lazy="select",
+    )
     
     def __repr__(self) -> str:
         return f"<Unit {self.unit_number}: {self.unit_type}>"
 
 
-class UnitAvailabilityLog(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class UnitAvailabilityLog(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Tracks unit status changes for audit trail.
     
@@ -307,23 +315,23 @@ class UnitAvailabilityLog(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "unit_availability_logs"
 
-    unit_id = Column(String(36), ForeignKey("units.id", ondelete="CASCADE"), nullable=False, index=True)
+    unit_id = Column(PG_UUID(as_uuid=True), ForeignKey("units.id", ondelete="CASCADE"), nullable=False, index=True)
     
     old_status = Column(String(50), nullable=True)
     new_status = Column(String(50), nullable=False)
-    changed_by_user_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    changed_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     reason = Column(String(500), nullable=True)
-    related_booking_id = Column(String(36), ForeignKey("bookings.id", ondelete="SET NULL"), nullable=True)
+    related_booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id", ondelete="SET NULL"), nullable=True)
     
     # ── Relationships ──────────────────────────────────────────────────────
     unit = relationship("Unit", back_populates="availability_logs")
-    changed_by_user = relationship("User", lazy="select")
+    changed_by_user = relationship("User", foreign_keys=[changed_by_user_id], lazy="select")
     
     def __repr__(self) -> str:
         return f"<UnitAvailabilityLog {self.unit_id}: {self.old_status}→{self.new_status}>"
 
 
-class ProjectAmenity(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class ProjectAmenity(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Amenities available in project.
     
@@ -336,7 +344,7 @@ class ProjectAmenity(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "project_amenities"
 
-    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    project_id = Column(PG_UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
     
     amenity_type = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)

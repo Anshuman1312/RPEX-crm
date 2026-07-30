@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     DATABASE_MAX_OVERFLOW: int = 40
     DATABASE_POOL_TIMEOUT: int = 30
     DATABASE_POOL_RECYCLE: int = 3600
+    AUTO_INIT_DB_SCHEMA: bool = True
 
     # ── Redis ─────────────────────────────────────────────────────────────────
     REDIS_URL: str = "redis://localhost:6379/0"

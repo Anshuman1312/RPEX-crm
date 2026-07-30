@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin
 
@@ -26,8 +27,8 @@ class RolePermission(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     __tablename__ = "role_permissions"
 
     # ── Foreign Keys ───────────────────────────────────────────────────────
-    role_id = Column(String(36), ForeignKey("roles.id", ondelete="CASCADE"), nullable=False, index=True)
-    permission_id = Column(String(36), ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True)
+    role_id = Column(PG_UUID(as_uuid=True), ForeignKey("roles.id", ondelete="CASCADE"), nullable=False, index=True)
+    permission_id = Column(PG_UUID(as_uuid=True), ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # ── Relationships ──────────────────────────────────────────────────────
     role = relationship("Role", back_populates="role_permissions")

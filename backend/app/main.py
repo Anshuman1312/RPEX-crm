@@ -20,6 +20,7 @@ from app.core.exceptions import (
 from app.core.logging import setup_logging
 from app.core.redis import RedisManager
 from app.database.postgres import engine
+from app.database.init_db import init_db
 from app.middleware.correlation_middleware import CorrelationIDMiddleware
 from app.middleware.logging_middleware import RequestLoggingMiddleware
 from app.middleware.security import setup_security
@@ -31,6 +32,8 @@ from app.middleware.security import setup_security
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # ── Startup ───────────────────────────────────────────────────────────────
     setup_logging()
+    if settings.AUTO_INIT_DB_SCHEMA and not settings.is_production:
+        await init_db()
     await RedisManager.init()
 
     from loguru import logger

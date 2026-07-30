@@ -39,6 +39,11 @@ class Lead(Base, BaseModelMixin):
     source: Mapped[str] = mapped_column(String(50), index=True)
     """Where lead came from (enum: walk_in, phone, email, etc.)"""
 
+    campaign_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("campaigns.id", ondelete="SET NULL"), index=True, nullable=True
+    )
+    """Marketing campaign source reference"""
+
     status: Mapped[str] = mapped_column(String(50), index=True, default=LeadStatus.NEW.value)
     """Current lifecycle status"""
 
@@ -105,7 +110,8 @@ class Lead(Base, BaseModelMixin):
     )
     """Lead activities (calls, emails, meetings)"""
 
-    followups: Mapped[list] = relationship(
+    followups: Mapped[list["FollowUp"]] = relationship(
+        "FollowUp",
         back_populates="lead",
         cascade="all, delete-orphan",
         foreign_keys="FollowUp.lead_id",
@@ -114,6 +120,9 @@ class Lead(Base, BaseModelMixin):
 
     assigned_user: Mapped[Optional[object]] = relationship("User", foreign_keys=[assigned_to_user_id])
     """Sales person assigned to lead"""
+
+    campaign: Mapped[Optional[object]] = relationship("Campaign", back_populates="leads", foreign_keys=[campaign_id])
+    """Associated marketing campaign"""
 
     interested_project: Mapped[Optional[object]] = relationship("Project", foreign_keys=[interested_in_project])
     """Interested project"""

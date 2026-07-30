@@ -12,8 +12,7 @@ from app.models.customer_payment import CustomerPayment
 from app.models.followup import FollowUp
 from app.models.invoice import Invoice
 from app.models.lead import Lead
-from app.models.role import Role
-from app.models.user import User
+from app.models.user import Role, User
 from app.workers.celery_app import celery
 
 

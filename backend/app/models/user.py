@@ -38,7 +38,7 @@ class Department(Base, BaseModelMixin):
     # Self-referential relationship for hierarchy
     parent: Mapped[Department | None] = relationship(
         "Department",
-        remote_side=[id],
+        remote_side=lambda: [Department.id],
         foreign_keys=[parent_id],
         backref="children",
     )
@@ -181,9 +181,24 @@ class User(Base, BaseModelMixin):
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    department: Mapped[Department | None] = relationship("Department")
-    designation: Mapped[Designation | None] = relationship("Designation")
-    role: Mapped[Role | None] = relationship("Role")
+    department: Mapped[Department | None] = relationship("Department", foreign_keys=[department_id])
+    designation: Mapped[Designation | None] = relationship("Designation", foreign_keys=[designation_id])
+    role: Mapped[Role | None] = relationship("Role", foreign_keys=[role_id])
+    referred_customers: Mapped[list[object]] = relationship(
+        "Customer",
+        back_populates="referred_by_user",
+        foreign_keys="Customer.referred_by_user_id",
+    )
+    verified_kyc: Mapped[list[object]] = relationship(
+        "CustomerKYC",
+        back_populates="verified_by_user",
+        foreign_keys="CustomerKYC.verified_by_user_id",
+    )
+    assigned_bookings: Mapped[list[object]] = relationship(
+        "Booking",
+        back_populates="assigned_to_user",
+        foreign_keys="Booking.assignment_to_user_id",
+    )
 
 
 class UserSession(Base, TimestampMixin):

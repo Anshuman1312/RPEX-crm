@@ -6,12 +6,14 @@ from uuid import UUID
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Text, Boolean, Numeric
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
+from app.database.base import Base
 from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin
 from app.utils.enums import CustomerStatus, DocumentType
 
 
-class Customer(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Customer(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Customer entity representing real estate buyers/investors.
     
@@ -61,9 +63,9 @@ class Customer(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     status = Column(String(50), nullable=False, default=CustomerStatus.ACTIVE.value, index=True)
     
     # ── Referral & Conversion ────────────────────────────────────────────────
-    referred_by_user_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    referred_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     referred_by_date = Column(DateTime, nullable=True)
-    lead_converted_from_id = Column(String(36), ForeignKey("leads.id", ondelete="SET NULL"), nullable=True)
+    lead_converted_from_id = Column(PG_UUID(as_uuid=True), ForeignKey("leads.id", ondelete="SET NULL"), nullable=True)
     lead_converted_date = Column(DateTime, nullable=True)
     
     # ── Preferences ────────────────────────────────────────────────────────
@@ -96,6 +98,12 @@ class Customer(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         foreign_keys="Booking.customer_id",
         lazy="select"
     )
+    invoices = relationship(
+        "Invoice",
+        back_populates="customer",
+        foreign_keys="Invoice.customer_id",
+        lazy="select",
+    )
     payments = relationship(
         "CustomerPayment",
         back_populates="customer",
@@ -119,7 +127,7 @@ class Customer(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Customer {self.customer_number}: {self.first_name} {self.last_name}>"
 
 
-class CustomerAddress(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class CustomerAddress(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Customer addresses (billing, shipping, communication).
     
@@ -139,7 +147,7 @@ class CustomerAddress(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "customer_addresses"
 
-    customer_id = Column(String(36), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, index=True)
+    customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, index=True)
     address_type = Column(String(50), nullable=False, default="BILLING")  # BILLING/SHIPPING/COMMUNICATION
     
     full_address = Column(Text, nullable=False)
@@ -158,7 +166,7 @@ class CustomerAddress(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<CustomerAddress {self.address_type}: {self.city}>"
 
 
-class CustomerKYC(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class CustomerKYC(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Customer KYC (Know Your Customer) documents.
     
@@ -181,7 +189,7 @@ class CustomerKYC(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "customer_kyc"
 
-    customer_id = Column(String(36), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, index=True)
+    customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, index=True)
     
     document_type = Column(String(50), nullable=False)  # ID_PROOF/ADDRESS_PROOF/INCOME_PROOF/PAN/AADHAAR
     document_number = Column(String(100), nullable=False, index=True)
@@ -192,7 +200,7 @@ class CustomerKYC(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     document_url = Column(String(500), nullable=True)
     
     # ── Verification ──────────────────────────────────────────────────────
-    verified_by_user_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    verified_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     verified_at = Column(DateTime, nullable=True)
     verification_status = Column(String(50), nullable=False, default="PENDING")  # PENDING/VERIFIED/REJECTED/EXPIRED
     rejection_reason = Column(Text, nullable=True)
@@ -210,7 +218,7 @@ class CustomerKYC(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<CustomerKYC {self.document_type}: {self.verification_status}>"
 
 
-class CustomerPreference(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class CustomerPreference(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Customer preferences and interests.
     
@@ -231,7 +239,7 @@ class CustomerPreference(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "customer_preferences"
 
-    customer_id = Column(String(36), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, unique=True)
+    customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, unique=True)
     
     interested_project_ids = Column(String(1000), nullable=True)  # JSON array as string
     preferred_unit_type = Column(String(50), nullable=True)

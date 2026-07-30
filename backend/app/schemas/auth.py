@@ -21,6 +21,7 @@ class RegisterRequest(BaseModel):
     name: str = Field(default="User", min_length=2, max_length=128)
     email: EmailStr
     password: str = Field(min_length=8)
+    phone: str = Field(min_length=10, max_length=20)
     role_name: str = Field(default="SALES")
 
 

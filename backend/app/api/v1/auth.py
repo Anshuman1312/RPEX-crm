@@ -35,6 +35,7 @@ async def register(
                     "name": "Rahul Sharma",
                     "email": "rahul@company.com",
                     "password": "StrongPass@123",
+                    "phone": "+919999999999",
                     "role_name": "SALES",
                 },
             }
@@ -43,7 +44,7 @@ async def register(
     db: AsyncSession = Depends(get_db),
 ):
     auth_service = AuthService(AuthRepository(db))
-    user = await auth_service.register_user(payload.name, payload.email, payload.password, payload.role_name)
+    user = await auth_service.register_user(payload.name, payload.email, payload.password, payload.phone, payload.role_name)
     role = await db.get(Role, user.role_id) if hasattr(user, "role_id") and user.role_id else None
     if hasattr(AuditLogRepository, "log"):
         await AuditLogRepository(db).log(str(user.id), "auth", "register", None, {"email": user.email, "role": role.name if role else None})

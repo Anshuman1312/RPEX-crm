@@ -62,7 +62,7 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is inactive")
         return user
 
-    async def register_user(self, name: str, email: str, password: str, role_name: str = "SALES") -> User:
+    async def register_user(self, name: str, email: str, password: str, phone: str, role_name: str = "SALES") -> User:
         existing_user = await self.repo.get_user_by_email(email)
         if existing_user:
             from fastapi import HTTPException, status
@@ -76,8 +76,10 @@ class AuthService:
 
         user_kwargs = {
             "email": email,
+            "phone": phone,
             "password_hash": hash_password(password),
             "role_id": role.id,
+            "employee_code": f"EMP-{uuid.uuid4().hex[:10].upper()}",
         }
         if hasattr(User, "full_name"):
             user_kwargs["full_name"] = name

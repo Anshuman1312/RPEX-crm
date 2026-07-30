@@ -28,12 +28,14 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
+from app.database.base import Base
 from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin
 from app.utils.enums import BookingStatus, BookingApprovalStatus, PaymentStatus
 
 
-class Booking(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Booking(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Booking/Reservation entity.
 
@@ -59,29 +61,29 @@ class Booking(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "bookings"
     __table_args__ = (
-        Index("idx_booking_number", "booking_number"),
-        Index("idx_unit_id", "unit_id"),
-        Index("idx_customer_id", "customer_id"),
-        Index("idx_booking_status", "status"),
-        Index("idx_approval_status", "approval_status"),
-        Index("idx_assignment_user_id", "assignment_to_user_id"),
+        Index("idx_bookings_booking_number", "booking_number"),
+        Index("idx_bookings_unit_id", "unit_id"),
+        Index("idx_bookings_customer_id", "customer_id"),
+        Index("idx_bookings_status", "status"),
+        Index("idx_bookings_approval_status", "approval_status"),
+        Index("idx_bookings_assignment_user_id", "assignment_to_user_id"),
         UniqueConstraint("unit_id", "is_deleted", name="uq_unit_active_booking"),
     )
 
     booking_number = Column(String(50), nullable=False, unique=True, index=True)
-    unit_id = Column(String(36), ForeignKey("units.id"), nullable=False, index=True)
-    customer_id = Column(String(36), ForeignKey("customers.id"), nullable=False, index=True)
+    unit_id = Column(PG_UUID(as_uuid=True), ForeignKey("units.id"), nullable=False, index=True)
+    customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False, index=True)
     booking_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     booking_amount = Column(Numeric(15, 2), nullable=False)
     total_unit_price = Column(Numeric(15, 2), nullable=False)
     status = Column(String(50), nullable=False, default=BookingStatus.INITIATED.value, index=True)
     booking_expiry_date = Column(DateTime, nullable=True)
     booking_notes = Column(Text, nullable=True)
-    assignment_to_user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
+    assignment_to_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
     approval_status = Column(String(50), nullable=False, default=BookingApprovalStatus.PENDING.value, index=True)
     approval_completed_at = Column(DateTime, nullable=True)
-    related_lead_id = Column(String(36), ForeignKey("leads.id"), nullable=True)
-    confirmed_by_user_id = Column(String(36), ForeignKey("users.id"), nullable=True)
+    related_lead_id = Column(PG_UUID(as_uuid=True), ForeignKey("leads.id"), nullable=True)
+    confirmed_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     confirmed_at = Column(DateTime, nullable=True)
     cancellation_initiated_at = Column(DateTime, nullable=True)
     cancellation_reason = Column(Text, nullable=True)
@@ -125,7 +127,7 @@ class Booking(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Booking {self.booking_number}: Unit {self.unit_id} | {self.status}>"
 
 
-class BookingPaymentPlan(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class BookingPaymentPlan(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Payment plan/milestone for booking.
 
@@ -145,11 +147,11 @@ class BookingPaymentPlan(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "booking_payment_plans"
     __table_args__ = (
-        Index("idx_booking_id_payment", "booking_id"),
-        Index("idx_payment_status", "payment_status"),
+        Index("idx_booking_payment_plans_booking_id", "booking_id"),
+        Index("idx_booking_payment_plans_payment_status", "payment_status"),
     )
 
-    booking_id = Column(String(36), ForeignKey("bookings.id"), nullable=False, index=True)
+    booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, index=True)
     milestone_name = Column(String(100), nullable=False)
     percentage = Column(Integer, nullable=False)  # 0-100
     due_date = Column(DateTime, nullable=False)
@@ -168,7 +170,7 @@ class BookingPaymentPlan(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<BookingPaymentPlan {self.milestone_name}: {self.percentage}% ({self.payment_status})>"
 
 
-class BookingApproval(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class BookingApproval(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Multi-level approval workflow for bookings.
 
@@ -184,14 +186,14 @@ class BookingApproval(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "booking_approvals"
     __table_args__ = (
-        Index("idx_booking_id_approval", "booking_id"),
-        Index("idx_approver_id", "approver_user_id"),
-        Index("idx_approval_status_ba", "status"),
+        Index("idx_booking_approvals_booking_id", "booking_id"),
+        Index("idx_booking_approvals_approver_user_id", "approver_user_id"),
+        Index("idx_booking_approvals_status", "status"),
     )
 
-    booking_id = Column(String(36), ForeignKey("bookings.id"), nullable=False, index=True)
+    booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, index=True)
     approval_level = Column(Integer, nullable=False)  # 1, 2, 3
-    approver_user_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    approver_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     status = Column(String(50), nullable=False, default=BookingApprovalStatus.PENDING.value, index=True)
     notes = Column(Text, nullable=True)
     approval_date = Column(DateTime, nullable=True)
@@ -199,13 +201,13 @@ class BookingApproval(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     # Relationships
     booking = relationship("Booking", back_populates="approvals")
-    approver = relationship("User")
+    approver = relationship("User", foreign_keys=[approver_user_id])
 
     def __repr__(self) -> str:
         return f"<BookingApproval Level {self.approval_level}: {self.status}>"
 
 
-class BookingCancellation(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class BookingCancellation(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Booking cancellation record.
 
@@ -223,15 +225,15 @@ class BookingCancellation(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "booking_cancellations"
     __table_args__ = (
-        Index("idx_booking_id_cancellation", "booking_id"),
-        Index("idx_cancelled_by", "cancelled_by_user_id"),
-        Index("idx_refund_status", "refund_status"),
+        Index("idx_booking_cancellations_booking_id", "booking_id"),
+        Index("idx_booking_cancellations_cancelled_by_user_id", "cancelled_by_user_id"),
+        Index("idx_booking_cancellations_refund_status", "refund_status"),
     )
 
-    booking_id = Column(String(36), ForeignKey("bookings.id"), nullable=False, unique=True, index=True)
+    booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, unique=True, index=True)
     cancellation_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     reason = Column(Text, nullable=False)
-    cancelled_by_user_id = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    cancelled_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     refund_amount = Column(Numeric(15, 2), nullable=True)
     refund_status = Column(String(50), nullable=True, index=True)
     refund_date = Column(DateTime, nullable=True)
@@ -240,13 +242,13 @@ class BookingCancellation(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     # Relationships
     booking = relationship("Booking", back_populates="cancellation")
-    cancelled_by_user = relationship("User")
+    cancelled_by_user = relationship("User", foreign_keys=[cancelled_by_user_id])
 
     def __repr__(self) -> str:
         return f"<BookingCancellation Booking {self.booking_id}: {self.refund_status}>"
 
 
-class Possession(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Possession(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Possession tracking after booking confirmation.
 
@@ -266,21 +268,21 @@ class Possession(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "possessions"
     __table_args__ = (
-        Index("idx_booking_id_possession", "booking_id"),
-        Index("idx_keys_handed_by", "keys_handed_by_user_id"),
-        Index("idx_inspected_by", "inspected_by_user_id"),
-        Index("idx_possession_status", "possession_status"),
+        Index("idx_possessions_booking_id", "booking_id"),
+        Index("idx_possessions_keys_handed_by_user_id", "keys_handed_by_user_id"),
+        Index("idx_possessions_inspected_by_user_id", "inspected_by_user_id"),
+        Index("idx_possessions_status", "possession_status"),
     )
 
-    booking_id = Column(String(36), ForeignKey("bookings.id"), nullable=False, unique=True, index=True)
+    booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=False, unique=True, index=True)
     possession_date = Column(DateTime, nullable=False)
     possession_handed_date = Column(DateTime, nullable=True)
     possession_notes = Column(Text, nullable=True)
-    keys_handed_by_user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
+    keys_handed_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
     keys_handed_to_customer = Column(Boolean, default=False)
     documents_handed = Column(Boolean, default=False)
     final_inspection_done = Column(Boolean, default=False)
-    inspected_by_user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
+    inspected_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
     inspection_notes = Column(Text, nullable=True)
     possession_status = Column(String(50), nullable=False, default="SCHEDULED", index=True)
 

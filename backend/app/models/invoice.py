@@ -27,12 +27,14 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
+from app.database.base import Base
 from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin
 from app.utils.enums import PaymentStatus, LedgerEntryType
 
 
-class Invoice(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class Invoice(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Invoice entity for billing.
 
@@ -57,19 +59,19 @@ class Invoice(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "invoices"
     __table_args__ = (
-        Index("idx_invoice_number", "invoice_number"),
-        Index("idx_booking_id", "booking_id"),
-        Index("idx_customer_id", "customer_id"),
-        Index("idx_project_id", "project_id"),
-        Index("idx_due_date", "due_date"),
-        Index("idx_payment_status_inv", "payment_status"),
-        Index("idx_invoice_status", "invoice_status"),
+        Index("idx_invoices_invoice_number", "invoice_number"),
+        Index("idx_invoices_booking_id", "booking_id"),
+        Index("idx_invoices_customer_id", "customer_id"),
+        Index("idx_invoices_project_id", "project_id"),
+        Index("idx_invoices_due_date", "due_date"),
+        Index("idx_invoices_payment_status", "payment_status"),
+        Index("idx_invoices_status", "invoice_status"),
     )
 
     invoice_number = Column(String(50), nullable=False, unique=True, index=True)
-    booking_id = Column(String(36), ForeignKey("bookings.id"), nullable=True, index=True)
-    customer_id = Column(String(36), ForeignKey("customers.id"), nullable=False, index=True)
-    project_id = Column(String(36), ForeignKey("projects.id"), nullable=True, index=True)
+    booking_id = Column(PG_UUID(as_uuid=True), ForeignKey("bookings.id"), nullable=True, index=True)
+    customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False, index=True)
+    project_id = Column(PG_UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True, index=True)
     invoice_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     due_date = Column(DateTime, nullable=False, index=True)
     subtotal = Column(Numeric(15, 2), nullable=False)
@@ -104,7 +106,7 @@ class Invoice(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<Invoice {self.invoice_number}: {self.total_amount} ({self.payment_status})>"
 
 
-class InvoiceItem(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class InvoiceItem(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Line item in invoice.
 
@@ -121,9 +123,9 @@ class InvoiceItem(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
 
     __tablename__ = "invoice_items"
-    __table_args__ = (Index("idx_invoice_id_items", "invoice_id"),)
+    __table_args__ = (Index("idx_invoice_items_invoice_id", "invoice_id"),)
 
-    invoice_id = Column(String(36), ForeignKey("invoices.id"), nullable=False, index=True)
+    invoice_id = Column(PG_UUID(as_uuid=True), ForeignKey("invoices.id"), nullable=False, index=True)
     description = Column(String(255), nullable=False)
     quantity = Column(Integer, default=1)
     unit_price = Column(Numeric(15, 2), nullable=False)
@@ -140,7 +142,7 @@ class InvoiceItem(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
         return f"<InvoiceItem {self.description}: {self.item_total}>"
 
 
-class FinanceLedgerEntry(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class FinanceLedgerEntry(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Accounting ledger entry (debit/credit).
 
@@ -160,12 +162,12 @@ class FinanceLedgerEntry(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "finance_ledger_entries"
     __table_args__ = (
-        Index("idx_invoice_id_ledger", "invoice_id"),
-        Index("idx_entry_type", "entry_type"),
-        Index("idx_posted_by", "posted_by_user_id"),
+        Index("idx_finance_ledger_entries_invoice_id", "invoice_id"),
+        Index("idx_finance_ledger_entries_entry_type", "entry_type"),
+        Index("idx_finance_ledger_entries_posted_by_user_id", "posted_by_user_id"),
     )
 
-    invoice_id = Column(String(36), ForeignKey("invoices.id"), nullable=True, index=True)
+    invoice_id = Column(PG_UUID(as_uuid=True), ForeignKey("invoices.id"), nullable=True, index=True)
     entry_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     entry_type = Column(String(50), nullable=False, index=True)  # INVOICE/PAYMENT/ADJUSTMENT/REFUND/GST
     description = Column(String(255), nullable=False)
@@ -174,18 +176,18 @@ class FinanceLedgerEntry(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     account_code = Column(String(50), nullable=True)
     reference_number = Column(String(100), nullable=True, unique=True)
     remarks = Column(Text, nullable=True)
-    posted_by_user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
+    posted_by_user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
     posted_on = Column(DateTime, nullable=True)
 
     # Relationships
     invoice = relationship("Invoice", back_populates="ledger_entries")
-    posted_by_user = relationship("User")
+    posted_by_user = relationship("User", foreign_keys=[posted_by_user_id])
 
     def __repr__(self) -> str:
         return f"<LedgerEntry {self.entry_type}: D={self.debit_amount} C={self.credit_amount}>"
 
 
-class InvoicePaymentMapping(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
+class InvoicePaymentMapping(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     """
     Mapping between invoice items and booking payment plan milestones.
 
@@ -198,12 +200,12 @@ class InvoicePaymentMapping(BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
 
     __tablename__ = "invoice_payment_mappings"
     __table_args__ = (
-        Index("idx_invoice_id_mapping", "invoice_id"),
-        Index("idx_payment_plan_id", "payment_plan_id"),
+        Index("idx_invoice_payment_mappings_invoice_id", "invoice_id"),
+        Index("idx_invoice_payment_mappings_payment_plan_id", "payment_plan_id"),
     )
 
-    invoice_id = Column(String(36), ForeignKey("invoices.id"), nullable=False, index=True)
-    payment_plan_id = Column(String(36), ForeignKey("booking_payment_plans.id"), nullable=False, index=True)
+    invoice_id = Column(PG_UUID(as_uuid=True), ForeignKey("invoices.id"), nullable=False, index=True)
+    payment_plan_id = Column(PG_UUID(as_uuid=True), ForeignKey("booking_payment_plans.id"), nullable=False, index=True)
     mapped_amount = Column(Numeric(15, 2), nullable=False)
     mapped_on = Column(DateTime, nullable=False, default=datetime.utcnow)
 
