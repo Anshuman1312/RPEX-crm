@@ -13,6 +13,7 @@ import {
   setAuthStatus,
   updateAccessToken
 } from "@/features/auth/store/authSlice";
+import { PermissionKey, routePermissionMap } from "@/config/permissions";
 
 interface RefreshResponse {
   access_token?: string;
@@ -31,7 +32,22 @@ export function bootstrapAuthSession(dispatch: AppDispatch) {
     return;
   }
 
-  dispatch(setAuthStatus("unauthenticated"));
+  // Bypass authentication: hydrate a default mock session for frontend bypass
+  const allPermissions = Array.from(new Set(Object.values(routePermissionMap))) as PermissionKey[];
+  dispatch(
+    hydrateSession({
+      accessToken: "mocked-token",
+      refreshToken: "mocked-token",
+      session: {
+        userId: "mocked-user-id",
+        email: "admin@rpex.com",
+        name: "System Admin",
+        role: "SUPER_ADMIN",
+        permissions: allPermissions
+      },
+      rememberMe: true
+    })
+  );
 }
 
 export async function requestTokenRefresh() {
