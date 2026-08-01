@@ -1,0 +1,298 @@
+# Prometheus Alert Rules for RPEX CRM
+# Save as: monitoring/alert_rules.yml
+
+groups:
+  # ── Application Health Alerts ─────────────────────────────────────────────
+
+  - name: application_health
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+          runbook_url: "https://example.com/runbooks/high-error-rate"
+
+      - alert: SlowResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response latency detected"
+          description: "P95 latency is {{ $value | humanizeDuration }} (threshold: 1s)"
+
+      - alert: HighRequestQueue
+        expr: |
+          http_requests_pending > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of pending requests"
+          description: "{{ $value | humanize }} requests pending (threshold: 100)"
+
+  # ── Database Health Alerts ────────────────────────────────────────────────
+
+  - name: database_health
+    interval: 30s
+    rules:
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL has been unavailable for 2 minutes"
+          runbook_url: "https://example.com/runbooks/postgresql-down"
+
+      - alert: HighConnectionPoolUsage
+        expr: |
+          (pg_stat_activity_count / pg_settings_max_connections) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Connection pool near exhaustion"
+          description: "Database connections at {{ $value | humanizePercentage }} (threshold: 90%)"
+
+      - alert: SlowQueries
+        expr: |
+          rate(pg_stat_statements_mean_exec_time[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query time is {{ $value | humanizeDuration }} (threshold: 1s)"
+
+      - alert: DiskSpaceRunningOut
+        expr: |
+          (pg_database_size_bytes / (pg_database_size_bytes + pg_database_free_space_bytes)) > 0.8
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database disk space running out"
+          description: "Database disk usage is {{ $value | humanizePercentage }} (threshold: 80%)"
+
+      - alert: DeadlocksDetected
+        expr: |
+          rate(pg_stat_database_deadlocks[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database deadlocks detected"
+          description: "{{ $value | humanize }} deadlocks in last 5 minutes"
+
+  # ── Cache Health Alerts ───────────────────────────────────────────────────
+
+  - name: cache_health
+    interval: 30s
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis has been unavailable for 2 minutes"
+          runbook_url: "https://example.com/runbooks/redis-down"
+
+      - alert: HighRedisMemoryUsage
+        expr: |
+          (redis_memory_used_bytes / redis_memory_max_bytes) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis memory is {{ $value | humanizePercentage }} (threshold: 85%)"
+
+      - alert: HighCacheEvictions
+        expr: |
+          rate(redis_evicted_keys_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of cache evictions"
+          description: "{{ $value | humanize }} keys evicted per second (threshold: 100)"
+
+  # ── Task Queue & Dead Letter Queue Alerts ─────────────────────────────────
+
+  - name: task_health
+    interval: 30s
+    rules:
+      - alert: CeleryWorkerDown
+        expr: |
+          count(celery_worker_tasks_active) == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "All Celery workers are down"
+          description: "No active Celery workers detected for 2 minutes"
+          runbook_url: "https://example.com/runbooks/celery-worker-down"
+
+      - alert: HighTaskFailureRate
+        expr: |
+          (sum(rate(celery_task_failed_total[5m])) / (sum(rate(celery_task_succeeded_total[5m])) + sum(rate(celery_task_failed_total[5m])))) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High task failure rate"
+          description: "Task failure rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+
+      - alert: LongRunningTasks
+        expr: |
+          max(celery_task_runtime_seconds) > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Long-running tasks detected"
+          description: "Task taking {{ $value | humanizeDuration }} (threshold: 5m)"
+
+      - alert: HighTaskQueueDepth
+        expr: |
+          celery_queue_length > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Task queue depth high"
+          description: "{{ $value | humanize }} tasks pending (threshold: 1000)"
+
+      # ── Dead Letter Queue Alerts ──────────────────────────────────────────
+      - alert: DLQQueueNotEmpty
+        expr: |
+          dlq_queue_depth > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Dead Letter Queue has failed tasks"
+          description: "{{ $value | humanize }} tasks in DLQ (failed and awaiting manual retry)"
+
+      - alert: HighDLQQueueDepth
+        expr: |
+          dlq_queue_depth > 100
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Dead Letter Queue depth critical"
+          description: "{{ $value | humanize }} tasks in DLQ (threshold: 100)"
+          runbook_url: "https://example.com/runbooks/dlq-recovery"
+
+      - alert: OldTasksInDLQ
+        expr: |
+          dlq_oldest_task_age_hours > 24
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Old tasks stuck in Dead Letter Queue"
+          description: "Oldest DLQ task is {{ $value | humanize }} hours old (threshold: 24h)"
+
+  # ── System Health Alerts ──────────────────────────────────────────────────
+
+  - name: system_health
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          (100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value | humanize }}% (threshold: 80%)"
+
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} (threshold: 85%)"
+
+      - alert: DiskSpaceCritical
+        expr: |
+          (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space running low"
+          description: "{{ $value | humanizePercentage }} disk space available (threshold: 10%)"
+
+      - alert: HighINodeUsage
+        expr: |
+          (1 - (node_filesystem_files_free / node_filesystem_files)) > 0.9
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "iNode usage critical"
+          description: "iNode usage is {{ $value | humanizePercentage }} (threshold: 90%)"
+
+      - alert: SystemLoadHigh
+        expr: |
+          node_load5 > 4
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "System load average high"
+          description: "5-minute load average is {{ $value | humanize }} (threshold: 4)"
+
+  # ── Backup Health Alerts ──────────────────────────────────────────────────
+
+  - name: backup_health
+    interval: 5m
+    rules:
+      - alert: NoBackupIn24Hours
+        expr: |
+          (time() - backup_last_timestamp_seconds) > 86400
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No backup completed in 24 hours"
+          description: "Last backup was {{ $value | humanizeDuration }} ago (threshold: 24h)"
+          runbook_url: "https://example.com/runbooks/backup-failure"
+
+      - alert: BackupSizeTooSmall
+        expr: |
+          backup_size_bytes < 1000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Backup size suspiciously small"
+          description: "Last backup size is {{ $value | humanize }}B (threshold: 1MB)"
+
+      - alert: WALArchivingFailed
+        expr: |
+          rate(pg_wal_archiving_failed_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL WAL archiving failed"
+          description: "WAL archiving errors detected"

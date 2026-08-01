@@ -87,6 +87,22 @@ class Booking(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
     confirmed_at = Column(DateTime, nullable=True)
     cancellation_initiated_at = Column(DateTime, nullable=True)
     cancellation_reason = Column(Text, nullable=True)
+    
+    # ── Booking Details ────────────────────────────────────────────────────────
+    booking_interested = Column(Boolean, default=True, nullable=False)
+    """Whether customer is actively interested in the booking"""
+    
+    preferred_payment_mode = Column(String(100), nullable=True)
+    """Preferred payment mode: cash, check, bank_transfer, neft, imps, etc."""
+    
+    finance_required = Column(Boolean, default=False, nullable=False)
+    """Whether customer requires financing"""
+    
+    self_funding = Column(Boolean, default=False, nullable=False)
+    """Whether customer will self-fund the purchase"""
+    
+    loan_assistance_required = Column(Boolean, default=False, nullable=False)
+    """Whether customer requires loan assistance"""
 
     # Relationships
     unit = relationship("Unit", back_populates="bookings")

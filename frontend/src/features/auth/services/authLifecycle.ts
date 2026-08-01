@@ -1,4 +1,4 @@
-import type { AppDispatch } from "@/app/store";
+﻿import type { AppDispatch } from "@/app/store";
 import { authHttp } from "@/core/auth/authHttp";
 import {
   AUTH_SESSION_EXPIRED_EVENT,

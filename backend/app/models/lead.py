@@ -1,14 +1,17 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from datetime import datetime
 
-from sqlalchemy import String, Text, Integer, ForeignKey, Index, Boolean
+from sqlalchemy import String, Text, Integer, ForeignKey, Index, Boolean, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 from app.models.mixins import BaseModelMixin, VersionedModelMixin
 from app.utils.enums import LeadSource, LeadStatus, LeadPriority
+
+if TYPE_CHECKING:
+    from app.models.followup import FollowUp
 
 
 class Lead(Base, BaseModelMixin):
@@ -25,14 +28,28 @@ class Lead(Base, BaseModelMixin):
     lead_number: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     """Auto-generated lead ID (e.g., LEAD-000001)"""
 
+    # ── Client Details ────────────────────────────────────────────────────────
+    
+    title: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    """Title: Mr, Miss, Mrs, Ms, Dr, Prof"""
+
     full_name: Mapped[str] = mapped_column(String(200), index=True)
     """Lead name"""
+
+    phone: Mapped[Optional[str]] = mapped_column(String(20), index=True, nullable=True)
+    """Primary phone number"""
+
+    alternate_phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    """Alternate phone number"""
 
     email: Mapped[Optional[str]] = mapped_column(String(255), index=True, nullable=True)
     """Email address"""
 
-    phone: Mapped[Optional[str]] = mapped_column(String(20), index=True, nullable=True)
-    """Phone number"""
+    occupation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    """Occupation/profession"""
+
+    address: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    """Residential address"""
 
     # ── Source & Classification ────────────────────────────────────────────────
 
@@ -48,7 +65,7 @@ class Lead(Base, BaseModelMixin):
     """Current lifecycle status"""
 
     priority: Mapped[str] = mapped_column(String(50), index=True, default=LeadPriority.MEDIUM.value)
-    """Lead priority level"""
+    """Lead priority level: hot (🔥), warm (🟡), cold (🔵)"""
 
     # ── Assignment ─────────────────────────────────────────────────────────────
 
@@ -60,6 +77,28 @@ class Lead(Base, BaseModelMixin):
     assignment_date: Mapped[Optional[datetime]] = mapped_column(nullable=True)
     """When was this lead assigned"""
 
+    # ── Budget & Time Duration ────────────────────────────────────────────────
+
+    budget_min: Mapped[Optional[int]] = mapped_column(nullable=True)
+    """Minimum budget range (in paise)"""
+
+    budget_max: Mapped[Optional[int]] = mapped_column(nullable=True)
+    """Maximum budget range (in paise)"""
+
+    budget: Mapped[Optional[int]] = mapped_column(nullable=True)
+    """Estimated budget (in paise) - for backward compatibility"""
+
+    time_duration: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    """Timeline for purchase: immediate, 3-6 months, 6-12 months, 1+ year"""
+
+    # ── Purpose & Property Details ────────────────────────────────────────────
+
+    purpose: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    """Purpose: investment, self_use, business"""
+
+    property_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    """Property type interested in: plot, villa, flat, commercial"""
+
     # ── Details ────────────────────────────────────────────────────────────────
 
     company_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -68,11 +107,8 @@ class Lead(Base, BaseModelMixin):
     designation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     """Job title"""
 
-    budget: Mapped[Optional[int]] = mapped_column(nullable=True)
-    """Estimated budget (in paise)"""
-
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    """Internal notes"""
+    """Internal remarks/notes"""
 
     # ── Interest ───────────────────────────────────────────────────────────────
 
@@ -103,7 +139,7 @@ class Lead(Base, BaseModelMixin):
 
     # ── Relationships ─────────────────────────────────────────────────────────
 
-    activities: Mapped[list[LeadActivity]] = relationship(
+    activities: Mapped[list["LeadActivity"]] = relationship(
         back_populates="lead",
         cascade="all, delete-orphan",
         foreign_keys="LeadActivity.lead_id",

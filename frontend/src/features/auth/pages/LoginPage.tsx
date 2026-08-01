@@ -16,17 +16,16 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: true }
   });
-
-  const [login, { isLoading }] = useLoginMutation();
 
   const onSubmit = async (values: LoginFormValues) => {
     const redirectTo =
@@ -39,28 +38,34 @@ export function LoginPage() {
         password: values.password
       }).unwrap();
 
+      const { accessToken, refreshToken, session } = result;
+
       tokenStorage.persistAuth({
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-        session: result.session,
+        accessToken,
+        refreshToken,
+        session,
         rememberMe: Boolean(values.rememberMe)
       });
 
       dispatch(
         setCredentials({
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-          session: result.session,
+          accessToken,
+          refreshToken,
+          session,
           rememberMe: Boolean(values.rememberMe)
         })
       );
 
-      toast.success("Successfully signed in");
+      toast.success("Signed in successfully");
       navigate(redirectTo, { replace: true });
-    } catch (err: any) {
-      const apiErrorMessage = err?.data?.message || err?.message || "Failed to sign in. Please check your credentials.";
-      toast.error(apiErrorMessage);
-      console.error("Login error:", err);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" && err !== null && "data" in err
+            ? (err.data as { message?: string }).message
+            : "Invalid credentials";
+      toast.error(message);
     }
   };
 
@@ -99,8 +104,8 @@ export function LoginPage() {
             Keep me signed in on this device
           </label>
 
-          <Button className="w-full" disabled={isSubmitting || isLoading} type="submit">
-            {isSubmitting || isLoading ? "Signing in..." : "Sign in"}
+          <Button className="w-full" disabled={isLoading} type="submit">
+            {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </CardContent>

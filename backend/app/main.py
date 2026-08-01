@@ -17,7 +17,7 @@ from app.core.exceptions import (
     unhandled_exception_handler,
     validation_exception_handler,
 )
-from app.core.logging import setup_logging
+from app.core.logging import setup_logging, logger
 from app.core.redis import RedisManager
 from app.database.postgres import engine
 from app.database.init_db import init_db
@@ -103,8 +103,8 @@ def create_app() -> FastAPI:
         redis_ok = False
         try:
             redis_ok = await RedisManager.get_client().ping()
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug(f"Redis health check failed: {exc}")
         return {
             "status": "healthy",
             "version": settings.APP_VERSION,
