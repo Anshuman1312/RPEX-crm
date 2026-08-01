@@ -1,6 +1,6 @@
 """Add enhanced lead, follow-up, and booking fields.
 
-Revision ID: 002_add_lead_followup_booking_fields
+Revision ID: 002
 Revises: 001_initial_schema
 Create Date: 2026-08-01
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers
-revision: str = "002_add_lead_followup_booking_fields"
+revision: str = "002"
 down_revision = "001_initial_schema"
 branch_labels = None
 depends_on = None
