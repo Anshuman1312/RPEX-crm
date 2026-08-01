@@ -20,23 +20,39 @@ async def create_campaign(payload: CampaignCreate, current_user: CurrentUser, db
 @router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
 async def list_campaigns(_: CurrentUser, db: AsyncSession = Depends(get_db)):
     campaigns = await CampaignRepository(db).list_all()
-    return [
-        {
+    result = []
+    for c in campaigns:
+        extra_data = c.extra_data or {}
+        
+        # Safe type conversions with error handling
+        try:
+            leads = int(extra_data.get("leads") or 0)
+            reach = int(extra_data.get("reach") or 0)
+            roas = float(extra_data.get("roas") or 0)
+            conversion = float(extra_data.get("conversion") or 0)
+            budget = float(c.budget) if c.budget else 0
+        except (ValueError, TypeError):
+            # Default safe values if conversion fails
+            leads = reach = 0
+            roas = conversion = 0.0
+            budget = 0.0
+        
+        # Calculate CPL safely - avoid division by zero
+        cpl = round(budget / leads, 2) if leads > 0 else 0
+        
+        result.append({
             "id": str(c.id),
-            "name": c.name,
-            "type": c.type,
-            "platform": c.platform,
+            "name": c.name or "",
+            "type": c.type or "",
+            "platform": c.platform or "",
             "budget": str(c.budget),
             "start_date": c.start_date,
             "end_date": c.end_date,
-            "channel": (c.extra_data or {}).get("channel") or c.type,
-            "reach": int((c.extra_data or {}).get("reach") or 0),
-            "leads": int((c.extra_data or {}).get("leads") or 0),
-            "cpl": round(float(c.budget) / int((c.extra_data or {}).get("leads") or 0), 2)
-            if int((c.extra_data or {}).get("leads") or 0)
-            else 0,
-            "roas": float((c.extra_data or {}).get("roas") or 0),
-            "conversion": float((c.extra_data or {}).get("conversion") or 0),
-        }
-        for c in campaigns
-    ]
+            "channel": extra_data.get("channel") or c.type,
+            "reach": reach,
+            "leads": leads,
+            "cpl": cpl,
+            "roas": roas,
+            "conversion": conversion,
+        })
+    return result

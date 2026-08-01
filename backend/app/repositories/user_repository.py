@@ -87,6 +87,25 @@ class UserRepository(BaseRepository[User]):
         result = await self.session.execute(query)
         return result.scalars().all()
 
+    async def get_first_user_by_role(self, role_name: str) -> User | None:
+        """Get the first active user with the specified role."""
+        from app.models.user import Role
+        
+        query = (
+            select(self.model)
+            .join(Role, self.model.role_id == Role.id)
+            .where(
+                and_(
+                    Role.name == role_name.upper(),
+                    self.model.is_deleted == False,
+                    self.model.status == "active",
+                )
+            )
+            .limit(1)
+        )
+        result = await self.session.execute(query)
+        return result.scalars().first()
+
 
 class UserSessionRepository(BaseRepository[UserSession]):
     """Repository for user sessions (refresh tokens)."""

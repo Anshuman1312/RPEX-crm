@@ -1,0 +1,155 @@
+# Alertmanager Configuration for RPEX CRM
+# Save as: monitoring/alertmanager.yml
+
+global:
+  resolve_timeout: 5m
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+  pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+
+# Alert templates
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Routing tree
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+
+  routes:
+    # ── CRITICAL ALERTS → PagerDuty + Slack #incidents + SMS ────────────────
+    - match:
+        severity: critical
+      receiver: 'critical'
+      group_wait: 5s
+      group_interval: 5s
+      repeat_interval: 30m
+      continue: true
+
+    # ── WARNING ALERTS → Slack #alerts + Email ───────────────────────────────
+    - match:
+        severity: warning
+      receiver: 'warning'
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+
+    # ── INFO ALERTS → Slack #monitoring ─────────────────────────────────────
+    - match:
+        severity: info
+      receiver: 'info'
+      group_wait: 60s
+      group_interval: 30m
+      repeat_interval: 24h
+
+# Receivers
+receivers:
+  # ── Default receiver (fallback) ────────────────────────────────────────────
+  - name: 'default'
+    slack_configs:
+      - channel: '#alerts'
+        title: 'Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+
+  # ── Critical alerts → Immediate escalation ────────────────────────────────
+  - name: 'critical'
+    slack_configs:
+      - channel: '#incidents'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+        text: |
+          *Severity:* {{ .Alerts.Firing | len }} firing
+          {{ range .Alerts.Firing }}
+          *Alert:* {{ .Labels.alertname }}
+          *Instance:* {{ .Labels.instance }}
+          *Description:* {{ .Annotations.description }}
+          *Runbook:* {{ .Annotations.runbook }}
+          {{ end }}
+        send_resolved: true
+        color: 'danger'
+        actions:
+          - type: button
+            text: 'View Alert'
+            url: '{{ (index .Alerts 0).GeneratorURL }}'
+          - type: button
+            text: 'Runbook'
+            url: '{{ (index .Alerts 0).Annotations.runbook }}'
+
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        description: '{{ .GroupLabels.alertname }}: {{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        details:
+          firing: '{{ range .Alerts.Firing }}{{ .Labels.instance }},{{ end }}'
+          resolved: '{{ range .Alerts.Resolved }}{{ .Labels.instance }},{{ end }}'
+
+    email_configs:
+      - to: '${ALERT_EMAIL_CRITICAL}'
+        from: 'alerts@rpex.com'
+        smarthost: '${SMTP_HOST}:${SMTP_PORT}'
+        auth_username: '${SMTP_USERNAME}'
+        auth_password: '${SMTP_PASSWORD}'
+        headers:
+          Subject: '🚨 CRITICAL ALERT: {{ .GroupLabels.alertname }}'
+        html: |
+          <h2 style="color: red;">Critical Alert</h2>
+          <p><strong>Alert:</strong> {{ .GroupLabels.alertname }}</p>
+          <p><strong>Status:</strong> {{ .Status }}</p>
+          {{ range .Alerts }}
+          <hr>
+          <p><strong>Instance:</strong> {{ .Labels.instance }}</p>
+          <p><strong>Description:</strong> {{ .Annotations.description }}</p>
+          <p><strong>Runbook:</strong> <a href="{{ .Annotations.runbook }}">{{ .Annotations.runbook }}</a></p>
+          {{ end }}
+
+  # ── Warning alerts → Email + Slack ────────────────────────────────────────
+  - name: 'warning'
+    slack_configs:
+      - channel: '#alerts'
+        title: '⚠️ WARNING: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: 'warning'
+
+    email_configs:
+      - to: '${ALERT_EMAIL_WARNING}'
+        from: 'alerts@rpex.com'
+        smarthost: '${SMTP_HOST}:${SMTP_PORT}'
+        auth_username: '${SMTP_USERNAME}'
+        auth_password: '${SMTP_PASSWORD}'
+        headers:
+          Subject: '⚠️ WARNING: {{ .GroupLabels.alertname }}'
+
+  # ── Info alerts → Slack only ──────────────────────────────────────────────
+  - name: 'info'
+    slack_configs:
+      - channel: '#monitoring'
+        title: 'ℹ️ INFO: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: 'good'
+
+# Alert silencing (maintenance windows)
+inhibit_rules:
+  # ── Silence warnings if critical already firing for same alert ────────────
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+
+  # ── Silence info if warning already firing ────────────────────────────────
+  - source_match:
+      severity: 'warning'
+    target_match:
+      severity: 'info'
+    equal: ['alertname', 'instance']
+
+  # ── Silence alerts for specific instances during maintenance ──────────────
+  - source_match:
+      maintenance: 'true'
+    target_match_re:
+      severity: '.+'
+    equal: ['instance']

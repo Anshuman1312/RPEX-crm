@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,17 +11,17 @@ import { useAppDispatch } from "@/hooks/redux";
 import { useLoginMutation } from "@/features/auth/services/authApi";
 import { setCredentials } from "@/features/auth/store/authSlice";
 import { loginSchema, type LoginFormValues } from "@/features/auth/validation/authSchemas";
-import { PermissionKey, routePermissionMap } from "@/config/permissions";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: true }
@@ -32,33 +32,41 @@ export function LoginPage() {
       (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ??
       appPaths.dashboard;
 
-    // Bypass authentication: directly persist mock session and redirect
-    const allPermissions = Array.from(new Set(Object.values(routePermissionMap))) as PermissionKey[];
-    const mockSession = {
-      userId: "mocked-user-id",
-      email: values.email || "admin@rpex.com",
-      name: (values.email || "admin@rpex.com").split("@")[0],
-      role: "SUPER_ADMIN" as const,
-      permissions: allPermissions
-    };
+    try {
+      const result = await login({
+        email: values.email,
+        password: values.password
+      }).unwrap();
 
-    tokenStorage.persistAuth({
-      accessToken: "mocked-token",
-      refreshToken: "mocked-token",
-      session: mockSession,
-      rememberMe: Boolean(values.rememberMe)
-    });
+      const { accessToken, refreshToken, session, rememberMe } = result;
 
-    dispatch(
-      setCredentials({
-        accessToken: "mocked-token",
-        refreshToken: "mocked-token",
-        session: mockSession,
+      tokenStorage.persistAuth({
+        accessToken,
+        refreshToken,
+        session,
         rememberMe: Boolean(values.rememberMe)
-      })
-    );
+      });
 
-    navigate(redirectTo, { replace: true });
+      dispatch(
+        setCredentials({
+          accessToken,
+          refreshToken,
+          session,
+          rememberMe: Boolean(values.rememberMe)
+        })
+      );
+
+      toast.success("Signed in successfully");
+      navigate(redirectTo, { replace: true });
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" && err !== null && "data" in err
+            ? (err.data as { message?: string }).message
+            : "Invalid credentials";
+      toast.error(message);
+    }
   };
 
   return (
@@ -96,8 +104,8 @@ export function LoginPage() {
             Keep me signed in on this device
           </label>
 
-          <Button className="w-full" disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Signing in..." : "Sign in"}
+          <Button className="w-full" disabled={isLoading} type="submit">
+            {isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </CardContent>

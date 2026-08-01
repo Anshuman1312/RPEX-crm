@@ -12,6 +12,7 @@ from app.api.v1 import (
     communications,
     customers,
     dashboard,
+    dlq,
     documents,
     finance,
     followups,
@@ -73,3 +74,4 @@ api_router.include_router(communications.router, prefix="/communications", tags=
 api_router.include_router(invoices.router, prefix="/invoices", tags=["invoices"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 api_router.include_router(tasks.router, prefix="/tasks", tags=["tasks"])
+api_router.include_router(dlq.router, tags=["dlq"])

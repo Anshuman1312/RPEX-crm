@@ -34,11 +34,22 @@ class LoginStatus(str, Enum):
 class LeadSource(str, Enum):
     """Lead acquisition source."""
 
+    FACEBOOK = "facebook"
+    INSTAGRAM = "instagram"
+    GOOGLE_ADS = "google_ads"
+    WEBSITE = "website"
+    WHATSAPP = "whatsapp"
     WALK_IN = "walk_in"
+    REFERRAL = "referral"
+    CHANNEL_PARTNER = "channel_partner"
+    CLIENT_REFERENCE = "client_reference"
+    EXHIBITION_EVENT = "exhibition_event"
+    JUSTDIAL = "justdial"
+    LINKEDIN = "linkedin"
+    99_ACRES = "99_acres"
+    ONLINE_PORTAL = "online_portal"
     PHONE = "phone"
     EMAIL = "email"
-    WEBSITE = "website"
-    REFERRAL = "referral"
     SOCIAL_MEDIA = "social_media"
     ADVERTISEMENT = "advertisement"
     PROPERTY_PORTAL = "property_portal"
@@ -62,6 +73,9 @@ class LeadStatus(str, Enum):
 class LeadPriority(str, Enum):
     """Lead priority level."""
 
+    HOT = "hot"  # 🔥
+    WARM = "warm"  # 🟡
+    COLD = "cold"  # 🔵
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -79,6 +93,33 @@ class LeadLostReason(str, Enum):
     NO_RESPONSE = "no_response"
     CHANGED_MIND = "changed_mind"
     OTHER = "other"
+
+
+class LeadPurpose(str, Enum):
+    """Lead's purpose for property acquisition."""
+
+    INVESTMENT = "investment"
+    SELF_USE = "self_use"
+    BUSINESS = "business"
+
+
+class PropertyType(str, Enum):
+    """Property type classification."""
+
+    PLOT = "plot"
+    VILLA = "villa"
+    FLAT = "flat"
+    COMMERCIAL = "commercial"
+    OTHER = "other"
+
+
+class TimeDuration(str, Enum):
+    """Timeline for property purchase."""
+
+    IMMEDIATE = "immediate"
+    THREE_TO_SIX_MONTHS = "3_6_months"
+    SIX_TO_TWELVE_MONTHS = "6_12_months"
+    ONE_PLUS_YEAR = "1_plus_year"
 
 
 # ── Customer Management ──────────────────────────────────────────────────────
@@ -227,6 +268,19 @@ class FollowUpType(str, Enum):
     SITE_VISIT = "site_visit"
     VIDEO_CALL = "video_call"
     WHATSAPP = "whatsapp"
+    OTHER = "other"
+
+
+class FollowUpMode(str, Enum):
+    """Follow-up mode/channel of communication."""
+
+    CALL = "call"
+    WHATSAPP = "whatsapp"
+    EMAIL = "email"
+    MEETING = "meeting"
+    SMS = "sms"
+    VIDEO_CALL = "video_call"
+    IN_PERSON = "in_person"
     OTHER = "other"
 
 

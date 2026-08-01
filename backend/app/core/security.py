@@ -51,15 +51,21 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
                 iterations,
             )
             return hmac.compare_digest(actual, expected)
-        except Exception:
+        except (ValueError, IndexError) as exc:
+            from loguru import logger
+            logger.error(f"Failed to verify PBKDF2 password: {exc}")
             return False
 
     if hashed_password.startswith(("$2a$", "$2b$", "$2y$")):
         try:
             return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
-        except Exception:
+        except (ValueError, TypeError) as exc:
+            from loguru import logger
+            logger.error(f"Failed to verify bcrypt password: {exc}")
             return False
 
+    from loguru import logger
+    logger.warning("Unknown password hash format")
     return False
 
 

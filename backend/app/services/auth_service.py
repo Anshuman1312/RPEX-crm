@@ -12,6 +12,7 @@ from app.core.exceptions import (
     TokenExpiredException,
     AccountDisabledException,
     DuplicateEntryException,
+    ValidationException,
 )
 from app.core.security import (
     hash_password,
@@ -27,6 +28,7 @@ from app.repositories.user_repository import (
     UserSessionRepository,
     LoginHistoryRepository,
 )
+from app.repositories.auth_repository import AuthRepository
 
 
 class AuthService:
@@ -41,38 +43,30 @@ class AuthService:
       - Login history tracking
     """
 
-    def __init__(self, session: AsyncSession | AuthRepository):
-        if isinstance(session, AsyncSession):
-            self.session = session
-            self.user_repo = UserRepository(session)
-            self.session_repo = UserSessionRepository(session)
-            self.history_repo = LoginHistoryRepository(session)
-            self.repo = AuthRepository(session)
-        else:
-            self.repo = session
-            self.session = getattr(session, "db", None)
+    def __init__(self, session: AsyncSession):
+        self.session = session
+        self.user_repo = UserRepository(session)
+        self.session_repo = UserSessionRepository(session)
+        self.history_repo = LoginHistoryRepository(session)
+        self.repo = AuthRepository(session)
 
     async def authenticate(self, email: str, password: str) -> User:
         user = await self.repo.get_user_by_email(email)
         if not user or not verify_password(password, user.password_hash):
-            from fastapi import HTTPException, status
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+            raise AuthenticationException("Invalid email or password.")
         if hasattr(user, "is_active") and not user.is_active:
-            from fastapi import HTTPException, status
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is inactive")
+            raise AuthenticationException("User account is inactive.")
         return user
 
     async def register_user(self, name: str, email: str, password: str, phone: str, role_name: str = "SALES") -> User:
         existing_user = await self.repo.get_user_by_email(email)
         if existing_user:
-            from fastapi import HTTPException, status
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+            raise DuplicateEntryException("User", "email")
 
         requested_role = role_name.upper().strip()
         role = await self.repo.get_role_by_name(requested_role)
         if not role:
-            from fastapi import HTTPException, status
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid role")
+            raise ValidationException(f"Invalid role: {role_name}")
 
         user_kwargs = {
             "email": email,
@@ -93,16 +87,33 @@ class AuthService:
 
     async def issue_tokens(self, user_id: str) -> dict[str, str]:
         from app.core.security import decode_access_token
-        from app.core.redis import redis_client
+        from app.core.redis import redis_client, RedisManager
+        
         access_token = create_access_token(subject=user_id)
         refresh_token = create_refresh_token(subject=user_id)
+        
+        # Decode refresh token to get JTI and expiry
         try:
             refresh_payload = decode_refresh_token(refresh_token)
-        except Exception:
-            refresh_payload = {"jti": "jti", "exp": datetime.now(timezone.utc).timestamp() + 3600}
-        ttl = max(int(refresh_payload.get("exp", 0) - datetime.now(timezone.utc).timestamp()), 1)
-        if "jti" in refresh_payload:
-            await redis_client.setex(f"refresh:{refresh_payload['jti']}", ttl, user_id)
+            jti = refresh_payload.get("jti")
+            exp = refresh_payload.get("exp", 0)
+        except (TokenExpiredException, InvalidTokenException) as exc:
+            from loguru import logger
+            logger.error(f"Failed to decode refresh token: {exc}")
+            raise AuthenticationException("Failed to generate refresh token")
+        
+        # Calculate TTL from expiry time
+        ttl = max(int(exp - datetime.now(timezone.utc).timestamp()), 1)
+        
+        # Store refresh token mapping in Redis if available
+        if jti and RedisManager.is_available():
+            try:
+                await RedisManager.set_with_ttl(f"refresh:{jti}", user_id, ttl)
+            except Exception as exc:
+                from loguru import logger
+                logger.warning(f"Failed to cache refresh token in Redis: {exc} - continuing without cache")
+                # Don't fail the entire operation if Redis is down
+        
         return {"access_token": access_token, "refresh_token": refresh_token}
 
 

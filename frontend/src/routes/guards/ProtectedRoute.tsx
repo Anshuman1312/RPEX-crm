@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+﻿import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { PermissionKey } from "@/config/permissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useAppSelector } from "@/hooks/redux";
@@ -15,8 +15,6 @@ export function ProtectedRoute({ requiredPermission, allowedRoles }: ProtectedRo
   const { accessToken, session, status } = useAppSelector(state => state.auth);
   const { hasPermission } = usePermissions();
 
-  // Bypassed authentication checks for frontend development
-  /*
   if (status === "unknown") {
     return null;
   }
@@ -32,7 +30,6 @@ export function ProtectedRoute({ requiredPermission, allowedRoles }: ProtectedRo
   if (allowedRoles && session && !allowedRoles.includes(session.role)) {
     return <Navigate to={appPaths.forbidden} replace />;
   }
-  */
 
   return <Outlet />;
 }

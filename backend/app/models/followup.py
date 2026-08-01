@@ -26,7 +26,7 @@ from app.models.mixins import BaseModelMixin, PrimaryKeyMixin, TimestampMixin, S
 from app.database.base import Base
 from app.utils.enums import (
     FollowUpStatus, FollowUpType, FollowUpOutcomeType,
-    FollowUpTaskStatus, FollowUpTaskType
+    FollowUpTaskStatus, FollowUpTaskType, FollowUpMode
 )
 
 
@@ -53,6 +53,10 @@ class FollowUp(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin, SoftDelete
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     scheduled_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    
+    # Follow-up mode/channel
+    mode: Mapped[FollowUpMode | None] = mapped_column(SQLEnum(FollowUpMode), nullable=True, index=True)
+    """Mode of follow-up: call, whatsapp, email, meeting, etc."""
     
     # Status tracking
     status: Mapped[FollowUpStatus] = mapped_column(

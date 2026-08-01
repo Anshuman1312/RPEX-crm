@@ -75,68 +75,91 @@ class BookingService:
         related_lead_id: Optional[str] = None,
         created_by: str = "system",
     ) -> Booking:
-        """Create new booking."""
-        # Validate unit exists and available
-        unit = await self.unit_repo.get_by_id(unit_id)
-        if not unit:
-            raise NotFoundException(f"Unit {unit_id} not found")
-        if unit.status != UnitStatus.AVAILABLE.value:
-            raise ValidationException(f"Unit {unit_id} is not available for booking")
+        """Create new booking with approval workflow."""
+        try:
+            # Validate unit exists and available
+            unit = await self.unit_repo.get_by_id(unit_id)
+            if not unit:
+                raise NotFoundException(f"Unit {unit_id} not found")
+            if unit.status != UnitStatus.AVAILABLE.value:
+                raise ValidationException(f"Unit {unit_id} is not available for booking")
 
-        # Check no active booking for unit
-        existing_booking = await self.booking_repo.get_by_unit_id(unit_id)
-        if existing_booking:
-            raise ConflictException(f"Unit {unit_id} already has active booking")
+            # Check no active booking for unit
+            existing_booking = await self.booking_repo.get_by_unit_id(unit_id)
+            if existing_booking:
+                raise ConflictException(f"Unit {unit_id} already has active booking")
 
-        # Validate customer exists
-        customer = await self.customer_repo.get_by_id(customer_id)
-        if not customer:
-            raise NotFoundException(f"Customer {customer_id} not found")
+            # Validate customer exists
+            customer = await self.customer_repo.get_by_id(customer_id)
+            if not customer:
+                raise NotFoundException(f"Customer {customer_id} not found")
 
-        # Generate booking number
-        booking_number = await self.numbering_service.get_next_number("BOOK")
+            # Generate booking number
+            booking_number = await self.numbering_service.get_next_number("BOOK")
 
-        # Create booking
-        booking = Booking(
-            booking_number=booking_number,
-            unit_id=unit_id,
-            customer_id=customer_id,
-            booking_amount=booking_amount,
-            total_unit_price=unit.price,
-            status=BookingStatus.INITIATED.value,
-            booking_expiry_date=booking_expiry_date or (datetime.utcnow() + timedelta(days=7)),
-            booking_notes=booking_notes,
-            assignment_to_user_id=assignment_to_user_id,
-            approval_status=BookingApprovalStatus.PENDING.value,
-            related_lead_id=related_lead_id,
-            created_by=created_by,
-        )
-        self.session.add(booking)
-        await self.session.flush()
-
-        # Update unit status to BLOCKED
-        unit.status = UnitStatus.BLOCKED.value
-        unit.updated_at = datetime.utcnow()
-
-        # Create approval workflow (3 levels)
-        approval_levels = [
-            (1, "Sales Manager"),
-            (2, "Finance Manager"),
-            (3, "CEO"),
-        ]
-        for level, role_name in approval_levels:
-            approval = BookingApproval(
-                booking_id=booking.id,
-                approval_level=level,
-                approver_user_id="",  # Will be assigned
-                status=BookingApprovalStatus.PENDING.value,
-                approval_order=level,
+            # Create booking
+            booking = Booking(
+                booking_number=booking_number,
+                unit_id=unit_id,
+                customer_id=customer_id,
+                booking_amount=booking_amount,
+                total_unit_price=unit.price,
+                status=BookingStatus.INITIATED.value,
+                booking_expiry_date=booking_expiry_date or (datetime.utcnow() + timedelta(days=7)),
+                booking_notes=booking_notes,
+                assignment_to_user_id=assignment_to_user_id,
+                approval_status=BookingApprovalStatus.PENDING.value,
+                related_lead_id=related_lead_id,
                 created_by=created_by,
             )
-            self.session.add(approval)
+            self.session.add(booking)
+            await self.session.flush()
 
-        await self.session.flush()
-        return booking
+            # Update unit status to BLOCKED
+            unit.status = UnitStatus.BLOCKED.value
+            unit.updated_at = datetime.utcnow()
+
+            # Create approval workflow (3 levels) with actual approvers
+            approval_levels = [
+                (1, "SALES_MANAGER"),
+                (2, "FINANCE_MANAGER"),
+                (3, "SUPER_ADMIN"),
+            ]
+            
+            for level, role_name in approval_levels:
+                # Find a user with this role to assign as approver
+                approver = await self.user_repo.get_first_user_by_role(role_name)
+                approver_user_id = approver.id if approver else None
+                
+                if not approver_user_id:
+                    from loguru import logger
+                    logger.warning(f"No user found with role {role_name} for booking approval level {level}")
+                
+                approval = BookingApproval(
+                    booking_id=booking.id,
+                    approval_level=level,
+                    approver_user_id=approver_user_id,  # ✅ FIXED: Actual approver or None
+                    status=BookingApprovalStatus.PENDING.value,
+                    approval_order=level,
+                    created_by=created_by,
+                )
+                self.session.add(approval)
+
+            await self.session.flush()
+            # Commit all changes together
+            await self.session.commit()
+            return booking
+            
+        except (NotFoundException, ValidationException, ConflictException):
+            # Known business exceptions - rollback and re-raise
+            await self.session.rollback()
+            raise
+        except Exception as exc:
+            # Unexpected error - rollback and log
+            await self.session.rollback()
+            from loguru import logger
+            logger.error(f"Unexpected error creating booking: {exc}", exc_info=True)
+            raise
 
     async def get_booking(self, booking_id: str) -> Booking:
         """Get booking with relations."""
