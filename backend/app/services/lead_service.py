@@ -28,9 +28,9 @@ class LeadService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.lead_repo = LeadRepository(session)
-        self.activity_repo = LeadActivityRepository(session)
-        self.assignment_repo = LeadAssignmentRepository(session)
+        self.lead_repo = LeadRepository(session, Lead)
+        self.activity_repo = LeadActivityRepository(session, LeadActivity)
+        self.assignment_repo = LeadAssignmentRepository(session, LeadAssignment)
         self.numbering = NumberingService(session)
 
     async def create_lead(

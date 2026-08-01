@@ -27,9 +27,9 @@ class NotificationService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.repo = NotificationRepository(session)
-        self.pref_repo = NotificationPreferenceRepository(session)
-        self.template_repo = NotificationTemplateRepository(session)
+        self.repo = NotificationRepository(session, Notification)
+        self.pref_repo = NotificationPreferenceRepository(session, NotificationPreference)
+        self.template_repo = NotificationTemplateRepository(session, NotificationTemplate)
 
     # ── Send Notifications ────────────────────────────────────────────
 

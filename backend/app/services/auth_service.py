@@ -45,9 +45,9 @@ class AuthService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.user_repo = UserRepository(session)
-        self.session_repo = UserSessionRepository(session)
-        self.history_repo = LoginHistoryRepository(session)
+        self.user_repo = UserRepository(session, User)
+        self.session_repo = UserSessionRepository(session, UserSession)
+        self.history_repo = LoginHistoryRepository(session, LoginHistory)
         self.repo = AuthRepository(session)
 
     async def authenticate(self, email: str, password: str) -> User:
@@ -306,7 +306,7 @@ class UserService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.user_repo = UserRepository(session)
+        self.user_repo = UserRepository(session, User)
 
     async def create_user(
         self,

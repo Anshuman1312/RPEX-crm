@@ -21,7 +21,7 @@ from app.core.exceptions import (
     NotFoundException, ConflictException, ValidationException,
     InvalidStateTransitionException
 )
-from app.models.followup import FollowUp, FollowUpTask, FollowUpOutcome
+from app.models.followup import FollowUp, FollowUpTask, FollowUpOutcome, FollowUpAttachment
 from app.models.lead import Lead
 from app.models.customer import Customer
 from app.repositories.followup_repository import (
@@ -40,10 +40,10 @@ class FollowUpService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.repo = FollowUpRepository(session)
-        self.task_repo = FollowUpTaskRepository(session)
-        self.outcome_repo = FollowUpOutcomeRepository(session)
-        self.attachment_repo = FollowUpAttachmentRepository(session)
+        self.repo = FollowUpRepository(session, FollowUp)
+        self.task_repo = FollowUpTaskRepository(session, FollowUpTask)
+        self.outcome_repo = FollowUpOutcomeRepository(session, FollowUpOutcome)
+        self.attachment_repo = FollowUpAttachmentRepository(session, FollowUpAttachment)
         self.numbering = NumberingService(session)
 
     async def create_followup(

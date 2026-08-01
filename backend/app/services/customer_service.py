@@ -28,10 +28,10 @@ class CustomerService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.customer_repo = CustomerRepository(session)
-        self.address_repo = CustomerAddressRepository(session)
-        self.kyc_repo = CustomerKYCRepository(session)
-        self.preference_repo = CustomerPreferenceRepository(session)
+        self.customer_repo = CustomerRepository(session, Customer)
+        self.address_repo = CustomerAddressRepository(session, CustomerAddress)
+        self.kyc_repo = CustomerKYCRepository(session, CustomerKYC)
+        self.preference_repo = CustomerPreferenceRepository(session, CustomerPreference)
         self.numbering_service = NumberingService(session)
 
     # ── Customer CRUD ──────────────────────────────────────────────────────

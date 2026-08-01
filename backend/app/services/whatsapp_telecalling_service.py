@@ -190,8 +190,8 @@ class TelecallingCallRepository(BaseRepository[TelecallingCall]):
 class WhatsAppService:
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.template_repo = WhatsAppTemplateRepository(session)
-        self.interaction_repo = WhatsAppInteractionRepository(session)
+        self.template_repo = WhatsAppTemplateRepository(session, WhatsAppTemplate)
+        self.interaction_repo = WhatsAppInteractionRepository(session, WhatsAppInteraction)
 
     async def send_message(
         self, phone_number: str, message_type: str, sent_by_user_id: UUID,
@@ -276,8 +276,8 @@ class WhatsAppService:
 class TelecallingService:
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.script_repo = TelecallingScriptRepository(session)
-        self.call_repo = TelecallingCallRepository(session)
+        self.script_repo = TelecallingScriptRepository(session, TelecallingScript)
+        self.call_repo = TelecallingCallRepository(session, TelecallingCall)
 
     async def log_call(
         self, phone_number: str, direction: str, agent_user_id: UUID,
