@@ -7,7 +7,6 @@ from app.core.deps import CurrentUser, get_current_permissions
 from app.database.postgres import get_db
 from app.models.user import Role
 from app.repositories.audit_repository import AuditLogRepository
-from app.repositories.auth_repository import AuthRepository
 from app.schemas.auth import (
     ChangePasswordRequest,
     LoginRequest,
@@ -43,7 +42,7 @@ async def register(
     ),
     db: AsyncSession = Depends(get_db),
 ):
-    auth_service = AuthService(AuthRepository(db))
+    auth_service = AuthService(db)
     user = await auth_service.register_user(payload.name, payload.email, payload.password, payload.phone, payload.role_name)
     role = await db.get(Role, user.role_id) if hasattr(user, "role_id") and user.role_id else None
     if hasattr(AuditLogRepository, "log"):
@@ -61,7 +60,7 @@ async def login(
     ),
     db: AsyncSession = Depends(get_db),
 ):
-    auth_service = AuthService(AuthRepository(db))
+    auth_service = AuthService(db)
     user = await auth_service.authenticate(payload.email, payload.password)
     tokens = await auth_service.issue_tokens(str(user.id))
 
@@ -79,7 +78,7 @@ async def refresh(
     ),
     db: AsyncSession = Depends(get_db),
 ):
-    auth_service = AuthService(AuthRepository(db))
+    auth_service = AuthService(db)
     tokens = await auth_service.issue_tokens(payload.refresh_token)
     return TokenResponse(**tokens)
 
@@ -100,7 +99,7 @@ async def logout(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing access token")
 
     access_token = authorization.split(" ", 1)[1]
-    auth_service = AuthService(AuthRepository(db))
+    auth_service = AuthService(db)
     if hasattr(auth_service, "revoke_tokens"):
         await auth_service.revoke_tokens(access_token, payload.refresh_token)
     if hasattr(AuditLogRepository, "log"):
