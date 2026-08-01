@@ -87,17 +87,6 @@ def upgrade() -> None:
     )
     op.create_unique_constraint("uq_role_permission", "role_permissions", ["role_id", "permission_id"])
 
-    op.create_table(
-        "user_permissions",
-        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
-        sa.Column("permission_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True),
-        sa.Column("is_granted", sa.Boolean(), default=True, nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
-    )
-    op.create_unique_constraint("uq_user_permission", "user_permissions", ["user_id", "permission_id"])
-
     # ── Users & Auth ───────────────────────────────────────────────────
     op.create_table(
         "users",
@@ -123,6 +112,17 @@ def upgrade() -> None:
     op.create_index("ix_users_email", "users", ["email"])
     op.create_index("ix_users_phone", "users", ["phone"])
     op.create_index("ix_users_employee_code", "users", ["employee_code"])
+
+    op.create_table(
+        "user_permissions",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("permission_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("is_granted", sa.Boolean(), default=True, nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+    )
+    op.create_unique_constraint("uq_user_permission", "user_permissions", ["user_id", "permission_id"])
 
     op.create_table(
         "user_sessions",
