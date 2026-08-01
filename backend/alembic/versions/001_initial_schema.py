@@ -19,26 +19,110 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # ── Departments, Designations, Roles & Permissions ─────────────────
+    op.create_table(
+        "departments",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("name", sa.String(100), nullable=False, unique=True),
+        sa.Column("code", sa.String(50), nullable=False, unique=True),
+        sa.Column("parent_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("departments.id", ondelete="SET NULL"), nullable=True),
+        sa.Column("is_active", sa.Boolean(), default=True, nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+    )
+
+    op.create_table(
+        "designations",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("name", sa.String(100), nullable=False),
+        sa.Column("code", sa.String(50), nullable=False),
+        sa.Column("department_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("departments.id", ondelete="RESTRICT"), nullable=False, index=True),
+        sa.Column("level", sa.Integer(), nullable=False, default=0),
+        sa.Column("is_active", sa.Boolean(), default=True, nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+    )
+    op.create_unique_constraint("uq_designation_code_per_dept", "designations", ["code", "department_id"])
+
+    op.create_table(
+        "roles",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("name", sa.String(100), nullable=False, unique=True),
+        sa.Column("code", sa.String(50), nullable=False, unique=True),
+        sa.Column("is_system", sa.Boolean(), default=False, nullable=False),
+        sa.Column("is_active", sa.Boolean(), default=True, nullable=False),
+        sa.Column("description", sa.String(500), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+    )
+
+    op.create_table(
+        "permissions",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("name", sa.String(100), nullable=False, unique=True),
+        sa.Column("code", sa.String(100), nullable=False, unique=True, index=True),
+        sa.Column("module", sa.String(50), nullable=False),
+        sa.Column("action", sa.String(50), nullable=False),
+        sa.Column("description", sa.String(500), nullable=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+    )
+    op.create_unique_constraint("uq_permission_module_action", "permissions", ["module", "action"])
+
+    op.create_table(
+        "role_permissions",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("role_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("roles.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("permission_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+    )
+    op.create_unique_constraint("uq_role_permission", "role_permissions", ["role_id", "permission_id"])
+
+    op.create_table(
+        "user_permissions",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("permission_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column("is_granted", sa.Boolean(), default=True, nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+    )
+    op.create_unique_constraint("uq_user_permission", "user_permissions", ["user_id", "permission_id"])
+
     # ── Users & Auth ───────────────────────────────────────────────────
     op.create_table(
         "users",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("email", sa.String(255), nullable=False, unique=True),
+        sa.Column("email", sa.String(255), nullable=False, unique=True, index=True),
+        sa.Column("phone", sa.String(20), nullable=False, unique=True, index=True),
         sa.Column("full_name", sa.String(200), nullable=False),
-        sa.Column("hashed_password", sa.String(255), nullable=False),
-        sa.Column("role", sa.String(100), nullable=True),
-        sa.Column("is_active", sa.Boolean(), default=True),
-        sa.Column("is_superuser", sa.Boolean(), default=False),
-        sa.Column("is_verified", sa.Boolean(), default=False),
-        sa.Column("phone", sa.String(20), nullable=True),
-        sa.Column("avatar_url", sa.Text(), nullable=True),
-        sa.Column("last_login_at", sa.DateTime(), nullable=True),
+        sa.Column("password_hash", sa.String(255), nullable=False),
+        sa.Column("employee_code", sa.String(50), nullable=False, unique=True, index=True),
+        sa.Column("department_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("departments.id", ondelete="SET NULL"), nullable=True, index=True),
+        sa.Column("designation_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("designations.id", ondelete="SET NULL"), nullable=True, index=True),
+        sa.Column("role_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("roles.id", ondelete="SET NULL"), nullable=True, index=True),
+        sa.Column("status", sa.String(50), nullable=False, default="pending_verification", index=True),
+        sa.Column("is_verified", sa.Boolean(), default=False, nullable=False),
+        sa.Column("last_login_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("created_by", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column("updated_by", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
     op.create_index("ix_users_email", "users", ["email"])
+    op.create_index("ix_users_phone", "users", ["phone"])
+    op.create_index("ix_users_employee_code", "users", ["employee_code"])
 
     op.create_table(
         "user_sessions",
