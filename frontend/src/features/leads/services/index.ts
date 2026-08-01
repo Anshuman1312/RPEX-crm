@@ -1,3 +1,8 @@
-export * from "@/features/leads/services/leadApi";
-export * from "@/features/leads/services/leadMockData";
-
+export {
+  leadKeys,
+  useGetLeadsQuery,
+  useCreateLeadMutation,
+  useUpdateLeadStatusMutation,
+  useUpdateLeadMutation,
+  useDeleteLeadMutation
+} from "@/features/leads/services/leadQueries";

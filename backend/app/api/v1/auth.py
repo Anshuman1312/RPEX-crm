@@ -79,8 +79,26 @@ async def refresh(
     ),
     db: AsyncSession = Depends(get_db),
 ):
+    from app.core.security import decode_refresh_token
+    from app.core.exceptions import TokenExpiredException, InvalidTokenException
+    
+    try:
+        token_payload = decode_refresh_token(payload.refresh_token)
+    except (TokenExpiredException, InvalidTokenException) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired refresh token",
+        ) from exc
+
+    user_id = token_payload.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token payload",
+        )
+
     auth_service = AuthService(AuthRepository(db))
-    tokens = await auth_service.issue_tokens(payload.refresh_token)
+    tokens = await auth_service.issue_tokens(user_id)
     return TokenResponse(**tokens)
 
 

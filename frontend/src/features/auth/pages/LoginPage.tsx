@@ -11,7 +11,6 @@ import { useAppDispatch } from "@/hooks/redux";
 import { useLoginMutation } from "@/features/auth/services/authApi";
 import { setCredentials } from "@/features/auth/store/authSlice";
 import { loginSchema, type LoginFormValues } from "@/features/auth/validation/authSchemas";
-import { PermissionKey, routePermissionMap } from "@/config/permissions";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -27,38 +26,42 @@ export function LoginPage() {
     defaultValues: { email: "", password: "", rememberMe: true }
   });
 
+  const [login, { isLoading }] = useLoginMutation();
+
   const onSubmit = async (values: LoginFormValues) => {
     const redirectTo =
       (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ??
       appPaths.dashboard;
 
-    // Bypass authentication: directly persist mock session and redirect
-    const allPermissions = Array.from(new Set(Object.values(routePermissionMap))) as PermissionKey[];
-    const mockSession = {
-      userId: "mocked-user-id",
-      email: values.email || "admin@rpex.com",
-      name: (values.email || "admin@rpex.com").split("@")[0],
-      role: "SUPER_ADMIN" as const,
-      permissions: allPermissions
-    };
+    try {
+      const result = await login({
+        email: values.email,
+        password: values.password
+      }).unwrap();
 
-    tokenStorage.persistAuth({
-      accessToken: "mocked-token",
-      refreshToken: "mocked-token",
-      session: mockSession,
-      rememberMe: Boolean(values.rememberMe)
-    });
-
-    dispatch(
-      setCredentials({
-        accessToken: "mocked-token",
-        refreshToken: "mocked-token",
-        session: mockSession,
+      tokenStorage.persistAuth({
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        session: result.session,
         rememberMe: Boolean(values.rememberMe)
-      })
-    );
+      });
 
-    navigate(redirectTo, { replace: true });
+      dispatch(
+        setCredentials({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+          session: result.session,
+          rememberMe: Boolean(values.rememberMe)
+        })
+      );
+
+      toast.success("Successfully signed in");
+      navigate(redirectTo, { replace: true });
+    } catch (err: any) {
+      const apiErrorMessage = err?.data?.message || err?.message || "Failed to sign in. Please check your credentials.";
+      toast.error(apiErrorMessage);
+      console.error("Login error:", err);
+    }
   };
 
   return (
@@ -96,8 +99,8 @@ export function LoginPage() {
             Keep me signed in on this device
           </label>
 
-          <Button className="w-full" disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Signing in..." : "Sign in"}
+          <Button className="w-full" disabled={isSubmitting || isLoading} type="submit">
+            {isSubmitting || isLoading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </CardContent>

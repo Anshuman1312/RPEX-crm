@@ -76,6 +76,7 @@ def create_access_token(
         "iat": now,
         "exp": now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
         "type": "access",
+        "jti": secrets.token_hex(32),
     }
     if extra_claims:
         payload.update(extra_claims)

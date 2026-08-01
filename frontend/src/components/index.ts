@@ -10,4 +10,5 @@ export * from "@/components/table";
 export * from "@/components/ui/breadcrumb";
 export * from "@/components/ui/scroll-area";
 export * from "@/components/ui/popover";
+export * from "@/components/ui/tooltip";
 

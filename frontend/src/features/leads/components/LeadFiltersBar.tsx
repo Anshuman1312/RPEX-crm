@@ -1,22 +1,22 @@
 import { SearchInput } from "@/components";
-import { leadSourceOptions, leadStageOptions } from "@/features/leads/constants/leadOptions";
-import { LeadSource, LeadStage } from "@/features/leads/types/lead";
+import { leadSourceOptions, leadStatusOptions } from "@/features/leads/constants/leadOptions";
+import { LeadSource, LeadStatus } from "@/features/leads/types/lead";
 
 interface LeadFiltersBarProps {
   search: string;
-  stage: LeadStage | "All";
+  status: LeadStatus | "All";
   source: LeadSource | "All";
   onSearchChange: (value: string) => void;
-  onStageChange: (value: LeadStage | "All") => void;
+  onStatusChange: (value: LeadStatus | "All") => void;
   onSourceChange: (value: LeadSource | "All") => void;
 }
 
 export function LeadFiltersBar({
   search,
-  stage,
+  status,
   source,
   onSearchChange,
-  onStageChange,
+  onStatusChange,
   onSourceChange
 }: LeadFiltersBarProps) {
   return (
@@ -29,12 +29,12 @@ export function LeadFiltersBar({
 
       <select
         className="h-10 rounded-md border bg-background px-3 text-sm"
-        onChange={event => onStageChange(event.target.value as LeadStage | "All")}
-        value={stage}
+        onChange={event => onStatusChange(event.target.value as LeadStatus | "All")}
+        value={status}
       >
-        {leadStageOptions.map(option => (
+        {leadStatusOptions.map(option => (
           <option key={option} value={option}>
-            {option === "All" ? "All Stages" : option}
+            {option === "All" ? "All Statuses" : option}
           </option>
         ))}
       </select>
@@ -53,3 +53,4 @@ export function LeadFiltersBar({
     </section>
   );
 }
+

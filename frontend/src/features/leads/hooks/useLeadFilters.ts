@@ -1,27 +1,28 @@
 import { useMemo, useState } from "react";
-import { LeadFilters, LeadSource, LeadStage } from "@/features/leads/types/lead";
+import { LeadFilters, LeadSource, LeadStatus } from "@/features/leads/types/lead";
 
 export function useLeadFilters() {
   const [search, setSearch] = useState("");
-  const [stage, setStage] = useState<LeadStage | "All">("All");
+  const [status, setStatus] = useState<LeadStatus | "All">("All");
   const [source, setSource] = useState<LeadSource | "All">("All");
 
   const filters = useMemo<LeadFilters>(
     () => ({
       search,
-      stage,
+      status,
       source
     }),
-    [search, source, stage]
+    [search, source, status]
   );
 
   return {
     filters,
     search,
-    stage,
+    status,
     source,
     setSearch,
-    setStage,
+    setStatus,
     setSource
   };
 }
+

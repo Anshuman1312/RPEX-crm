@@ -1,43 +1,51 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, FormField, FormSection, Input } from "@/components";
-import { leadPriorityOptions, leadSourceOptions, leadStageOptions } from "@/features/leads/constants/leadOptions";
 import {
-  CreateLeadFormValues,
-  createLeadSchema
-} from "@/features/leads/validation/leadSchemas";
+  leadPriorityOptions,
+  leadSourceOptions,
+  leadStatusOptions
+} from "@/features/leads/constants/leadOptions";
+import { CreateLeadFormValues, createLeadSchema } from "@/features/leads/validation/leadSchemas";
+import { useAppSelector } from "@/hooks/redux";
 
 interface LeadCreateFormProps {
   isSubmitting: boolean;
   onCancel: () => void;
   onSubmit: (values: CreateLeadFormValues) => Promise<void>;
+  initialValues?: CreateLeadFormValues;
 }
 
-export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateFormProps) {
+export function LeadCreateForm({ isSubmitting, onCancel, onSubmit, initialValues }: LeadCreateFormProps) {
+  const session = useAppSelector((state) => state.auth.session);
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<CreateLeadFormValues>({
     resolver: zodResolver(createLeadSchema),
-    defaultValues: {
-      name: "",
+    defaultValues: initialValues || {
+      fullName: "",
       email: "",
       phone: "",
       source: "Website",
       priority: "Warm",
-      owner: "",
+      assignedToUserId: session?.userId || "",
       budget: 0,
-      nextFollowUp: "",
-      stage: "New"
+      nextFollowupAt: "",
+      status: "New"
     }
   });
 
   return (
-    <FormSection description="Capture lead profile, ownership, and follow-up schedule." title="Create Lead">
+    <FormSection
+      description="Capture lead profile, ownership, and follow-up schedule."
+      title={initialValues ? "Edit Lead" : "Create Lead"}
+    >
       <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-        <FormField error={errors.name?.message} id="lead-name" label="Lead Name" required>
-          <Input id="lead-name" {...register("name")} />
+        <FormField error={errors.fullName?.message} id="lead-name" label="Lead Name" required>
+          <Input id="lead-name" {...register("fullName")} />
         </FormField>
 
         <FormField error={errors.email?.message} id="lead-email" label="Email" required>
@@ -48,15 +56,20 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
           <Input id="lead-phone" {...register("phone")} />
         </FormField>
 
-        <FormField error={errors.owner?.message} id="lead-owner" label="Owner" required>
-          <Input id="lead-owner" {...register("owner")} />
+        <FormField error={errors.assignedToUserId?.message} id="lead-owner" label="Owner" required>
+          <Input id="lead-owner" readOnly value={session?.name || "System Admin"} />
+          <input type="hidden" {...register("assignedToUserId")} />
         </FormField>
 
         <FormField error={errors.source?.message} id="lead-source" label="Source" required>
-          <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" id="lead-source" {...register("source")}>
+          <select
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+            id="lead-source"
+            {...register("source")}
+          >
             {leadSourceOptions
-              .filter(option => option !== "All")
-              .map(option => (
+              .filter((option) => option !== "All")
+              .map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -65,10 +78,14 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
         </FormField>
 
         <FormField error={errors.priority?.message} id="lead-priority" label="Priority" required>
-          <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" id="lead-priority" {...register("priority")}>
+          <select
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+            id="lead-priority"
+            {...register("priority")}
+          >
             {leadPriorityOptions
-              .filter(option => option !== "All")
-              .map(option => (
+              .filter((option) => option !== "All")
+              .map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -76,11 +93,15 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
           </select>
         </FormField>
 
-        <FormField error={errors.stage?.message} id="lead-stage" label="Stage" required>
-          <select className="h-10 w-full rounded-md border bg-background px-3 text-sm" id="lead-stage" {...register("stage")}>
-            {leadStageOptions
-              .filter(option => option !== "All")
-              .map(option => (
+        <FormField error={errors.status?.message} id="lead-status" label="Status" required>
+          <select
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+            id="lead-status"
+            {...register("status")}
+          >
+            {leadStatusOptions
+              .filter((option) => option !== "All")
+              .map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -92,8 +113,13 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
           <Input id="lead-budget" type="number" {...register("budget", { valueAsNumber: true })} />
         </FormField>
 
-        <FormField error={errors.nextFollowUp?.message} id="lead-followup" label="Next Follow-up" required>
-          <Input id="lead-followup" type="date" {...register("nextFollowUp")} />
+        <FormField
+          error={errors.nextFollowupAt?.message}
+          id="lead-followup"
+          label="Next Follow-up"
+          required
+        >
+          <Input id="lead-followup" type="date" {...register("nextFollowupAt")} />
         </FormField>
 
         <div className="col-span-full flex justify-end gap-2">
@@ -101,7 +127,9 @@ export function LeadCreateForm({ isSubmitting, onCancel, onSubmit }: LeadCreateF
             Cancel
           </Button>
           <Button disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Creating..." : "Create Lead"}
+            {isSubmitting 
+              ? (initialValues ? "Saving..." : "Creating...") 
+              : (initialValues ? "Save Changes" : "Create Lead")}
           </Button>
         </div>
       </form>

@@ -1,6 +1,6 @@
-import { LeadPriority, LeadSource, LeadStage } from "@/features/leads/types/lead";
+import { LeadPriority, LeadSource, LeadStatus } from "@/features/leads/types/lead";
 
-export const leadStageOptions: Array<LeadStage | "All"> = [
+export const leadStatusOptions: Array<LeadStatus | "All"> = [
   "All",
   "New",
   "Qualified",
@@ -8,6 +8,7 @@ export const leadStageOptions: Array<LeadStage | "All"> = [
   "Won",
   "Future Perspective"
 ];
+
 
 export const leadSourceOptions: Array<LeadSource | "All"> = [
   "All",
