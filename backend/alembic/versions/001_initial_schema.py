@@ -160,10 +160,12 @@ def upgrade() -> None:
         "system_settings",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("key", sa.String(100), nullable=False, unique=True),
+        sa.Column("description", sa.String(500), nullable=True),
         sa.Column("str_value", sa.Text(), nullable=True),
         sa.Column("int_value", sa.Integer(), nullable=True),
         sa.Column("float_value", sa.Float(), nullable=True),
         sa.Column("bool_value", sa.Boolean(), nullable=True),
+        sa.Column("text_value", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
     )
