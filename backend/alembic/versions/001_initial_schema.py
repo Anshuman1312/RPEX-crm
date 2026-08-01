@@ -360,6 +360,27 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
     )
 
+    # ── Site Visits ────────────────────────────────────────────────────
+    op.create_table(
+        "site_visits",
+        sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column("visit_date", sa.Date(), nullable=False, index=True),
+        sa.Column("visit_time", sa.DateTime(), nullable=True),
+        sa.Column("customer_name", sa.String(200), nullable=False, index=True),
+        sa.Column("sales_executive", sa.String(200), nullable=True),
+        sa.Column("pickup_required", sa.Boolean(), default=False),
+        sa.Column("vehicle_assigned", sa.String(100), nullable=True),
+        sa.Column("driver", sa.String(100), nullable=True),
+        sa.Column("attendance", sa.String(32), nullable=False, default="PENDING"),
+        sa.Column("feedback", sa.Text(), nullable=True),
+        sa.Column("outcome", sa.String(100), nullable=True),
+        sa.Column("created_by", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
+        sa.Column("deleted_at", sa.DateTime(), nullable=True),
+    )
+
     # ── Invoices ───────────────────────────────────────────────────────
     op.create_table(
         "invoices",
@@ -806,7 +827,7 @@ def downgrade() -> None:
         "activities", "task_comments", "task_checklists", "tasks",
         "followup_outcomes", "followup_tasks", "followups",
         "finance_ledger_entries", "invoice_items", "invoices",
-        "possessions", "booking_cancellations", "booking_approvals", "booking_payment_plans", "bookings",
+        "site_visits", "possessions", "booking_cancellations", "booking_approvals", "booking_payment_plans", "bookings",
         "units", "floors", "buildings", "blocks", "projects",
         "customer_preferences", "customer_kycs", "customer_addresses", "customers",
         "lead_activities", "leads",
