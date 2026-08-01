@@ -78,8 +78,16 @@ async def refresh(
     ),
     db: AsyncSession = Depends(get_db),
 ):
+    from app.core.security import decode_refresh_token
+    
     auth_service = AuthService(db)
-    tokens = await auth_service.issue_tokens(payload.refresh_token)
+    # Decode refresh token to extract user_id from sub claim
+    refresh_payload = decode_refresh_token(payload.refresh_token)
+    user_id = refresh_payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+    
+    tokens = await auth_service.issue_tokens(user_id)
     return TokenResponse(**tokens)
 
 
