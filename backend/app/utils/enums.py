@@ -46,7 +46,7 @@ class LeadSource(str, Enum):
     EXHIBITION_EVENT = "exhibition_event"
     JUSTDIAL = "justdial"
     LINKEDIN = "linkedin"
-    99_ACRES = "99_acres"
+    NINETY_NINE_ACRES = "99_acres"
     ONLINE_PORTAL = "online_portal"
     PHONE = "phone"
     EMAIL = "email"
