@@ -15,8 +15,6 @@ from fastapi import APIRouter, HTTPException, Query
 from loguru import logger
 from pydantic import BaseModel
 
-from app.core.deps import get_current_user
-from app.models.user import User
 from app.workers.celery_app import celery, dlq_manager
 
 # ── Schemas ────────────────────────────────────────────────────────────────────
@@ -68,7 +66,7 @@ router = APIRouter(prefix="/api/v1/dlq", tags=["DLQ"])
 # ── Public Endpoints ───────────────────────────────────────────────────────────
 
 @router.get("/stats", response_model=DLQStatsResponse)
-async def get_dlq_stats(current_user: User = None) -> dict[str, Any]:
+async def get_dlq_stats() -> dict[str, Any]:
     """Get Dead Letter Queue statistics.
     
     Returns:
@@ -94,7 +92,6 @@ async def get_dlq_stats(current_user: User = None) -> dict[str, Any]:
 async def list_dlq_tasks(
     limit: int = Query(50, ge=1, le=500),
     offset: int = Query(0, ge=0),
-    current_user: User = None,
 ) -> dict[str, Any]:
     """List all failed tasks in the DLQ.
     
@@ -143,7 +140,6 @@ async def list_dlq_tasks(
 @router.get("/tasks/{task_id}", response_model=dict[str, Any])
 async def get_dlq_task_details(
     task_id: str,
-    current_user: User = None,
 ) -> dict[str, Any]:
     """Get details of a specific failed task.
     
@@ -183,7 +179,6 @@ async def get_dlq_task_details(
 @router.post("/tasks/{task_id}/retry", response_model=DLQRetryResponse)
 async def retry_dlq_task(
     task_id: str,
-    current_user: User = None,
 ) -> dict[str, Any]:
     """Retry a single failed task from the DLQ.
     
@@ -254,7 +249,6 @@ async def retry_dlq_task(
 async def retry_all_dlq_tasks(
     task_name_filter: str | None = Query(None),
     max_age_hours: int | None = Query(None),
-    current_user: User = None,
 ) -> dict[str, Any]:
     """Retry all failed tasks in the DLQ (bulk operation).
     
@@ -338,7 +332,6 @@ async def retry_all_dlq_tasks(
 @router.delete("/tasks/{task_id}", response_model=dict[str, str])
 async def delete_dlq_task(
     task_id: str,
-    current_user: User = None,
 ) -> dict[str, str]:
     """Delete a failed task from the DLQ.
     
@@ -374,7 +367,6 @@ async def delete_dlq_task(
 @router.post("/tasks/cleanup", response_model=dict[str, Any])
 async def cleanup_old_dlq_tasks(
     days_old: int = Query(30, ge=1),
-    current_user: User = None,
 ) -> dict[str, Any]:
     """Cleanup (delete) old tasks from the DLQ.
     
