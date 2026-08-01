@@ -109,9 +109,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_users_email", "users", ["email"])
-    op.create_index("ix_users_phone", "users", ["phone"])
-    op.create_index("ix_users_employee_code", "users", ["employee_code"])
 
     op.create_table(
         "user_permissions",
