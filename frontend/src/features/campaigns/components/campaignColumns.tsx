@@ -12,9 +12,7 @@ const statusToneMap: Record<CampaignStatus, "info" | "warning" | "danger" | "suc
   Completed: "danger"
 };
 
-export function buildCampaignColumns(
-  onStatusChange: (campaignId: string, status: CampaignStatus) => void
-): ColumnDef<CampaignRecord>[] {
+export function buildCampaignColumns(): ColumnDef<CampaignRecord>[] {
   return [
     {
       accessorKey: "id",
@@ -25,24 +23,33 @@ export function buildCampaignColumns(
       header: "Campaign Name"
     },
     {
-      accessorKey: "channel",
-      header: "Channel"
+      accessorKey: "type",
+      header: "Type"
     },
     {
-      accessorKey: "owner",
-      header: "Owner"
+      accessorKey: "platform",
+      header: "Platform"
     },
     {
       accessorKey: "budget",
       header: "Budget"
     },
     {
-      accessorKey: "startDate",
-      header: "Start"
+      accessorKey: "start_date",
+      header: "Start Date"
     },
     {
-      accessorKey: "endDate",
-      header: "End"
+      accessorKey: "end_date",
+      header: "End Date"
+    },
+    {
+      accessorKey: "extra_data",
+      header: "Extra Data",
+      cell: ({ row }) => (
+        <pre className="font-mono text-xs max-w-[200px] truncate">
+          {JSON.stringify(row.original.extra_data)}
+        </pre>
+      )
     },
     {
       accessorKey: "leadsGenerated",
@@ -54,17 +61,6 @@ export function buildCampaignColumns(
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <StatusBadge label={row.original.status} tone={statusToneMap[row.original.status]} />
-          <select
-            className="h-8 rounded border bg-background px-2 text-xs"
-            onChange={event => onStatusChange(row.original.id, event.target.value as CampaignStatus)}
-            value={row.original.status}
-          >
-            {(["Draft", "Running", "Paused", "Completed"] as CampaignStatus[]).map(status => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
         </div>
       )
     },

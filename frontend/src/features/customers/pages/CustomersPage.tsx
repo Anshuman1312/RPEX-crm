@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button, DataTable, Dialog, ErrorState, LoadingState } from "@/components";
+import { Button, DataTable, Dialog, LoadingState } from "@/components";
 import { CustomerCreateForm } from "@/features/customers/components/CustomerCreateForm";
 import { CustomerFiltersBar } from "@/features/customers/components/CustomerFiltersBar";
 import { CustomerStatsCards } from "@/features/customers/components/CustomerStatsCards";
@@ -15,7 +15,8 @@ import { PageContainer } from "@/layouts/components/PageContainer";
 
 export function CustomersPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const { filters, search, setSearch, purpose, setPurpose, propertyType, setPropertyType } = useCustomerFilters();
+  const { filters, search, status, customerType, setSearch, setStatus, setCustomerType } =
+    useCustomerFilters();
   const { data, isLoading, isError, refetch } = useGetCustomersQuery(filters);
   const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateCustomerMutation();
 
@@ -33,39 +34,36 @@ export function CustomersPage() {
 
   return (
     <PageContainer
-      actions={
-        <Button onClick={() => setShowCreateForm(true)}>
-          Create Client
-        </Button>
-      }
+      actions={<Button onClick={() => setShowCreateForm(true)}>Create Client</Button>}
       description="Track and manage prospective client requirements, budgets, and property preferences."
-      title="Client Details"
+      title="Customer Details"
     >
       {isLoading ? <LoadingState label="Loading client workspace..." /> : null}
-      {isError ? (
-        <ErrorState
-          description="Could not load clients. Retry to refresh the workspace."
-          onRetry={() => refetch()}
-          title="Client workspace unavailable"
-        />
-      ) : null}
-
-      {data ? <CustomerStatsCards stats={data.stats} /> : null}
+      <CustomerStatsCards
+        stats={
+          data?.stats ?? {
+            by_status: {},
+            by_type: {},
+            total: 0
+          }
+        }
+      />
 
       <CustomerFiltersBar
         onSearchChange={setSearch}
-        onPurposeChange={setPurpose}
-        onPropertyTypeChange={setPropertyType}
+        onStatusChange={setStatus}
+        onCustomerTypeChange={setCustomerType}
         search={search}
-        purpose={purpose}
-        propertyType={propertyType}
+        status={status}
+        customerType={customerType}
       />
 
       <Dialog
         isOpen={showCreateForm}
         onClose={() => setShowCreateForm(false)}
-        title="Create Client Details"
-        size="lg"
+        title="Create Customer Details"
+        description="Create customer profile and capture detailed property preferences."
+        size="xl"
       >
         <CustomerCreateForm
           isSubmitting={isCreatingCustomer}

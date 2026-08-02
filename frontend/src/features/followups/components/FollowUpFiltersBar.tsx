@@ -1,33 +1,28 @@
 import { SearchInput } from "@/components";
 import {
-  followUpChannelOptions,
+  followUpTypeOptions,
   followUpPriorityOptions,
   followUpStatusOptions
 } from "@/features/followups/constants/followupOptions";
-import {
-  FollowUpChannel,
-  FollowUpPriority,
-  FollowUpStatus
-} from "@/features/followups/types/followup";
 
 interface FollowUpFiltersBarProps {
   search: string;
-  channel: FollowUpChannel | "All";
-  priority: FollowUpPriority | "All";
-  status: FollowUpStatus | "All";
+  type: string;
+  priority: string;
+  status: string;
   onSearchChange: (value: string) => void;
-  onChannelChange: (value: FollowUpChannel | "All") => void;
-  onPriorityChange: (value: FollowUpPriority | "All") => void;
-  onStatusChange: (value: FollowUpStatus | "All") => void;
+  onTypeChange: (value: string) => void;
+  onPriorityChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
 }
 
 export function FollowUpFiltersBar({
   search,
-  channel,
+  type,
   priority,
   status,
   onSearchChange,
-  onChannelChange,
+  onTypeChange,
   onPriorityChange,
   onStatusChange
 }: FollowUpFiltersBarProps) {
@@ -35,25 +30,25 @@ export function FollowUpFiltersBar({
     <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
       <SearchInput
         onChange={onSearchChange}
-        placeholder="Search by follow-up id, lead name or owner"
+        placeholder="Search by subject, notes or reference..."
         value={search}
       />
 
       <select
-        className="h-10 rounded-md border bg-background px-3 text-sm"
-        onChange={event => onChannelChange(event.target.value as FollowUpChannel | "All")}
-        value={channel}
+        className="h-10 rounded-md border bg-background px-3 text-sm capitalize"
+        onChange={event => onTypeChange(event.target.value)}
+        value={type}
       >
-        {followUpChannelOptions.map(option => (
+        {followUpTypeOptions.map(option => (
           <option key={option} value={option}>
-            Mode: {option}
+            Type: {option === "All" ? "All" : option.replace("_", " ")}
           </option>
         ))}
       </select>
 
       <select
         className="h-10 rounded-md border bg-background px-3 text-sm"
-        onChange={event => onPriorityChange(event.target.value as FollowUpPriority | "All")}
+        onChange={event => onPriorityChange(event.target.value)}
         value={priority}
       >
         {followUpPriorityOptions.map(option => (
@@ -64,8 +59,8 @@ export function FollowUpFiltersBar({
       </select>
 
       <select
-        className="h-10 rounded-md border bg-background px-3 text-sm"
-        onChange={event => onStatusChange(event.target.value as FollowUpStatus | "All")}
+        className="h-10 rounded-md border bg-background px-3 text-sm capitalize"
+        onChange={event => onStatusChange(event.target.value)}
         value={status}
       >
         {followUpStatusOptions.map(option => (

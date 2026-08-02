@@ -1,35 +1,30 @@
 import { useMemo, useState } from "react";
-import {
-  FollowUpChannel,
-  FollowUpFilters,
-  FollowUpPriority,
-  FollowUpStatus
-} from "@/features/followups/types/followup";
+import { FollowUpFilters } from "@/features/followups/types/followup";
 
 export function useFollowUpFilters() {
   const [search, setSearch] = useState("");
-  const [channel, setChannel] = useState<FollowUpChannel | "All">("All");
-  const [priority, setPriority] = useState<FollowUpPriority | "All">("All");
-  const [status, setStatus] = useState<FollowUpStatus | "All">("All");
+  const [type, setType] = useState<string>("All");
+  const [priority, setPriority] = useState<string>("All");
+  const [status, setStatus] = useState<string>("All");
 
   const filters = useMemo<FollowUpFilters>(
     () => ({
       search,
-      channel,
-      priority,
-      status
+      type: type === "All" ? undefined : (type as any),
+      priority: priority === "All" ? undefined : (priority as any),
+      status: status === "All" ? undefined : (status as any)
     }),
-    [channel, priority, search, status]
+    [type, search, priority, status]
   );
 
   return {
     filters,
     search,
-    channel,
+    type,
     priority,
     status,
     setSearch,
-    setChannel,
+    setType,
     setPriority,
     setStatus
   };

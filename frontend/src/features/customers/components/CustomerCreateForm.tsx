@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button, FormField, FormSection, Input } from "@/components";
+import { Button, FormField, Input } from "@/components";
+import { Textarea } from "@/components/ui/textarea";
 import {
   CreateCustomerFormValues,
   createCustomerSchema
@@ -24,99 +25,101 @@ export function CustomerCreateForm({
   } = useForm<CreateCustomerFormValues>({
     resolver: zodResolver(createCustomerSchema),
     defaultValues: {
-      title: "Mr.",
-      name: "",
-      phone: "",
-      alternatePhone: "",
+      first_name: "",
+      last_name: "",
       email: "",
-      occupation: "",
-      address: "",
-      budgetRange: "",
-      timeDuration: "",
-      purpose: "Self Use",
-      propertyType: "Flat",
-      remarks: ""
+      phone: "",
+      alternate_phone: "",
+      company_name: "",
+      customer_type: "individual",
+      referred_by_user_id: "",
+      lead_converted_from_id: "",
+      preferred_contact_method: "",
+      preferred_language: "en",
+      gstin: "",
+      pan: "",
+      notes: ""
     }
   });
 
   return (
-    <FormSection
-      description="Create client profile and capture detailed property preferences."
-      title="Create Client Details"
-    >
-      <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-        <FormField error={errors.title?.message} id="customer-title" label="Title" required>
-          <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="customer-title"
-            {...register("title")}
-          >
-            <option value="Mr.">Mr.</option>
-            <option value="Miss">Miss</option>
-            <option value="Mrs">Mrs</option>
-          </select>
+    <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+        <FormField error={errors.first_name?.message} id="customer-first-name" label="First Name" required>
+          <Input id="customer-first-name" {...register("first_name")} />
         </FormField>
 
-        <FormField error={errors.name?.message} id="customer-name" label="Full Name" required>
-          <Input id="customer-name" {...register("name")} />
+        <FormField error={errors.last_name?.message} id="customer-last-name" label="Last Name" required>
+          <Input id="customer-last-name" {...register("last_name")} />
         </FormField>
 
         <FormField error={errors.phone?.message} id="customer-phone" label="Mobile Number (Primary)" required>
           <Input id="customer-phone" {...register("phone")} />
         </FormField>
 
-        <FormField error={errors.alternatePhone?.message} id="customer-alt-phone" label="Alternate Mobile Number">
-          <Input id="customer-alt-phone" {...register("alternatePhone")} />
+        <FormField error={errors.alternate_phone?.message} id="customer-alt-phone" label="Alternate Mobile Number">
+          <Input id="customer-alt-phone" {...register("alternate_phone")} />
         </FormField>
 
-        <FormField error={errors.email?.message} id="customer-email" label="Email ID">
+        <FormField error={errors.email?.message} id="customer-email" label="Email ID" required>
           <Input id="customer-email" type="email" {...register("email")} />
         </FormField>
 
-        <FormField error={errors.occupation?.message} id="customer-occupation" label="Occupation">
-          <Input id="customer-occupation" {...register("occupation")} />
+        <FormField error={errors.company_name?.message} id="customer-company" label="Company Name">
+          <Input id="customer-company" {...register("company_name")} />
         </FormField>
 
-        <FormField error={errors.address?.message} id="customer-address" label="Address" className="sm:col-span-2">
-          <Input id="customer-address" {...register("address")} />
-        </FormField>
-
-        <FormField error={errors.budgetRange?.message} id="customer-budget" label="Budget Range">
-          <Input id="customer-budget" {...register("budgetRange")} placeholder="e.g. 50L - 80L, 1Cr+" />
-        </FormField>
-
-        <FormField error={errors.timeDuration?.message} id="customer-duration" label="Time Duration">
-          <Input id="customer-duration" {...register("timeDuration")} placeholder="e.g. Immediate, 3 Months" />
-        </FormField>
-
-        <FormField error={errors.purpose?.message} id="customer-purpose" label="Purpose" required>
+        <FormField error={errors.customer_type?.message} id="customer-type" label="Customer Type" required>
           <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="customer-purpose"
-            {...register("purpose")}
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm capitalize"
+            id="customer-type"
+            {...register("customer_type")}
           >
-            <option value="Investment">Investment</option>
-            <option value="Self Use">Self Use</option>
-            <option value="Business">Business</option>
+            <option value="individual">Individual</option>
+            <option value="corporate">Corporate</option>
+            <option value="partnership">Partnership</option>
+            <option value="trust">Trust</option>
+            <option value="nri">NRI</option>
           </select>
         </FormField>
 
-        <FormField error={errors.propertyType?.message} id="customer-property" label="Property Type" required>
+        <FormField error={errors.preferred_contact_method?.message} id="customer-contact-method" label="Preferred Contact Method">
           <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="customer-property"
-            {...register("propertyType")}
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm capitalize"
+            id="customer-contact-method"
+            {...register("preferred_contact_method")}
           >
-            <option value="Plot">Plot</option>
-            <option value="Villa">Villa</option>
-            <option value="Flat">Flat</option>
-            <option value="Commercial">Commercial</option>
+            <option value="">Select Method</option>
+            <option value="phone">Phone</option>
+            <option value="email">Email</option>
+            <option value="whatsapp">WhatsApp</option>
           </select>
         </FormField>
 
-        <FormField error={errors.remarks?.message} id="customer-remarks" label="Remarks" className="sm:col-span-2">
-          <Input id="customer-remarks" {...register("remarks")} />
+        <FormField error={errors.preferred_language?.message} id="customer-language" label="Preferred Language">
+          <Input id="customer-language" {...register("preferred_language")} />
         </FormField>
+
+        <FormField error={errors.gstin?.message} id="customer-gstin" label="GSTIN">
+          <Input id="customer-gstin" {...register("gstin")} />
+        </FormField>
+
+        <FormField error={errors.pan?.message} id="customer-pan" label="PAN">
+          <Input id="customer-pan" {...register("pan")} />
+        </FormField>
+
+        <FormField error={errors.referred_by_user_id?.message} id="customer-referred-by" label="Referred By User ID">
+          <Input id="customer-referred-by" {...register("referred_by_user_id")} />
+        </FormField>
+
+        <FormField error={errors.lead_converted_from_id?.message} id="customer-lead-converted-from" label="Converted From Lead ID">
+          <Input id="customer-lead-converted-from" {...register("lead_converted_from_id")} />
+        </FormField>
+
+        <div className="sm:col-span-2">
+          <FormField error={errors.notes?.message} id="customer-notes" label="Notes">
+            <Textarea id="customer-notes" {...register("notes")} />
+          </FormField>
+        </div>
 
         <div className="col-span-full flex justify-end gap-2 mt-2">
           <Button onClick={onCancel} type="button" variant="outline">
@@ -126,7 +129,6 @@ export function CustomerCreateForm({
             {isSubmitting ? "Creating..." : "Create Client"}
           </Button>
         </div>
-      </form>
-    </FormSection>
+    </form>
   );
 }

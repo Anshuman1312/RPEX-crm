@@ -12,17 +12,17 @@ export const leadStatusOptions: Array<LeadStatus | "All"> = [
 
 export const leadSourceOptions: Array<LeadSource | "All"> = [
   "All",
-  "Facebook",
-  "Instagram",
-  "Google Ads",
+  //"Facebook",
+ // "Instagram",
+ // "Google Ads",
   "Website",
-  "WhatsApp",
+  //"WhatsApp",
   "Walk-in",
   "Referral",
   "Channel Partner",
   "Client Reference",
   "Exhibition/Event",
-  "JustDial",
+  //"JustDial",
   "Other"
 ];
 

@@ -1,31 +1,32 @@
 import { useMemo, useState } from "react";
-import {
-  CustomerFilters,
-  CustomerPropertyType,
-  CustomerPurpose
-} from "@/features/customers/types/customer";
+import { CustomerFilters } from "@/features/customers/types/customer";
 
 export function useCustomerFilters() {
   const [search, setSearch] = useState("");
-  const [purpose, setPurpose] = useState<CustomerPurpose | "All">("All");
-  const [propertyType, setPropertyType] = useState<CustomerPropertyType | "All">("All");
+  const [status, setStatus] = useState<string>("All");
+  const [customerType, setCustomerType] = useState<string>("All");
 
   const filters = useMemo<CustomerFilters>(
-    () => ({
-      search,
-      purpose,
-      propertyType
-    }),
-    [search, purpose, propertyType]
+    () => {
+      const f: CustomerFilters = { search };
+      if (status !== "All") {
+        f.statuses = status;
+      }
+      if (customerType !== "All") {
+        f.customer_types = customerType;
+      }
+      return f;
+    },
+    [search, status, customerType]
   );
 
   return {
     filters,
     search,
-    purpose,
-    propertyType,
+    status,
+    customerType,
     setSearch,
-    setPurpose,
-    setPropertyType
+    setStatus,
+    setCustomerType
   };
 }

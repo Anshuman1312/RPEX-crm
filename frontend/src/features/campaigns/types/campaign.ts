@@ -1,22 +1,22 @@
-export type CampaignChannel = "WhatsApp" | "Email" | "SMS" | "Social" | "Referral";
 export type CampaignStatus = "Draft" | "Running" | "Paused" | "Completed";
 
 export interface CampaignRecord {
   id: string;
   name: string;
-  channel: CampaignChannel;
-  status: CampaignStatus;
-  owner: string;
+  type: string;
+  platform: string;
   budget: number;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
+  extra_data: Record<string, any>;
+  status: CampaignStatus;
   leadsGenerated: number;
   updatedAt: string;
 }
 
 export interface CampaignFilters {
   search?: string;
-  channel?: CampaignChannel | "All";
+  type?: string | "All";
   status?: CampaignStatus | "All";
 }
 
@@ -35,9 +35,10 @@ export interface CampaignListResponse {
 
 export interface CreateCampaignInput {
   name: string;
-  channel: CampaignChannel;
-  owner: string;
+  type: string;
+  platform: string;
   budget: number;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
+  extra_data: Record<string, any>;
 }

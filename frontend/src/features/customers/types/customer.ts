@@ -1,34 +1,37 @@
-export type CustomerTitle = "Mr." | "Miss" | "Mrs";
-export type CustomerPurpose = "Investment" | "Self Use" | "Business";
-export type CustomerPropertyType = "Plot" | "Villa" | "Flat" | "Commercial";
-
 export interface CustomerRecord {
   id: string;
-  title: CustomerTitle;
-  name: string; // Full Name
-  phone: string; // Mobile Number (Primary)
-  alternatePhone?: string; // Alternate Mobile Number
-  email: string; // Email ID
-  occupation?: string;
-  address?: string;
-  budgetRange?: string;
-  timeDuration?: string;
-  purpose: CustomerPurpose;
-  propertyType: CustomerPropertyType;
-  remarks?: string;
+  customer_number: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  alternate_phone?: string;
+  company_name?: string;
+  customer_type: string;
+  status: string;
+  referred_by_user_id?: string;
+  referred_by_date?: string;
+  lead_converted_from_id?: string;
+  lead_converted_date?: string;
+  preferred_contact_method?: string;
+  preferred_language?: string;
+  gstin?: string;
+  pan?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CustomerFilters {
   search?: string;
-  purpose?: CustomerPurpose | "All";
-  propertyType?: CustomerPropertyType | "All";
+  statuses?: string;
+  customer_types?: string;
 }
 
 export interface CustomerStats {
+  by_status: Record<string, number>;
+  by_type: Record<string, number>;
   total: number;
-  investment: number;
-  selfUse: number;
-  business: number;
 }
 
 export interface CustomerListResponse {
@@ -38,16 +41,18 @@ export interface CustomerListResponse {
 }
 
 export interface CreateCustomerInput {
-  title: CustomerTitle;
-  name: string;
-  phone: string;
-  alternatePhone?: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  occupation?: string;
-  address?: string;
-  budgetRange?: string;
-  timeDuration?: string;
-  purpose: CustomerPurpose;
-  propertyType: CustomerPropertyType;
-  remarks?: string;
+  phone: string;
+  alternate_phone?: string;
+  company_name?: string;
+  customer_type: string;
+  referred_by_user_id?: string;
+  lead_converted_from_id?: string;
+  preferred_contact_method?: string;
+  preferred_language?: string;
+  gstin?: string;
+  pan?: string;
+  notes?: string;
 }

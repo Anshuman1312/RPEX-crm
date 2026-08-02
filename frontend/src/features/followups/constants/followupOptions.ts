@@ -1,18 +1,21 @@
 import {
-  FollowUpChannel,
-  FollowUpPriority,
+  FollowUpType,
   FollowUpStatus
 } from "@/features/followups/types/followup";
 
-export const followUpChannelOptions: Array<FollowUpChannel | "All"> = [
+export const followUpTypeOptions: Array<FollowUpType | "All"> = [
   "All",
-  "Call",
-  "WhatsApp",
-  "Email",
-  "Meeting"
+  "call",
+  "email",
+  "sms",
+  "meeting",
+  "site_visit",
+  "video_call",
+  "whatsapp",
+  "other"
 ];
 
-export const followUpPriorityOptions: Array<FollowUpPriority | "All"> = [
+export const followUpPriorityOptions = [
   "All",
   "Low",
   "Medium",
@@ -21,8 +24,8 @@ export const followUpPriorityOptions: Array<FollowUpPriority | "All"> = [
 
 export const followUpStatusOptions: Array<FollowUpStatus | "All"> = [
   "All",
-  "Pending",
-  "Done",
-  "Missed",
-  "Rescheduled"
+  "scheduled",
+  "completed",
+  "cancelled",
+  "overdue"
 ];

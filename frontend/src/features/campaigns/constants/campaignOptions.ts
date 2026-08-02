@@ -1,6 +1,6 @@
-import { CampaignChannel, CampaignStatus } from "@/features/campaigns/types/campaign";
+import { CampaignStatus } from "@/features/campaigns/types/campaign";
 
-export const campaignChannelOptions: Array<CampaignChannel | "All"> = [
+export const campaignTypeOptions: string[] = [
   "All",
   "WhatsApp",
   "Email",

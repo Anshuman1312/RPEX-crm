@@ -21,6 +21,7 @@ import { PageContainer } from "@/layouts/components/PageContainer";
 export function LeadsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingLead, setEditingLead] = useState<LeadRecord | null>(null);
+  const [viewingLead, setViewingLead] = useState<LeadRecord | null>(null);
   const { filters, search, setSearch, source, setSource, status, setStatus } = useLeadFilters();
   const { data, isLoading, isError, refetch } = useGetLeadsQuery(filters);
   
@@ -36,6 +37,10 @@ export function LeadsPage() {
 
   const handleEditClick = useCallback((lead: LeadRecord) => {
     setEditingLead(lead);
+  }, []);
+
+  const handleViewClick = useCallback((lead: LeadRecord) => {
+    setViewingLead(lead);
   }, []);
 
   const handleDeleteClick = useCallback(async (leadId: string) => {
@@ -62,9 +67,10 @@ export function LeadsPage() {
           }
         },
         handleEditClick,
-        handleDeleteClick
+        handleDeleteClick,
+        handleViewClick
       ),
-    [updateLeadStatus, handleEditClick, handleDeleteClick]
+    [updateLeadStatus, handleEditClick, handleDeleteClick, handleViewClick]
   );
 
   const handleCreateLead = async (values: CreateLeadFormValues) => {
@@ -114,7 +120,8 @@ export function LeadsPage() {
         isOpen={showCreateForm}
         onClose={() => setShowCreateForm(false)}
         title="Create Lead"
-        size="lg"
+        description="Capture lead profile, ownership, and follow-up schedule."
+        size="xl"
       >
         <LeadCreateForm
           isSubmitting={isCreatingLead}
@@ -124,10 +131,73 @@ export function LeadsPage() {
       </Dialog>
 
       <Dialog
+        isOpen={!!viewingLead}
+        onClose={() => setViewingLead(null)}
+        title="View Lead Details"
+        description="Detailed lead profile details in read-only mode."
+        size="xl"
+      >
+        {viewingLead ? (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lead Name</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.fullName}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email Address</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.email || "-"}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Phone Number</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.phone || "-"}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assigned Owner ID</span>
+                <p className="mt-1 text-sm font-semibold font-mono text-xs text-muted-foreground">{viewingLead.assignedToUserId || "-"}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lead Source</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.source}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Priority Level</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.priority}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Lead Status</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.status}</p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</span>
+                <p className="mt-1 text-sm font-semibold text-primary">
+                  {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0
+                  }).format(viewingLead.budget)}
+                </p>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Next Follow-up Date</span>
+                <p className="mt-1 text-sm font-semibold">{viewingLead.nextFollowupAt || "-"}</p>
+              </div>
+            </div>
+            <div className="flex justify-end border-t pt-4">
+              <Button onClick={() => setViewingLead(null)} variant="outline">
+                Close
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </Dialog>
+
+      <Dialog
         isOpen={!!editingLead}
         onClose={() => setEditingLead(null)}
         title="Edit Lead"
-        size="lg"
+        description="Capture lead profile, ownership, and follow-up schedule."
+        size="xl"
       >
         {editingLead ? (
           <LeadCreateForm
