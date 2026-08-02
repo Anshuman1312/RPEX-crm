@@ -53588,3 +53588,642 @@ WHERE roles.id = $1::UUID
 2026-07-29 18:24:35.006 | WARNING  | app.middleware.logging_middleware:dispatch:43 | e5b53f9d-5c65-49f5-9a72-7084326ee4f4 | ← GET /api/v1/auth/me | 401 | 2.85ms
 2026-07-29 18:24:35.007 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:53754 - "GET /api/v1/auth/me HTTP/1.1" 401
 2026-07-29 18:36:48.757 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 05:10:25.210 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-02 05:10:25.211 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:25.214 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-02 05:10:25.214 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:25.218 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-02 05:10:25.219 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:25.221 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-02 05:10:25.226 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.227 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00066s] ('departments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.230 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.231 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.004937s ago] ('designations', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.232 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.233 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.007033s ago] ('roles', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.236 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.237 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01071s ago] ('permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.238 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.239 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01299s ago] ('role_permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.240 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.241 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01518s ago] ('user_permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.242 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.243 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01705s ago] ('users', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.244 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.245 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01885s ago] ('user_sessions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.246 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.246 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02035s ago] ('login_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.247 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.248 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02194s ago] ('system_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.249 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.250 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0239s ago] ('leads', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.253 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.253 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02727s ago] ('lead_activities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.254 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.255 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02915s ago] ('lead_assignments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.256 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.257 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03106s ago] ('customers', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.258 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.259 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03286s ago] ('customer_addresses', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.260 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.261 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03463s ago] ('customer_kyc', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.262 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.262 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03644s ago] ('customer_preferences', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.264 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.264 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03823s ago] ('projects', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.265 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.266 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03994s ago] ('blocks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.269 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.269 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04339s ago] ('buildings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.270 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.271 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04517s ago] ('floors', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.272 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.273 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04691s ago] ('units', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.274 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.274 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04845s ago] ('unit_availability_logs', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.276 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.276 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05047s ago] ('project_amenities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.278 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.278 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05235s ago] ('bookings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.279 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.280 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05401s ago] ('booking_payment_plans', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.281 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.281 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05572s ago] ('booking_approvals', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.283 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.284 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05817s ago] ('booking_cancellations', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.286 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.287 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06108s ago] ('possessions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.289 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.289 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06331s ago] ('invoices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.291 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.291 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06555s ago] ('invoice_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.293 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.293 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0674s ago] ('finance_ledger_entries', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.294 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.295 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.069s ago] ('invoice_payment_mappings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.296 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.296 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07058s ago] ('followups', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.297 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.298 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07214s ago] ('followup_tasks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.299 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.300 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07421s ago] ('followup_outcomes', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.302 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.303 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07737s ago] ('followup_attachments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.305 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.305 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0793s ago] ('tasks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.306 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.307 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08095s ago] ('task_checklists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.308 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.309 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08279s ago] ('task_comments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.310 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.310 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08461s ago] ('task_attachments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.312 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.312 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08632s ago] ('activities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.313 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.314 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.088s ago] ('notifications', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.315 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.316 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08972s ago] ('notification_preferences', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.318 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.319 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09307s ago] ('notification_templates', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.320 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.321 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09488s ago] ('app_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.322 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.323 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09692s ago] ('user_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.324 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.324 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09855s ago] ('audit_logs', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.326 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.326 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1003s ago] ('whatsapp_templates', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.327 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.328 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1019s ago] ('whatsapp_interactions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.329 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.329 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1035s ago] ('telecalling_scripts', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.330 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.331 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1051s ago] ('telecalling_calls', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.332 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.333 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1071s ago] ('campaigns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.336 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.336 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1102s ago] ('seo_keywords', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.337 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.338 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.112s ago] ('customer_payments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.339 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.339 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1137s ago] ('document_assets', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.341 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.341 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1155s ago] ('hr_employees', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.343 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.343 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1172s ago] ('hr_records', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.344 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.345 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.119s ago] ('inventory_units', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.346 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.346 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1205s ago] ('websites', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.348 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.348 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1222s ago] ('vendors', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.349 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.351 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1253s ago] ('sales_bookings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.353 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.353 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1276s ago] ('sales_team_reports', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.355 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.355 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1296s ago] ('site_visits', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.357 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:25.357 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1314s ago] ('approval_requests', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:25.360 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.360 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00058s] ('userstatus', 'pg_catalog')
+2026-08-02 05:10:25.363 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.364 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.003893s ago] ('followuptype', 'pg_catalog')
+2026-08-02 05:10:25.366 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.367 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.006715s ago] ('followupmode', 'pg_catalog')
+2026-08-02 05:10:25.370 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.373 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01217s ago] ('followupstatus', 'pg_catalog')
+2026-08-02 05:10:25.378 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.379 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0191s ago] ('followuptasktype', 'pg_catalog')
+2026-08-02 05:10:25.381 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.382 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02166s ago] ('followuptaskstatus', 'pg_catalog')
+2026-08-02 05:10:25.385 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.386 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02617s ago] ('followupoutcometype', 'pg_catalog')
+2026-08-02 05:10:25.388 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.389 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.029s ago] ('taskstatus', 'pg_catalog')
+2026-08-02 05:10:25.391 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.391 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03152s ago] ('taskpriority', 'pg_catalog')
+2026-08-02 05:10:25.393 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.394 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0342s ago] ('notificationtype', 'pg_catalog')
+2026-08-02 05:10:25.396 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:25.396 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03636s ago] ('notificationchannel', 'pg_catalog')
+2026-08-02 05:10:25.403 | INFO     | sqlalchemy.log:info:159 | N/A | INSERT INTO roles (name, code, is_system, is_active, description, id, created_at, updated_at, is_deleted) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BOOLEAN, $4::BOOLEAN, $5::VARCHAR, $6::UUID, $7::TIMESTAMP WITH TIME ZONE, $8::TIMESTAMP WITH TIME ZONE, $9::BOOLEAN), ($10::VARCHAR, $11::VARCHAR, $12::BOOLEAN, $13::BOOLEAN, $14::VARCHAR, $15::UUID, $16::TIMESTAMP WITH TIME ZONE, $17::TIMESTAMP WITH TIME ZONE, $18::BOOLEAN), ($19::VARCHAR, $20::VARCHAR, $21::BOOLEAN, $22::BOOLEAN, $23::VARCHAR, $24::UUID, $25::TIMESTAMP WITH TIME ZONE, $26::TIMESTAMP WITH TIME ZONE, $27::BOOLEAN), ($28::VARCHAR, $29::VARCHAR, $30::BOOLEAN, $31::BOOLEAN, $32::VARCHAR, $33::UUID, $34::TIMESTAMP WITH TIME ZONE, $35::TIMESTAMP WITH TIME ZONE, $36::BOOLEAN), ($37::VARCHAR, $38::VARCHAR, $39::BOOLEAN, $40::BOOLEAN, $41::VARCHAR, $42::UUID, $43::TIMESTAMP WITH TIME ZONE, $44::TIMESTAMP WITH TIME ZONE, $45::BOOLEAN), ($46::VARCHAR, $47::VARCHAR, $48::BOOLEAN, $49::BOOLEAN, $50::VARCHAR, $51::UUID, $52::TIMESTAMP WITH TIME ZONE, $53::TIMESTAMP WITH TIME ZONE, $54::BOOLEAN), ($55::VARCHAR, $56::VARCHAR, $57::BOOLEAN, $58::BOOLEAN, $59::VARCHAR, $60::UUID, $61::TIMESTAMP WITH TIME ZONE, $62::TIMESTAMP WITH TIME ZONE, $63::BOOLEAN) ON CONFLICT (name) DO NOTHING
+2026-08-02 05:10:25.404 | INFO     | sqlalchemy.log:info:159 | N/A | [no key 0.00151s] ('SUPER_ADMIN', 'SUPER_ADMIN', True, True, 'System super administrator', UUID('46bd32ef-bb87-4b4f-b0a8-3da93f81f659'), datetime.datetime(2026, 8, 2, 5, 10, 25, 402935, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 402941, tzinfo=datetime.timezone.utc), False, 'ADMIN', 'ADMIN', True, True, 'System administrator', UUID('479ba2c9-a21a-4866-bfb6-ed467edddc56'), datetime.datetime(2026, 8, 2, 5, 10, 25, 402971, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 402972, tzinfo=datetime.timezone.utc), False, 'SALES_MANAGER', 'SALES_MANAGER', True, True, 'Sales manager', UUID('b135a3b4-edf3-467c-9ecb-6bdbe41f14dd'), datetime.datetime(2026, 8, 2, 5, 10, 25, 402977, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 402978, tzinfo=datetime.timezone.utc), False, 'SALES_EXECUTIVE', 'SALES_EXECUTIVE', True, True, 'Sales executive', UUID('b9b12d7b-b6c0-4504-a9b1-4c9e9b99dbb3'), datetime.datetime(2026, 8, 2, 5, 10, 25, 402991, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 402992, tzinfo=datetime.timezone.utc), False, 'TELECALLER', 'TELECALLER', True, True, 'Telecalling executive', UUID('1cd07425-a40d-4cb8-b66c-b90fd302fa2c'), datetime.datetime(2026, 8, 2, 5, 10, 25, 402998, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 402999, tzinfo=datetime.timezone.utc), False, 'CRM_EXECUTIVE', 'CRM_EXECUTIVE', True, True, 'CRM executive', UUID('42fe522a-0481-4d22-8b45-ba90aed951ba'), datetime.datetime(2026, 8, 2, 5, 10, 25, 403003, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 403004, tzinfo=datetime.timezone.utc), False, 'SALES', 'SALES', True, True, 'Sales user', UUID('2f681221-f0f4-40fc-af3f-a1b04b24548c'), datetime.datetime(2026, 8, 2, 5, 10, 25, 403011, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 25, 403013, tzinfo=datetime.timezone.utc), False)
+2026-08-02 05:10:25.407 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-02 05:10:25.408 | INFO     | app.database.init_db:init_db:37 | N/A | Database tables initialised.
+2026-08-02 05:10:25.410 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-02 05:10:25.411 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 05:10:25.412 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 05:10:26.215 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 05:10:26.316 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 05:10:26.317 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 05:10:31.879 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-02 05:10:31.880 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:31.883 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-02 05:10:31.884 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:31.886 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-02 05:10:31.887 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-02 05:10:31.889 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-02 05:10:31.894 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.894 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00079s] ('departments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.898 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.899 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.005101s ago] ('designations', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.900 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.901 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.007548s ago] ('roles', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.904 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.905 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01113s ago] ('permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.907 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.907 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01364s ago] ('role_permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.910 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.912 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01792s ago] ('user_permissions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.915 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.915 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02184s ago] ('users', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.919 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.919 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02559s ago] ('user_sessions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.921 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.922 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02818s ago] ('login_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.923 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.924 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03015s ago] ('system_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.928 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.929 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0356s ago] ('leads', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.931 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.931 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03757s ago] ('lead_activities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.932 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.933 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.03967s ago] ('lead_assignments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.935 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.936 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04251s ago] ('customers', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.937 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.938 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04434s ago] ('customer_addresses', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.939 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.940 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04627s ago] ('customer_kyc', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.941 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.942 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04808s ago] ('customer_preferences', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.943 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.943 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.04974s ago] ('projects', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.944 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.945 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05123s ago] ('blocks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.946 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.946 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05293s ago] ('buildings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.948 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.948 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05474s ago] ('floors', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.949 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.950 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05641s ago] ('units', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.951 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.952 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05821s ago] ('unit_availability_logs', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.953 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.953 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.05987s ago] ('project_amenities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.955 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.955 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0616s ago] ('bookings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.956 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.957 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06316s ago] ('booking_payment_plans', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.959 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.960 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06596s ago] ('booking_approvals', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.961 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.961 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06796s ago] ('booking_cancellations', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.963 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.963 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.06998s ago] ('possessions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.965 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.965 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07166s ago] ('invoices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.966 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.967 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07318s ago] ('invoice_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.968 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.968 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07485s ago] ('finance_ledger_entries', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.969 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.970 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07647s ago] ('invoice_payment_mappings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.971 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.971 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07788s ago] ('followups', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.972 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.973 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.07935s ago] ('followup_tasks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.974 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.975 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08124s ago] ('followup_outcomes', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.976 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.976 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0828s ago] ('followup_attachments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.977 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.978 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08453s ago] ('tasks', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.979 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.980 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08619s ago] ('task_checklists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.981 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.981 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08775s ago] ('task_comments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.982 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.983 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.08945s ago] ('task_attachments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.984 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.985 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09116s ago] ('activities', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.986 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.986 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09283s ago] ('notifications', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.987 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.988 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09461s ago] ('notification_preferences', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.989 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.990 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0962s ago] ('notification_templates', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.991 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.992 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.09805s ago] ('app_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.993 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.993 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0997s ago] ('user_settings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.994 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.995 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1015s ago] ('audit_logs', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.996 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.996 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1031s ago] ('whatsapp_templates', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.998 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:31.998 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1045s ago] ('whatsapp_interactions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:31.999 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.000 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1062s ago] ('telecalling_scripts', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.001 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.001 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1079s ago] ('telecalling_calls', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.002 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.003 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1095s ago] ('campaigns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.004 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.005 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1111s ago] ('seo_keywords', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.006 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.006 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1127s ago] ('customer_payments', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.008 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.009 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1151s ago] ('document_assets', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.010 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.011 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1177s ago] ('hr_employees', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.013 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.013 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1198s ago] ('hr_records', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.015 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.017 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1226s ago] ('inventory_units', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.020 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.021 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1272s ago] ('websites', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.024 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.025 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1311s ago] ('vendors', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.026 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.027 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1335s ago] ('sales_bookings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.029 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.032 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1373s ago] ('sales_team_reports', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.034 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.035 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1413s ago] ('site_visits', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.036 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-08-02 05:10:32.037 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.1431s ago] ('approval_requests', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-02 05:10:32.039 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.040 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00066s] ('userstatus', 'pg_catalog')
+2026-08-02 05:10:32.043 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.043 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.004186s ago] ('followuptype', 'pg_catalog')
+2026-08-02 05:10:32.046 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.046 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.006953s ago] ('followupmode', 'pg_catalog')
+2026-08-02 05:10:32.048 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.048 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.009235s ago] ('followupstatus', 'pg_catalog')
+2026-08-02 05:10:32.052 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.052 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.0131s ago] ('followuptasktype', 'pg_catalog')
+2026-08-02 05:10:32.055 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.055 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01592s ago] ('followuptaskstatus', 'pg_catalog')
+2026-08-02 05:10:32.057 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.058 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.01852s ago] ('followupoutcometype', 'pg_catalog')
+2026-08-02 05:10:32.060 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.060 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02099s ago] ('taskstatus', 'pg_catalog')
+2026-08-02 05:10:32.062 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.063 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02326s ago] ('taskpriority', 'pg_catalog')
+2026-08-02 05:10:32.064 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.065 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02541s ago] ('notificationtype', 'pg_catalog')
+2026-08-02 05:10:32.067 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT pg_catalog.pg_type.typname 
+FROM pg_catalog.pg_type JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_type.typnamespace 
+WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible(pg_catalog.pg_type.oid) AND pg_catalog.pg_namespace.nspname != $2::VARCHAR
+2026-08-02 05:10:32.067 | INFO     | sqlalchemy.log:info:159 | N/A | [cached since 0.02802s ago] ('notificationchannel', 'pg_catalog')
+2026-08-02 05:10:32.072 | INFO     | sqlalchemy.log:info:159 | N/A | INSERT INTO roles (name, code, is_system, is_active, description, id, created_at, updated_at, is_deleted) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BOOLEAN, $4::BOOLEAN, $5::VARCHAR, $6::UUID, $7::TIMESTAMP WITH TIME ZONE, $8::TIMESTAMP WITH TIME ZONE, $9::BOOLEAN), ($10::VARCHAR, $11::VARCHAR, $12::BOOLEAN, $13::BOOLEAN, $14::VARCHAR, $15::UUID, $16::TIMESTAMP WITH TIME ZONE, $17::TIMESTAMP WITH TIME ZONE, $18::BOOLEAN), ($19::VARCHAR, $20::VARCHAR, $21::BOOLEAN, $22::BOOLEAN, $23::VARCHAR, $24::UUID, $25::TIMESTAMP WITH TIME ZONE, $26::TIMESTAMP WITH TIME ZONE, $27::BOOLEAN), ($28::VARCHAR, $29::VARCHAR, $30::BOOLEAN, $31::BOOLEAN, $32::VARCHAR, $33::UUID, $34::TIMESTAMP WITH TIME ZONE, $35::TIMESTAMP WITH TIME ZONE, $36::BOOLEAN), ($37::VARCHAR, $38::VARCHAR, $39::BOOLEAN, $40::BOOLEAN, $41::VARCHAR, $42::UUID, $43::TIMESTAMP WITH TIME ZONE, $44::TIMESTAMP WITH TIME ZONE, $45::BOOLEAN), ($46::VARCHAR, $47::VARCHAR, $48::BOOLEAN, $49::BOOLEAN, $50::VARCHAR, $51::UUID, $52::TIMESTAMP WITH TIME ZONE, $53::TIMESTAMP WITH TIME ZONE, $54::BOOLEAN), ($55::VARCHAR, $56::VARCHAR, $57::BOOLEAN, $58::BOOLEAN, $59::VARCHAR, $60::UUID, $61::TIMESTAMP WITH TIME ZONE, $62::TIMESTAMP WITH TIME ZONE, $63::BOOLEAN) ON CONFLICT (name) DO NOTHING
+2026-08-02 05:10:32.073 | INFO     | sqlalchemy.log:info:159 | N/A | [no key 0.00134s] ('SUPER_ADMIN', 'SUPER_ADMIN', True, True, 'System super administrator', UUID('3c721520-206c-42e4-88a5-d27285eda6c2'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71715, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71722, tzinfo=datetime.timezone.utc), False, 'ADMIN', 'ADMIN', True, True, 'System administrator', UUID('b1065554-5a04-4783-9745-cdfd22fe17ff'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71743, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71746, tzinfo=datetime.timezone.utc), False, 'SALES_MANAGER', 'SALES_MANAGER', True, True, 'Sales manager', UUID('a6331772-3bdc-477d-a740-ef58bcbf6c84'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71763, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71765, tzinfo=datetime.timezone.utc), False, 'SALES_EXECUTIVE', 'SALES_EXECUTIVE', True, True, 'Sales executive', UUID('acb0443f-761e-4826-9f84-a9cfe0e77265'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71779, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71782, tzinfo=datetime.timezone.utc), False, 'TELECALLER', 'TELECALLER', True, True, 'Telecalling executive', UUID('4f73c79f-ee10-4316-b3c4-2663027c9ba4'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71806, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71808, tzinfo=datetime.timezone.utc), False, 'CRM_EXECUTIVE', 'CRM_EXECUTIVE', True, True, 'CRM executive', UUID('4cf3d62d-2d9d-497d-9ec3-8b71e6a69d9c'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71853, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71856, tzinfo=datetime.timezone.utc), False, 'SALES', 'SALES', True, True, 'Sales user', UUID('12af9559-51a2-47e6-9c9f-bc36c9d58ba1'), datetime.datetime(2026, 8, 2, 5, 10, 32, 71870, tzinfo=datetime.timezone.utc), datetime.datetime(2026, 8, 2, 5, 10, 32, 71874, tzinfo=datetime.timezone.utc), False)
+2026-08-02 05:10:32.075 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-02 05:10:32.076 | INFO     | app.database.init_db:init_db:37 | N/A | Database tables initialised.
+2026-08-02 05:10:32.078 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-02 05:10:32.079 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 05:10:32.079 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
