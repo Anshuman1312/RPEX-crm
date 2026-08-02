@@ -142,7 +142,6 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
     )
-    op.create_index("ix_user_sessions_user_id", "user_sessions", ["user_id"])
 
     op.create_table(
         "login_history",
@@ -229,8 +228,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_leads_lead_number", "leads", ["lead_number"])
-    op.create_index("ix_leads_status_created_at", "leads", ["status", "created_at"])
 
     op.create_table(
         "lead_activities",
@@ -266,7 +263,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_customers_customer_number", "customers", ["customer_number"])
 
     op.create_table(
         "customer_addresses",
@@ -342,7 +338,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_projects_project_number", "projects", ["project_number"])
 
     op.create_table(
         "blocks",
@@ -401,8 +396,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_units_unit_number", "units", ["unit_number"])
-    op.create_index("ix_units_status", "units", ["status"])
 
     # ── Bookings ───────────────────────────────────────────────────────
     op.create_table(
@@ -436,8 +429,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_bookings_booking_number", "bookings", ["booking_number"])
-    op.create_index("ix_bookings_status", "bookings", ["status"])
 
     op.create_table(
         "booking_payment_plans",
@@ -545,7 +536,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_invoices_invoice_number", "invoices", ["invoice_number"])
 
     op.create_table(
         "invoice_items",
@@ -609,7 +599,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_followups_followup_number", "followups", ["followup_number"])
 
     op.create_table(
         "followup_tasks",
@@ -684,7 +673,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_tasks_task_number", "tasks", ["task_number"])
 
     op.create_table(
         "task_checklists",
@@ -757,7 +745,6 @@ def upgrade() -> None:
         sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=True),
     )
-    op.create_index("ix_notifications_user_read", "notifications", ["user_id", "is_read"])
 
     op.create_table(
         "notification_preferences",
@@ -850,9 +837,6 @@ def upgrade() -> None:
         sa.Column("error_message", sa.Text(), nullable=True),
         sa.Column("extra_data", postgresql.JSONB(), nullable=True),
     )
-    op.create_index("ix_audit_logs_entity", "audit_logs", ["entity_type", "entity_id"])
-    op.create_index("ix_audit_logs_user", "audit_logs", ["user_id", "created_at"])
-    op.create_index("ix_audit_logs_action", "audit_logs", ["action", "created_at"])
 
     # ── WhatsApp & Telecalling ─────────────────────────────────────────
     op.create_table(

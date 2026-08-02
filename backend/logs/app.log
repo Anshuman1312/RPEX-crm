@@ -57116,3 +57116,67 @@ WHERE pg_catalog.pg_type.typname = $1::VARCHAR AND pg_catalog.pg_type_is_visible
 2026-08-02 05:33:35.294 | INFO     | app.middleware.logging_middleware:dispatch:33 | d5d9aee2-9dec-4cad-be1d-dd3aea161aff | → GET /openapi.json | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
 2026-08-02 05:33:35.807 | INFO     | app.middleware.logging_middleware:dispatch:43 | d5d9aee2-9dec-4cad-be1d-dd3aea161aff | ← GET /openapi.json | 200 | 512.65ms
 2026-08-02 05:33:35.808 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:44924 - "GET /openapi.json HTTP/1.1" 200
+2026-08-02 08:11:11.332 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 08:11:12.337 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 08:11:14.341 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 08:11:14.342 | ERROR    | app.core.redis:init:74 | N/A | Redis initialization failed after 3 attempts. Running in degraded mode.
+2026-08-02 08:11:14.343 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 08:11:14.345 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:36:20.644 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:36:20.988 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:36:21.305 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:36:57.631 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:36:58.636 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:00.639 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:00.639 | ERROR    | app.core.redis:init:74 | N/A | Redis initialization failed after 3 attempts. Running in degraded mode.
+2026-08-02 16:37:00.640 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:37:00.641 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:37:10.847 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:37:10.960 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:37:10.964 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:37:10.973 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-08-02 16:37:30.019 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:31.032 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:33.037 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:33.038 | ERROR    | app.core.redis:init:74 | N/A | Redis initialization failed after 3 attempts. Running in degraded mode.
+2026-08-02 16:37:33.039 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:37:33.040 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:37:33.950 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:37:34.055 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:37:34.056 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:37:50.392 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:51.396 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:53.400 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:37:53.400 | ERROR    | app.core.redis:init:74 | N/A | Redis initialization failed after 3 attempts. Running in degraded mode.
+2026-08-02 16:37:53.401 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:37:53.402 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:38:10.998 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:38:26.112 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:27.116 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:29.121 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:40.387 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 1/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:41.390 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 2/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:43.396 | WARNING  | app.core.redis:init:68 | N/A | Redis initialization failed (attempt 3/3): Error -3 connecting to redis:6379. Temporary failure in name resolution.
+2026-08-02 16:38:43.397 | ERROR    | app.core.redis:init:74 | N/A | Redis initialization failed after 3 attempts. Running in degraded mode.
+2026-08-02 16:38:43.398 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:38:43.400 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:39:27.099 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:39:27.215 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:39:27.226 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:39:27.295 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-08-02 16:40:19.670 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-02 16:40:19.670 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:40:19.672 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:41:10.599 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:41:10.738 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:41:10.761 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:41:10.836 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-08-02 16:41:10.840 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [8]
+2026-08-02 16:41:38.617 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-02 16:41:38.617 | INFO     | app.main:lifespan:40 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-02 16:41:38.618 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-02 16:44:04.633 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-02 16:44:04.828 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-02 16:44:04.893 | INFO     | app.main:lifespan:46 | N/A | Shutting down — closing connections.
+2026-08-02 16:44:05.025 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-08-02 16:44:05.035 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [8]
