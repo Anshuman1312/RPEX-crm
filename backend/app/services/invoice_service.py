@@ -36,11 +36,11 @@ class InvoiceService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.invoice_repo = InvoiceRepository(session)
-        self.item_repo = InvoiceItemRepository(session)
-        self.ledger_repo = FinanceLedgerRepository(session)
-        self.mapping_repo = InvoicePaymentMappingRepository(session)
-        self.booking_repo = BookingRepository(session)
+        self.invoice_repo = InvoiceRepository(session, Invoice)
+        self.item_repo = InvoiceItemRepository(session, InvoiceItem)
+        self.ledger_repo = FinanceLedgerRepository(session, FinanceLedgerEntry)
+        self.mapping_repo = InvoicePaymentMappingRepository(session, InvoicePaymentMapping)
+        self.booking_repo = BookingRepository(session, Booking)
         self.numbering_service = NumberingService(session)
 
     # ── Invoice CRUD ──────────────────────────────────────────────────

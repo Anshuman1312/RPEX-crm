@@ -37,10 +37,10 @@ class TaskService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.repo = TaskRepository(session)
-        self.checklist_repo = TaskChecklistRepository(session)
-        self.comment_repo = TaskCommentRepository(session)
-        self.attachment_repo = TaskAttachmentRepository(session)
+        self.repo = TaskRepository(session, Task)
+        self.checklist_repo = TaskChecklistRepository(session, TaskChecklist)
+        self.comment_repo = TaskCommentRepository(session, TaskComment)
+        self.attachment_repo = TaskAttachmentRepository(session, TaskAttachment)
         self.numbering = NumberingService(session)
 
     async def create_task(
@@ -410,7 +410,7 @@ class ActivityService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.repo = ActivityRepository(session)
+        self.repo = ActivityRepository(session, Activity)
 
     async def log_activity(
         self,
