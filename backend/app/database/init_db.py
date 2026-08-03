@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from loguru import logger
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
 from app.database.base import Base
 from app.database.postgres import engine
@@ -10,6 +11,7 @@ import app.models  # noqa: F401  # register all models on Base metadata
 
 
 async def _bootstrap_roles(conn) -> None:
+    """Bootstrap core system roles."""
     core_roles = [
         {"name": "SUPER_ADMIN", "code": "SUPER_ADMIN", "description": "System super administrator", "is_system": True},
         {"name": "ADMIN", "code": "ADMIN", "description": "System administrator", "is_system": True},
@@ -22,6 +24,7 @@ async def _bootstrap_roles(conn) -> None:
     stmt = pg_insert(Role).values(core_roles)
     stmt = stmt.on_conflict_do_nothing(index_elements=[Role.name])
     await conn.execute(stmt)
+    logger.info(f"Bootstrapped {len(core_roles)} core system roles")
 
 
 async def init_db() -> None:
@@ -35,6 +38,17 @@ async def init_db() -> None:
         await conn.run_sync(Base.metadata.create_all)
         await _bootstrap_roles(conn)
     logger.info("Database tables initialised.")
+
+
+async def init_roles_only() -> None:
+    """
+    Initialize or sync core system roles.
+    
+    This can be called independently to ensure roles exist,
+    even if schema initialization is disabled.
+    """
+    async with engine.begin() as conn:
+        await _bootstrap_roles(conn)
 
 
 async def drop_db() -> None:
