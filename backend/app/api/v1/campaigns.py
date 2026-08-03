@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from datetime import date
 from fastapi import Query
 from sqlalchemy import and_, func, or_, select
@@ -74,12 +74,14 @@ async def get_campaign_kpis(
 
 @router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
 async def create_campaign(payload: CampaignCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
-    campaign = await CampaignService(CampaignRepository(db)).create(payload.model_dump(), str(current_user.id))
+    """Create a new campaign."""
+    campaign = await CampaignService(db).create(payload.model_dump(), str(current_user.id))
     return {"id": str(campaign.id), "name": campaign.name, "platform": campaign.platform}
 
 
 @router.get("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
 async def list_campaigns(_: CurrentUser, db: AsyncSession = Depends(get_db)):
+    """List all campaigns with metrics."""
     campaigns = await CampaignRepository(db).list_all()
     result = []
     for c in campaigns:
@@ -117,3 +119,48 @@ async def list_campaigns(_: CurrentUser, db: AsyncSession = Depends(get_db)):
             "conversion": conversion,
         })
     return result
+
+
+@router.post("/{campaign_id}/execute", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
+async def execute_campaign(
+    campaign_id: str,
+    current_user: CurrentUser,
+    target_filters: dict = Body(None, description="Optional filters for targeting leads/customers"),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Execute a campaign on its configured platform.
+    
+    The campaign will be sent to all relevant leads and customers based on the platform:
+    - WhatsApp: Uses phone numbers and templates
+    - Email: Uses email addresses and HTML/text content
+    - SMS: Uses phone numbers for text messages
+    - Notification: Sends in-app notifications
+    
+    Args:
+        campaign_id: Campaign ID to execute
+        target_filters: Optional filters for targeting (e.g., {"status": "active"})
+    
+    Returns:
+        Execution result with metrics (sent count, failed count, reach, etc.)
+    """
+    campaign_service = CampaignService(db)
+    result = await campaign_service.execute_campaign(campaign_id, str(current_user.id), target_filters)
+    return result
+
+
+@router.get("/{campaign_id}/performance", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
+async def get_campaign_performance(
+    campaign_id: str,
+    _: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get detailed campaign performance metrics.
+    
+    Returns:
+        Performance data including reach, sent count, leads, budget, ROI, etc.
+    """
+    campaign_service = CampaignService(db)
+    performance = await campaign_service.get_campaign_performance(campaign_id)
+    return performance

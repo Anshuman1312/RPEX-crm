@@ -306,7 +306,7 @@ class UserService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.user_repo = UserRepository(session, User)
+        self.user_repo = UserRepository(session)
 
     async def create_user(
         self,

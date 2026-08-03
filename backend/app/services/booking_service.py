@@ -52,14 +52,14 @@ class BookingService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.booking_repo = BookingRepository(session, Booking)
-        self.payment_plan_repo = BookingPaymentPlanRepository(session, BookingPaymentPlan)
-        self.approval_repo = BookingApprovalRepository(session, BookingApproval)
-        self.cancellation_repo = BookingCancellationRepository(session, BookingCancellation)
-        self.possession_repo = PossessionRepository(session, Possession)
+        self.booking_repo = BookingRepository(session)
+        self.payment_plan_repo = BookingPaymentPlanRepository(session)
+        self.approval_repo = BookingApprovalRepository(session)
+        self.cancellation_repo = BookingCancellationRepository(session)
+        self.possession_repo = PossessionRepository(session)
         self.unit_repo = UnitRepository(session, Unit)
         self.customer_repo = CustomerRepository(session, Customer)
-        self.user_repo = UserRepository(session, User)
+        self.user_repo = UserRepository(session)
         self.numbering_service = NumberingService(session)
 
     # ── Booking CRUD ──────────────────────────────────────────────────
