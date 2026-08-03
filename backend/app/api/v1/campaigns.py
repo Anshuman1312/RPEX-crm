@@ -1,14 +1,75 @@
 from fastapi import APIRouter, Depends
+from datetime import date
+from fastapi import Query
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import CurrentUser, require_permissions
 from app.core.permissions import PERMISSIONS
 from app.database.postgres import get_db
+from app.models.campaign import Campaign
 from app.repositories.campaign_repository import CampaignRepository
 from app.schemas.campaign import CampaignCreate
 from app.services.campaign_service import CampaignService
 
 router = APIRouter()
+
+
+@router.get("/stats/kpis", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])
+async def get_campaign_kpis(
+    _: CurrentUser,
+    statuses: str = Query(None, description="Comma-separated campaign statuses: active, upcoming, ended"),
+    priorities: str = Query(None, description="Comma-separated priorities (not applicable for campaigns)"),
+    sources: str = Query(None, description="Comma-separated campaign platforms"),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get campaign KPIs with optional status/source filters."""
+    today = date.today()
+    status_values = [s.strip().lower() for s in statuses.split(",") if s.strip()] if statuses else None
+    source_values = [s.strip().lower() for s in sources.split(",") if s.strip()] if sources else None
+    priority_values = [p.strip().lower() for p in priorities.split(",") if p.strip()] if priorities else None
+
+    active_condition = and_(Campaign.start_date.is_not(None), Campaign.start_date <= today, or_(Campaign.end_date.is_(None), Campaign.end_date >= today))
+    upcoming_condition = and_(Campaign.start_date.is_not(None), Campaign.start_date > today)
+    ended_condition = and_(Campaign.end_date.is_not(None), Campaign.end_date < today)
+
+    filters = [Campaign.is_deleted == False]
+
+    if source_values:
+        filters.append(func.lower(Campaign.platform).in_(source_values))
+
+    if status_values:
+        status_conditions = []
+        if "active" in status_values:
+            status_conditions.append(active_condition)
+        if "upcoming" in status_values:
+            status_conditions.append(upcoming_condition)
+        if "ended" in status_values:
+            status_conditions.append(ended_condition)
+        if status_conditions:
+            filters.append(or_(*status_conditions))
+
+    query = select(
+        func.count(Campaign.id).label("total_campaigns"),
+        func.count(Campaign.id).filter(active_condition).label("active_campaigns"),
+        func.count(Campaign.id).filter(upcoming_condition).label("upcoming_campaigns"),
+        func.count(Campaign.id).filter(ended_condition).label("ended_campaigns"),
+    ).where(and_(*filters))
+
+    row = (await db.execute(query)).one()
+
+    return {
+        "total_campaigns": row.total_campaigns or 0,
+        "active_campaigns": row.active_campaigns or 0,
+        "upcoming_campaigns": row.upcoming_campaigns or 0,
+        "ended_campaigns": row.ended_campaigns or 0,
+        "filters_applied": {
+            "statuses": status_values,
+            "priorities": priority_values,
+            "sources": source_values,
+            "ignored_filters": ["priorities"] if priority_values else [],
+        },
+    }
 
 
 @router.post("", dependencies=[Depends(require_permissions({PERMISSIONS.MANAGE_CAMPAIGNS}))])

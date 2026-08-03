@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query, Response, status
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.postgres import get_db_session
 from app.dependencies.auth import get_current_user, require_permission
+from app.models.lead import Lead
 from app.models.user import User
 from app.schemas.lead import (
     LeadCreate,
@@ -23,6 +25,53 @@ from app.utils.response import ok, created, PaginatedResponse
 from loguru import logger
 
 router = APIRouter()
+
+
+@router.get("/stats/kpis", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_lead_kpis(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("leads.view")),
+    statuses: str = Query(None, description="Comma-separated lead statuses"),
+    priorities: str = Query(None, description="Comma-separated lead priorities"),
+    sources: str = Query(None, description="Comma-separated lead sources"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get lead KPIs with optional status/priority/source filters."""
+    status_values = [s.strip().lower() for s in statuses.split(",") if s.strip()] if statuses else None
+    priority_values = [p.strip().lower() for p in priorities.split(",") if p.strip()] if priorities else None
+    source_values = [s.strip().lower() for s in sources.split(",") if s.strip()] if sources else None
+
+    filters = [Lead.is_deleted == False]
+
+    if status_values:
+        filters.append(Lead.status.in_(status_values))
+    if priority_values:
+        filters.append(Lead.priority.in_(priority_values))
+    if source_values:
+        filters.append(Lead.source.in_(source_values))
+
+    query = select(
+        func.count(Lead.id).label("total_leads"),
+        func.count(Lead.id).filter(Lead.status == "new").label("new_leads"),
+        func.count(Lead.id).filter(Lead.status == "qualified").label("qualified_leads"),
+        func.count(Lead.id).filter(Lead.priority == "warm").label("warm_leads"),
+    ).where(and_(*filters))
+
+    row = (await session.execute(query)).one()
+
+    return ok(
+        data={
+            "total_leads": row.total_leads or 0,
+            "new_leads": row.new_leads or 0,
+            "qualified_leads": row.qualified_leads or 0,
+            "warm_leads": row.warm_leads or 0,
+            "filters_applied": {
+                "statuses": status_values,
+                "priorities": priority_values,
+                "sources": source_values,
+            },
+        }
+    )
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=dict)

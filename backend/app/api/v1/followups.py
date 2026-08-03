@@ -13,10 +13,13 @@ Endpoints:
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query, Response, status
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.postgres import get_db_session
 from app.dependencies.auth import get_current_user, require_permission
+from app.models.followup import FollowUp
+from app.models.lead import Lead
 from app.models.user import User
 from app.schemas.followup import (
     FollowUpCreate,
@@ -41,6 +44,57 @@ from app.utils.response import ok, created, PaginatedResponse
 from loguru import logger
 
 router = APIRouter()
+
+
+@router.get("/stats/kpis", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_followup_kpis(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("followups.view")),
+    statuses: str = Query(None, description="Comma-separated follow-up statuses"),
+    priorities: str = Query(None, description="Comma-separated lead priorities"),
+    sources: str = Query(None, description="Comma-separated lead sources"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get follow-up KPIs with optional status/priority/source filters."""
+    status_values = [s.strip().lower() for s in statuses.split(",") if s.strip()] if statuses else None
+    priority_values = [p.strip().lower() for p in priorities.split(",") if p.strip()] if priorities else None
+    source_values = [s.strip().lower() for s in sources.split(",") if s.strip()] if sources else None
+
+    base_query = select(
+        func.count(FollowUp.id).label("total_followups"),
+        func.count(FollowUp.id).filter(FollowUp.status == "scheduled").label("scheduled_followups"),
+        func.count(FollowUp.id).filter(FollowUp.status == "completed").label("completed_followups"),
+        func.count(FollowUp.id).filter(FollowUp.status == "overdue").label("overdue_followups"),
+    ).select_from(FollowUp)
+
+    filters = [FollowUp.is_deleted == False]
+
+    if status_values:
+        filters.append(func.lower(FollowUp.status).in_(status_values))
+
+    if source_values or priority_values:
+        base_query = base_query.join(Lead, FollowUp.lead_id == Lead.id)
+        if source_values:
+            filters.append(func.lower(Lead.source).in_(source_values))
+        if priority_values:
+            filters.append(func.lower(Lead.priority).in_(priority_values))
+
+    query = base_query.where(and_(*filters))
+    row = (await session.execute(query)).one()
+
+    return ok(
+        data={
+            "total_followups": row.total_followups or 0,
+            "scheduled_followups": row.scheduled_followups or 0,
+            "completed_followups": row.completed_followups or 0,
+            "overdue_followups": row.overdue_followups or 0,
+            "filters_applied": {
+                "statuses": status_values,
+                "priorities": priority_values,
+                "sources": source_values,
+            },
+        }
+    )
 
 
 # ── Follow-Up CRUD ────────────────────────────────────────────────────

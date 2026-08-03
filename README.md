@@ -241,6 +241,17 @@ curl -H "Authorization: Bearer <token>" \
 # List leads
 GET /api/v1/leads?status=QUALIFIED&sort=-created_at&page=1
 
+# Lead KPI stats (filterable)
+GET /api/v1/leads/stats/kpis
+GET /api/v1/leads/stats/kpis?statuses=new,qualified
+GET /api/v1/leads/stats/kpis?priorities=warm&sources=facebook,website
+
+# KPI response includes:
+# - total_leads
+# - new_leads
+# - qualified_leads
+# - warm_leads
+
 # Create lead
 POST /api/v1/leads
 {
@@ -258,6 +269,17 @@ GET /api/v1/leads/{id}
 ```bash
 # Get dashboard summary
 GET /api/v1/dashboard/dashboard
+
+# Get combined KPI overview (single call for dashboard cards)
+GET /api/v1/dashboard/kpis/overview
+GET /api/v1/dashboard/kpis/overview?statuses=new,qualified&priorities=warm&sources=facebook,website
+
+# KPI blocks include:
+# - leads
+# - campaigns
+# - customers
+# - followups
+# - projects
 
 # Response includes:
 # - Lead pipeline

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query, Response, status
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.postgres import get_db_session
 from app.dependencies.auth import get_current_user, require_permission
+from app.models.project import Project
 from app.models.user import User
 from app.schemas.project import (
     ProjectCreate,
@@ -29,6 +31,56 @@ from app.utils.response import ok, created, PaginatedResponse
 from loguru import logger
 
 router = APIRouter()
+
+
+@router.get("/stats/kpis", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_project_kpis(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("projects.view")),
+    statuses: str = Query(None, description="Comma-separated project statuses"),
+    priorities: str = Query(None, description="Comma-separated priorities (not applicable for projects)"),
+    sources: str = Query(None, description="Comma-separated sources (not applicable for projects)"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get project KPIs with optional status filter."""
+    status_values = [s.strip().lower() for s in statuses.split(",") if s.strip()] if statuses else None
+    priority_values = [p.strip().lower() for p in priorities.split(",") if p.strip()] if priorities else None
+    source_values = [s.strip().lower() for s in sources.split(",") if s.strip()] if sources else None
+
+    filters = [Project.is_deleted == False]
+
+    if status_values:
+        filters.append(func.lower(Project.status).in_(status_values))
+
+    query = select(
+        func.count(Project.id).label("total_projects"),
+        func.count(Project.id).filter(Project.status == "planning").label("planning_projects"),
+        func.count(Project.id).filter(Project.status == "ongoing").label("ongoing_projects"),
+        func.count(Project.id).filter(Project.status == "completed").label("completed_projects"),
+    ).where(and_(*filters))
+
+    row = (await session.execute(query)).one()
+
+    ignored_filters = []
+    if priority_values:
+        ignored_filters.append("priorities")
+    if source_values:
+        ignored_filters.append("sources")
+
+    return ok(
+        data={
+            "total_projects": row.total_projects or 0,
+            "planning_projects": row.planning_projects or 0,
+            "ongoing_projects": row.ongoing_projects or 0,
+            "completed_projects": row.completed_projects or 0,
+            "filters_applied": {
+                "statuses": status_values,
+                "priorities": priority_values,
+                "sources": source_values,
+                "ignored_filters": ignored_filters,
+            },
+        }
+    )
 
 
 # ── Project CRUD ──────────────────────────────────────────────────────
