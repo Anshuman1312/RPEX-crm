@@ -8,7 +8,7 @@ from app.database.postgres import get_db_session
 from app.dependencies.auth import get_current_user, require_permission
 from app.models.customer import Customer
 from app.models.lead import Lead
-from app.models.user import User
+from app.models.user import Role, User
 from app.schemas.customer import (
     CustomerCreate,
     CustomerUpdate,
@@ -82,6 +82,29 @@ async def get_customer_kpis(
             },
         }
     )
+
+
+# ── Users ────────────────────────────────────────────────────────────
+
+@router.get("/users", status_code=status.HTTP_200_OK, response_model=dict)
+async def list_users(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("customers.view")),
+    role: str = Query(None, description="Filter by role code, e.g. TELECALLER"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Return users (id + name), optionally filtered by role code."""
+    query = (
+        select(User.id, User.full_name)
+        .join(Role, User.role_id == Role.id)
+        .where(User.is_deleted == False)
+    )
+    if role:
+        query = query.where(Role.code == role.upper())
+
+    rows = (await session.execute(query)).all()
+    data = [{"user_id": str(r.id), "user_name": r.full_name} for r in rows]
+    return ok(data=data)
 
 
 # ── Customer CRUD ──────────────────────────────────────────────────────

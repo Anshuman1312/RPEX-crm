@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from loguru import logger
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
@@ -43,11 +44,15 @@ async def init_db() -> None:
 async def init_roles_only() -> None:
     """
     Initialize or sync core system roles.
-    
+
     This can be called independently to ensure roles exist,
     even if schema initialization is disabled.
     """
     async with engine.begin() as conn:
+        result = await conn.execute(text("SELECT to_regclass('public.roles')"))
+        if result.scalar() is None:
+            logger.warning("Roles table not found — skipping role bootstrap (run migrations first).")
+            return
         await _bootstrap_roles(conn)
 
 
