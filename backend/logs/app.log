@@ -57775,3 +57775,82 @@ sqlalchemy.exc.ProgrammingError: (sqlalchemy.dialects.postgresql.asyncpg.Program
 2026-08-04 09:52:03.480 | INFO     | app.middleware.logging_middleware:dispatch:33 | 800652be-1e3f-4fd1-9d1c-410d2e5b2e56 | → GET /openapi.json | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
 2026-08-04 09:52:04.075 | INFO     | app.middleware.logging_middleware:dispatch:43 | 800652be-1e3f-4fd1-9d1c-410d2e5b2e56 | ← GET /openapi.json | 200 | 594.55ms
 2026-08-04 09:52:04.075 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:56034 - "GET /openapi.json HTTP/1.1" 200
+2026-08-05 12:02:52.902 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-05 12:02:52.902 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:02:52.907 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-05 12:02:52.907 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:02:52.910 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-05 12:02:52.911 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:02:52.912 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-05 12:02:52.913 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT to_regclass('public.roles')
+2026-08-05 12:02:52.914 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00044s] ()
+2026-08-05 12:02:52.917 | WARNING  | app.database.init_db:init_roles_only:54 | N/A | Roles table not found — skipping role bootstrap (run migrations first).
+2026-08-05 12:02:52.917 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-05 12:02:52.920 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-05 12:02:52.921 | INFO     | app.main:lifespan:43 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-05 12:02:52.921 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-05 12:04:28.627 | INFO     | app.middleware.logging_middleware:dispatch:33 | 93ebd9aa-2989-430e-807f-4a76f532576d | → GET /docs | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:04:28.630 | INFO     | app.middleware.logging_middleware:dispatch:43 | 93ebd9aa-2989-430e-807f-4a76f532576d | ← GET /docs | 200 | 2.31ms
+2026-08-05 12:04:28.630 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:53342 - "GET /docs HTTP/1.1" 200
+2026-08-05 12:04:29.551 | INFO     | app.middleware.logging_middleware:dispatch:33 | e276d2d3-b958-4359-8ad5-a2cc8a5c8d5b | → GET /openapi.json | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:04:30.161 | INFO     | app.middleware.logging_middleware:dispatch:43 | e276d2d3-b958-4359-8ad5-a2cc8a5c8d5b | ← GET /openapi.json | 200 | 609.64ms
+2026-08-05 12:04:30.162 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:53342 - "GET /openapi.json HTTP/1.1" 200
+2026-08-05 12:06:50.466 | INFO     | app.middleware.logging_middleware:dispatch:33 | fe5473c3-e14b-4beb-a516-979e79597d1f | → GET /docs | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:06:50.471 | INFO     | app.middleware.logging_middleware:dispatch:43 | fe5473c3-e14b-4beb-a516-979e79597d1f | ← GET /docs | 200 | 5.49ms
+2026-08-05 12:06:50.474 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:49456 - "GET /docs HTTP/1.1" 200
+2026-08-05 12:06:50.934 | INFO     | app.middleware.logging_middleware:dispatch:33 | 50fd580f-64ef-483d-8a60-0e20bf802ae0 | → GET /openapi.json | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:06:50.946 | INFO     | app.middleware.logging_middleware:dispatch:43 | 50fd580f-64ef-483d-8a60-0e20bf802ae0 | ← GET /openapi.json | 200 | 12.02ms
+2026-08-05 12:06:50.947 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:49456 - "GET /openapi.json HTTP/1.1" 200
+2026-08-05 12:09:06.829 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-05 12:09:06.931 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-05 12:09:06.932 | INFO     | app.main:lifespan:49 | N/A | Shutting down — closing connections.
+2026-08-05 12:09:06.943 | INFO     | uvicorn.lifespan.on:shutdown:76 | N/A | Application shutdown complete.
+2026-08-05 12:09:06.944 | INFO     | uvicorn.server:_serve:92 | N/A | Finished server process [8]
+2026-08-05 12:09:15.073 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-05 12:09:15.074 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:15.076 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-05 12:09:15.077 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:15.080 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-05 12:09:15.081 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:15.083 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-05 12:09:15.085 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT to_regclass('public.roles')
+2026-08-05 12:09:15.086 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00134s] ()
+2026-08-05 12:09:15.088 | WARNING  | app.database.init_db:init_roles_only:54 | N/A | Roles table not found — skipping role bootstrap (run migrations first).
+2026-08-05 12:09:15.089 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-05 12:09:22.594 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-05 12:09:22.596 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:22.601 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-05 12:09:22.603 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:22.606 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-05 12:09:22.606 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:09:22.609 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-05 12:09:22.610 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT to_regclass('public.roles')
+2026-08-05 12:09:22.611 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00071s] ()
+2026-08-05 12:09:22.613 | WARNING  | app.database.init_db:init_roles_only:54 | N/A | Roles table not found — skipping role bootstrap (run migrations first).
+2026-08-05 12:09:22.614 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-05 12:09:22.619 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-05 12:09:22.619 | INFO     | app.main:lifespan:43 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-05 12:09:22.620 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.
+2026-08-05 12:10:22.071 | INFO     | app.middleware.logging_middleware:dispatch:33 | 0919cbe2-dbc1-4fe3-a874-845efb37e492 | → GET /docs | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:10:22.077 | INFO     | app.middleware.logging_middleware:dispatch:43 | 0919cbe2-dbc1-4fe3-a874-845efb37e492 | ← GET /docs | 200 | 5.89ms
+2026-08-05 12:10:22.078 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:33054 - "GET /docs HTTP/1.1" 200
+2026-08-05 12:10:22.593 | INFO     | app.middleware.logging_middleware:dispatch:33 | d00ac15a-281e-4fe5-8524-1fc4c0bc4679 | → GET /openapi.json | IP: 172.18.0.1 | UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15
+2026-08-05 12:10:23.104 | INFO     | app.middleware.logging_middleware:dispatch:43 | d00ac15a-281e-4fe5-8524-1fc4c0bc4679 | ← GET /openapi.json | 200 | 510.32ms
+2026-08-05 12:10:23.105 | INFO     | uvicorn.protocols.http.httptools_impl:send:476 | N/A | 172.18.0.1:33054 - "GET /openapi.json HTTP/1.1" 200
+2026-08-05 12:12:00.382 | INFO     | uvicorn.server:shutdown:262 | N/A | Shutting down
+2026-08-05 12:12:00.484 | INFO     | uvicorn.lifespan.on:shutdown:67 | N/A | Waiting for application shutdown.
+2026-08-05 12:12:00.488 | INFO     | app.main:lifespan:49 | N/A | Shutting down — closing connections.
+2026-08-05 12:13:20.135 | INFO     | sqlalchemy.log:info:159 | N/A | select pg_catalog.version()
+2026-08-05 12:13:20.135 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:13:20.138 | INFO     | sqlalchemy.log:info:159 | N/A | select current_schema()
+2026-08-05 12:13:20.138 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:13:20.140 | INFO     | sqlalchemy.log:info:159 | N/A | show standard_conforming_strings
+2026-08-05 12:13:20.141 | INFO     | sqlalchemy.log:info:159 | N/A | [raw sql] ()
+2026-08-05 12:13:20.142 | INFO     | sqlalchemy.log:info:159 | N/A | BEGIN (implicit)
+2026-08-05 12:13:20.143 | INFO     | sqlalchemy.log:info:159 | N/A | SELECT to_regclass('public.roles')
+2026-08-05 12:13:20.144 | INFO     | sqlalchemy.log:info:159 | N/A | [generated in 0.00063s] ()
+2026-08-05 12:13:20.145 | WARNING  | app.database.init_db:init_roles_only:54 | N/A | Roles table not found — skipping role bootstrap (run migrations first).
+2026-08-05 12:13:20.146 | INFO     | sqlalchemy.log:info:159 | N/A | COMMIT
+2026-08-05 12:13:20.149 | INFO     | app.core.redis:init:57 | N/A | Redis initialized successfully on attempt 1
+2026-08-05 12:13:20.149 | INFO     | app.main:lifespan:43 | N/A | RPEX SEO CRM v1.0.0 starting [development]
+2026-08-05 12:13:20.150 | INFO     | uvicorn.lifespan.on:startup:62 | N/A | Application startup complete.

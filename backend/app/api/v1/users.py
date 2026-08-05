@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status, Query
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.postgres import get_db_session
 from app.dependencies.auth import get_current_user, get_current_admin, require_permission
-from app.models.user import User
+from app.models.user import User, Role
 from app.schemas.auth import UserCreate, UserUpdate, UserListResponse
 from app.services.auth_service import UserService
 from app.utils.response import ok, created, PaginatedResponse
@@ -13,6 +14,41 @@ from app.utils.pagination import PaginationParams, get_pagination_params
 from loguru import logger
 
 router = APIRouter()
+
+
+@router.get(
+    "/lookup",
+    status_code=status.HTTP_200_OK,
+    response_model=dict,
+)
+async def lookup_users(
+    current_user: User = Depends(get_current_user),
+    _=Depends(require_permission("users.view")),
+    role_based: str = Query(..., description="Role code/name to filter users, e.g. SALES"),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """
+    List users by role and return only user_id and user_name.
+
+    Requires users.view permission.
+    """
+    role_filter = role_based.strip().upper()
+    query = (
+        select(User.id, User.full_name)
+        .outerjoin(Role, User.role_id == Role.id)
+        .where(User.is_deleted == False)
+        .where(
+            or_(
+                Role.code == role_filter,
+                Role.name == role_filter,
+            )
+        )
+        .order_by(User.full_name.asc())
+    )
+
+    rows = (await session.execute(query)).all()
+    data = [{"user_id": str(row.id), "user_name": row.full_name} for row in rows]
+    return ok(data=data)
 
 
 @router.post(
