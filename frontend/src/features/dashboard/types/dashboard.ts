@@ -1,5 +1,9 @@
 export type DashboardWidgetId =
   | "leadStats"
+  | "customers"
+  | "campaigns"
+  | "followups"
+  | "projects"
   | "revenueTrend"
   | "bookingPipeline"
   | "payments"

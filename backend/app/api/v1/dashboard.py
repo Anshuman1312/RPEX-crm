@@ -68,6 +68,65 @@ async def get_dashboard(
     return ok(data=dashboard.model_dump())
 
 
+@router.get("/kpis/leads", status_code=status.HTTP_200_OK, response_model=dict)
+async def get_lead_pipeline_kpis(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db_session),
+) -> dict:
+    """Get lead pipeline KPIs broken down by status for the dashboard KPI cards."""
+    _ = current_user
+
+    row = (
+        await session.execute(
+            select(
+                func.count(Lead.id).label("total_leads"),
+                # Open = anything not lost/inactive/converted
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status).notin_(["lost", "inactive", "converted"])
+                ).label("open_leads"),
+                # Follow-up leads = those with a scheduled next followup
+                func.count(Lead.id).filter(
+                    Lead.next_followup_at.isnot(None),
+                    func.lower(Lead.status).notin_(["lost", "inactive", "converted"]),
+                ).label("follow_leads"),
+                # Contacted (visit scheduled proxy) = contacted + proposal_sent
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status).in_(["contacted", "proposal_sent"])
+                ).label("visit_scheduled"),
+                # Negotiation = visited / qualified
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status).in_(["negotiation", "qualified"])
+                ).label("visited_leads"),
+                # Converted = booking leads
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status) == "converted"
+                ).label("booking_leads"),
+                # Lost = future perspective / lost but trackable
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status) == "lost"
+                ).label("lost_leads"),
+                # Inactive = duplicate/cold
+                func.count(Lead.id).filter(
+                    func.lower(Lead.status) == "inactive"
+                ).label("inactive_leads"),
+            ).where(Lead.is_deleted == False)
+        )
+    ).one()
+
+    return ok(
+        data={
+            "total_leads": row.total_leads or 0,
+            "open_leads": row.open_leads or 0,
+            "follow_leads": row.follow_leads or 0,
+            "visit_scheduled": row.visit_scheduled or 0,
+            "visited_leads": row.visited_leads or 0,
+            "booking_leads": row.booking_leads or 0,
+            "lost_leads": row.lost_leads or 0,
+            "inactive_leads": row.inactive_leads or 0,
+        }
+    )
+
+
 @router.get("/kpis/overview", status_code=status.HTTP_200_OK, response_model=dict)
 async def get_kpis_overview(
     statuses: str = Query(None, description="Comma-separated statuses"),

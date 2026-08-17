@@ -1,10 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button, FormField, FormSection, Input } from "@/components";
-import {
-  employeeBandOptions,
-  employeeDepartmentOptions
-} from "@/features/employees/constants/employeeOptions";
+import { useGetRolesQuery } from "@/features/roles/services/roleApi";
 import {
   CreateEmployeeFormValues,
   createEmployeeSchema
@@ -21,6 +18,9 @@ export function EmployeeCreateForm({
   onCancel,
   onSubmit
 }: EmployeeCreateFormProps) {
+  const { data: rolesData } = useGetRolesQuery();
+  const roles = rolesData?.items || [];
+
   const {
     register,
     handleSubmit,
@@ -30,16 +30,15 @@ export function EmployeeCreateForm({
     defaultValues: {
       fullName: "",
       email: "",
-      department: "Sales",
-      band: "Associate",
-      manager: "",
-      joiningDate: ""
+      password: "",
+      phone: "",
+      roleId: ""
     }
   });
 
   return (
     <FormSection
-      description="Register employee profiles with department, reporting manager, and banding context."
+      description="Register employee profiles with role context."
       title="Create Employee"
     >
       <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
@@ -51,42 +50,27 @@ export function EmployeeCreateForm({
           <Input id="employee-email" type="email" {...register("email")} />
         </FormField>
 
-        <FormField error={errors.department?.message} id="employee-department" label="Department" required>
-          <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="employee-department"
-            {...register("department")}
-          >
-            {employeeDepartmentOptions
-              .filter(option => option !== "All")
-              .map(option => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-          </select>
+        <FormField error={errors.password?.message} id="employee-password" label="Password" required>
+          <Input id="employee-password" type="password" {...register("password")} />
         </FormField>
 
-        <FormField error={errors.band?.message} id="employee-band" label="Band" required>
+        <FormField error={errors.phone?.message} id="employee-phone" label="Phone Number" required>
+          <Input id="employee-phone" {...register("phone")} />
+        </FormField>
+
+        <FormField error={errors.roleId?.message} id="employee-role" label="Role" required>
           <select
             className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="employee-band"
-            {...register("band")}
+            id="employee-role"
+            {...register("roleId")}
           >
-            {employeeBandOptions.map(option => (
-              <option key={option} value={option}>
-                {option}
+            <option value="">Select Role</option>
+            {roles.map(option => (
+              <option key={option.id} value={option.id}>
+                {option.name}
               </option>
             ))}
           </select>
-        </FormField>
-
-        <FormField error={errors.manager?.message} id="employee-manager" label="Manager" required>
-          <Input id="employee-manager" {...register("manager")} />
-        </FormField>
-
-        <FormField error={errors.joiningDate?.message} id="employee-joining-date" label="Joining Date" required>
-          <Input id="employee-joining-date" type="date" {...register("joiningDate")} />
         </FormField>
 
         <div className="col-span-full flex justify-end gap-2">

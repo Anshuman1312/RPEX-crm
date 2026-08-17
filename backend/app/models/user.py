@@ -172,7 +172,7 @@ class User(Base, BaseModelMixin):
     )
 
     status: Mapped[str] = mapped_column(
-        Enum(UserStatus),
+        Enum(UserStatus, native_enum=False),
         default=UserStatus.PENDING_VERIFICATION,
         nullable=False,
         index=True,

@@ -64,6 +64,7 @@ class PermissionDetail(BaseModel):
     module: str
     action: str
 
+    model_config = {"from_attributes": True}
 
 class RoleDetail(BaseModel):
     """Role detail with permissions."""
@@ -73,6 +74,7 @@ class RoleDetail(BaseModel):
     code: str
     permissions: list[PermissionDetail] = []
 
+    model_config = {"from_attributes": True}
 
 class UserResponse(BaseModel):
     """Full user response (for logged-in user info)."""
@@ -100,7 +102,7 @@ class UserCreate(BaseModel):
     phone: str = Field(..., min_length=10, max_length=20)
     full_name: str = Field(..., min_length=2, max_length=200)
     password: str = Field(..., min_length=8, max_length=255)
-    employee_code: str = Field(..., min_length=1, max_length=50)
+    employee_code: Optional[str] = Field(None, max_length=50)
     department_id: Optional[uuid.UUID] = None
     designation_id: Optional[uuid.UUID] = None
     role_id: Optional[uuid.UUID] = None
@@ -114,6 +116,7 @@ class UserUpdate(BaseModel):
     department_id: Optional[uuid.UUID] = None
     designation_id: Optional[uuid.UUID] = None
     role_id: Optional[uuid.UUID] = None
+    status: Optional[str] = None
 
 
 class ChangePasswordRequest(BaseModel):
@@ -127,6 +130,30 @@ class ChangePasswordRequest(BaseModel):
         return self.new_password == self.confirm_password
 
 
+class RoleSimple(BaseModel):
+    id: uuid.UUID
+    name: str
+    code: str
+
+    model_config = {"from_attributes": True}
+
+
+class DepartmentSimple(BaseModel):
+    id: uuid.UUID
+    name: str
+    code: str
+
+    model_config = {"from_attributes": True}
+
+
+class DesignationSimple(BaseModel):
+    id: uuid.UUID
+    name: str
+    code: str
+
+    model_config = {"from_attributes": True}
+
+
 class UserListResponse(BaseModel):
     """User list item (less info than full response)."""
 
@@ -137,5 +164,10 @@ class UserListResponse(BaseModel):
     status: str
     is_verified: bool
     last_login_at: Optional[datetime] = None
+    role: Optional[RoleSimple] = None
+    department: Optional[DepartmentSimple] = None
+    designation: Optional[DesignationSimple] = None
+    created_by: Optional[uuid.UUID] = None
+    created_at: datetime
 
     model_config = {"from_attributes": True}
