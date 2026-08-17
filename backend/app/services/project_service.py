@@ -30,13 +30,13 @@ class ProjectService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.project_repo = ProjectRepository(session, Project)
-        self.block_repo = BlockRepository(session, Block)
-        self.building_repo = BuildingRepository(session, Building)
-        self.floor_repo = FloorRepository(session, Floor)
-        self.unit_repo = UnitRepository(session, Unit)
-        self.amenity_repo = ProjectAmenityRepository(session, ProjectAmenity)
-        self.availability_log_repo = UnitAvailabilityLogRepository(session, UnitAvailabilityLog)
+        self.project_repo = ProjectRepository(session)
+        self.block_repo = BlockRepository(session)
+        self.building_repo = BuildingRepository(session)
+        self.floor_repo = FloorRepository(session)
+        self.unit_repo = UnitRepository(session)
+        self.amenity_repo = ProjectAmenityRepository(session)
+        self.availability_log_repo = UnitAvailabilityLogRepository(session)
         self.numbering_service = NumberingService(session)
 
     # ── Project CRUD ──────────────────────────────────────────────────────

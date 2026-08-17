@@ -11,12 +11,16 @@ interface CustomerCreateFormProps {
   isSubmitting: boolean;
   onCancel: () => void;
   onSubmit: (values: CreateCustomerFormValues) => Promise<void>;
+  initialValues?: Partial<CreateCustomerFormValues>;
+  submitLabel?: string;
 }
 
 export function CustomerCreateForm({
   isSubmitting,
   onCancel,
-  onSubmit
+  onSubmit,
+  initialValues,
+  submitLabel
 }: CustomerCreateFormProps) {
   const {
     register,
@@ -25,20 +29,20 @@ export function CustomerCreateForm({
   } = useForm<CreateCustomerFormValues>({
     resolver: zodResolver(createCustomerSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      alternate_phone: "",
-      company_name: "",
-      customer_type: "individual",
-      referred_by_user_id: "",
-      lead_converted_from_id: "",
-      preferred_contact_method: "",
-      preferred_language: "en",
-      gstin: "",
-      pan: "",
-      notes: ""
+      first_name: initialValues?.first_name || "",
+      last_name: initialValues?.last_name || "",
+      email: initialValues?.email || "",
+      phone: initialValues?.phone || "",
+      alternate_phone: initialValues?.alternate_phone || "",
+      company_name: initialValues?.company_name || "",
+      customer_type: initialValues?.customer_type || "individual",
+      referred_by_user_id: initialValues?.referred_by_user_id || "",
+      lead_converted_from_id: initialValues?.lead_converted_from_id || "",
+      preferred_contact_method: initialValues?.preferred_contact_method || "",
+      preferred_language: initialValues?.preferred_language || "en",
+      gstin: initialValues?.gstin || "",
+      pan: initialValues?.pan || "",
+      notes: initialValues?.notes || ""
     }
   });
 
@@ -126,7 +130,7 @@ export function CustomerCreateForm({
             Cancel
           </Button>
           <Button disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Creating..." : "Create Client"}
+            {isSubmitting ? (submitLabel ? `${submitLabel}...` : "Creating...") : (submitLabel || "Create Client")}
           </Button>
         </div>
     </form>

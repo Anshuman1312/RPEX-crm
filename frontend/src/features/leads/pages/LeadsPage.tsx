@@ -23,7 +23,7 @@ export function LeadsPage() {
   const [editingLead, setEditingLead] = useState<LeadRecord | null>(null);
   const [viewingLead, setViewingLead] = useState<LeadRecord | null>(null);
   const { filters, search, setSearch, source, setSource, status, setStatus } = useLeadFilters();
-  const { data, isLoading, isError, refetch } = useGetLeadsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetLeadsQuery(filters);
   
   const [createLead, { isLoading: isCreatingLead }] = useCreateLeadMutation();
   const [updateLead, { isLoading: isUpdatingLead }] = useUpdateLeadMutation();
@@ -221,7 +221,13 @@ export function LeadsPage() {
 
       <ConfirmDialog />
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Lead Pipeline" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Lead Pipeline"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

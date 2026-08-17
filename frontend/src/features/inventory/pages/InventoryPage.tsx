@@ -19,7 +19,7 @@ export function InventoryPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { filters, search, setSearch, category, setCategory, status, setStatus } =
     useInventoryFilters();
-  const { data, isLoading, isError, refetch } = useGetInventoryUnitsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetInventoryUnitsQuery(filters);
   const [createInventoryUnit, { isLoading: isCreatingInventoryUnit }] =
     useCreateInventoryUnitMutation();
   const [updateInventoryStatus] = useUpdateInventoryStatusMutation();
@@ -90,7 +90,13 @@ export function InventoryPage() {
         />
       </Dialog>
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Inventory Portfolio" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Inventory Portfolio"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

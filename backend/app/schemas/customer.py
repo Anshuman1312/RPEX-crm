@@ -36,7 +36,7 @@ class CustomerAddressUpdate(BaseModel):
 
 class CustomerAddressResponse(BaseModel):
     """Customer address response."""
-    id: str
+    id: UUID
     address_type: str
     full_address: str
     street: str
@@ -73,7 +73,7 @@ class CustomerKYCUpdate(BaseModel):
 
 class CustomerKYCResponse(BaseModel):
     """Customer KYC response."""
-    id: str
+    id: UUID
     document_type: str
     document_number: str
     issued_by: Optional[str]
@@ -81,7 +81,7 @@ class CustomerKYCResponse(BaseModel):
     expiry_date: Optional[datetime]
     document_url: Optional[str]
     verification_status: str
-    verified_by_user_id: Optional[str]
+    verified_by_user_id: Optional[UUID]
     verified_at: Optional[datetime]
     rejection_reason: Optional[str]
     created_at: datetime
@@ -125,8 +125,8 @@ class CustomerPreferenceUpdate(BaseModel):
 
 class CustomerPreferenceResponse(BaseModel):
     """Customer preferences response."""
-    id: str
-    customer_id: str
+    id: UUID
+    customer_id: UUID
     interested_project_ids: Optional[str]
     preferred_unit_type: Optional[str]
     budget_min: Optional[float]
@@ -185,7 +185,7 @@ class CustomerStatusUpdate(BaseModel):
 
 class CustomerListResponse(BaseModel):
     """Customer list response (subset of fields for list view)."""
-    id: str
+    id: UUID
     customer_number: str
     first_name: str
     last_name: str
@@ -194,7 +194,7 @@ class CustomerListResponse(BaseModel):
     company_name: Optional[str]
     customer_type: str
     status: str
-    referred_by_user_id: Optional[str]
+    referred_by_user_id: Optional[UUID]
     lead_converted_date: Optional[datetime]
     created_at: datetime
     updated_at: datetime
@@ -204,7 +204,7 @@ class CustomerListResponse(BaseModel):
 
 class CustomerResponse(BaseModel):
     """Full customer response with all details."""
-    id: str
+    id: UUID
     customer_number: str
     first_name: str
     last_name: str
@@ -214,9 +214,9 @@ class CustomerResponse(BaseModel):
     company_name: Optional[str]
     customer_type: str
     status: str
-    referred_by_user_id: Optional[str]
+    referred_by_user_id: Optional[UUID]
     referred_by_date: Optional[datetime]
-    lead_converted_from_id: Optional[str]
+    lead_converted_from_id: Optional[UUID]
     lead_converted_date: Optional[datetime]
     preferred_contact_method: Optional[str]
     preferred_language: str

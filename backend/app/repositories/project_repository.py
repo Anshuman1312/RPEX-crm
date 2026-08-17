@@ -15,6 +15,9 @@ from app.utils.filters import SortDirection
 class ProjectRepository(BaseRepository[Project]):
     """Repository for Project entity with advanced filtering."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Project)
+
     async def get_by_project_number(self, project_number: str) -> Optional[Project]:
         """Get project by project number."""
         stmt = select(Project).where(Project.project_number == project_number)
@@ -155,6 +158,9 @@ class ProjectRepository(BaseRepository[Project]):
 class BlockRepository(BaseRepository[Block]):
     """Repository for Block entity."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Block)
+
     async def get_project_blocks(self, project_id: str) -> List[Block]:
         """Get all blocks in a project."""
         stmt = (
@@ -180,6 +186,9 @@ class BlockRepository(BaseRepository[Block]):
 class BuildingRepository(BaseRepository[Building]):
     """Repository for Building entity."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Building)
+
     async def get_block_buildings(self, block_id: str) -> List[Building]:
         """Get all buildings in a block."""
         stmt = (
@@ -193,6 +202,9 @@ class BuildingRepository(BaseRepository[Building]):
 
 class FloorRepository(BaseRepository[Floor]):
     """Repository for Floor entity."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Floor)
 
     async def get_building_floors(self, building_id: str) -> List[Floor]:
         """Get all floors in a building."""
@@ -218,6 +230,9 @@ class FloorRepository(BaseRepository[Floor]):
 
 class UnitRepository(BaseRepository[Unit]):
     """Repository for Unit entity with advanced filtering."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Unit)
 
     async def get_by_unit_number(self, project_id: str, unit_number: str) -> Optional[Unit]:
         """Get unit by project and unit number."""
@@ -372,6 +387,9 @@ class UnitRepository(BaseRepository[Unit]):
 class UnitAvailabilityLogRepository(BaseRepository[UnitAvailabilityLog]):
     """Repository for Unit Availability Log."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, UnitAvailabilityLog)
+
     async def get_unit_logs(self, unit_id: str) -> List[UnitAvailabilityLog]:
         """Get all logs for a unit."""
         stmt = (
@@ -385,6 +403,9 @@ class UnitAvailabilityLogRepository(BaseRepository[UnitAvailabilityLog]):
 
 class ProjectAmenityRepository(BaseRepository[ProjectAmenity]):
     """Repository for Project Amenities."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, ProjectAmenity)
 
     async def get_project_amenities(self, project_id: str) -> List[ProjectAmenity]:
         """Get all amenities for a project."""

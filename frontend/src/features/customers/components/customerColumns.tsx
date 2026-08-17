@@ -1,13 +1,19 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CustomerRecord } from "@/features/customers/types/customer";
+import { Button } from "@/components/ui/button";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
-export function buildCustomerColumns(): ColumnDef<CustomerRecord>[] {
+export function buildCustomerColumns(
+  onEdit: (customer: CustomerRecord) => void,
+  onDelete: (customerId: string) => void,
+  onView: (customer: CustomerRecord) => void
+): ColumnDef<CustomerRecord>[] {
   return [
     {
       accessorKey: "customer_number",
       header: "Customer ID",
       cell: ({ row }) => (
-        <span className="font-semibold text-primary font-mono text-xs">
+        <span className="font-semibold text-muted-foreground font-mono text-xs">
           {row.original.customer_number}
         </span>
       )
@@ -26,11 +32,6 @@ export function buildCustomerColumns(): ColumnDef<CustomerRecord>[] {
       header: "Mobile"
     },
     {
-      accessorKey: "alternate_phone",
-      header: "Alternate Mobile",
-      cell: ({ row }) => row.original.alternate_phone || "-"
-    },
-    {
       accessorKey: "email",
       header: "Email ID"
     },
@@ -45,31 +46,6 @@ export function buildCustomerColumns(): ColumnDef<CustomerRecord>[] {
       cell: ({ row }) => (
         <span className="capitalize">{(row.original.customer_type || "").toLowerCase()}</span>
       )
-    },
-    {
-      accessorKey: "preferred_contact_method",
-      header: "Preferred Contact",
-      cell: ({ row }) => {
-        const method = row.original.preferred_contact_method;
-        return method ? <span className="capitalize">{method.toLowerCase()}</span> : "-";
-      }
-    },
-    {
-      accessorKey: "preferred_language",
-      header: "Language",
-      cell: ({ row }) => (
-        <span className="uppercase text-xs font-medium">{row.original.preferred_language || "EN"}</span>
-      )
-    },
-    {
-      accessorKey: "gstin",
-      header: "GSTIN",
-      cell: ({ row }) => row.original.gstin || "-"
-    },
-    {
-      accessorKey: "pan",
-      header: "PAN",
-      cell: ({ row }) => row.original.pan || "-"
     },
     {
       accessorKey: "status",
@@ -90,15 +66,6 @@ export function buildCustomerColumns(): ColumnDef<CustomerRecord>[] {
       }
     },
     {
-      accessorKey: "notes",
-      header: "Notes",
-      cell: ({ row }) => (
-        <span className="block max-w-[200px] truncate" title={row.original.notes}>
-          {row.original.notes || "-"}
-        </span>
-      )
-    },
-    {
       accessorKey: "created_at",
       header: "Created At",
       cell: ({ row }) => {
@@ -108,6 +75,41 @@ export function buildCustomerColumns(): ColumnDef<CustomerRecord>[] {
           return "-";
         }
       }
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onView(row.original)}
+            className="h-8 w-8 p-0"
+            title="View Customer Details"
+          >
+            <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onEdit(row.original)}
+            className="h-8 w-8 p-0"
+            title="Edit Customer"
+          >
+            <Edit className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onDelete(row.original.id)}
+            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+            title="Delete Customer"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      )
     }
   ];
 }

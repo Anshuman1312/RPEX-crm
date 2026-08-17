@@ -3,7 +3,8 @@ import {
   CreateCustomerInput,
   CustomerFilters,
   CustomerListResponse,
-  CustomerRecord
+  CustomerRecord,
+  UpdateCustomerInput
 } from "@/features/customers/types/customer";
 
 export const customerApi = rootApi.injectEndpoints({
@@ -66,8 +67,34 @@ export const customerApi = rootApi.injectEndpoints({
       }),
       transformResponse: (response: any) => response.data,
       invalidatesTags: [{ type: "Customers", id: "LIST" }]
+    }),
+
+    updateCustomer: builder.mutation<CustomerRecord, UpdateCustomerInput>({
+      query: ({ id, payload }) => ({
+        url: `/customers/${id}`,
+        method: "PATCH",
+        data: payload
+      }),
+      transformResponse: (response: any) => response.data,
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Customers", id },
+        { type: "Customers", id: "LIST" }
+      ]
+    }),
+
+    deleteCustomer: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/customers/${id}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: [{ type: "Customers", id: "LIST" }]
     })
   })
 });
 
-export const { useGetCustomersQuery, useCreateCustomerMutation } = customerApi;
+export const {
+  useGetCustomersQuery,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation
+} = customerApi;

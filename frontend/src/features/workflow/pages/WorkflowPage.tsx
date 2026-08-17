@@ -18,7 +18,7 @@ import { PageContainer } from "@/layouts/components/PageContainer";
 export function WorkflowPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { filters, search, setSearch, trigger, setTrigger, status, setStatus } = useWorkflowFilters();
-  const { data, isLoading, isError, refetch } = useGetWorkflowsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetWorkflowsQuery(filters);
   const [createWorkflow, { isLoading: isCreating }] = useCreateWorkflowMutation();
   const [updateWorkflowStatus] = useUpdateWorkflowStatusMutation();
 
@@ -88,7 +88,13 @@ export function WorkflowPage() {
         />
       </Dialog>
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Workflow Registry" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Workflow Registry"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

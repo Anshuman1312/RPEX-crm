@@ -56,3 +56,8 @@ export interface CreateCustomerInput {
   pan?: string;
   notes?: string;
 }
+
+export interface UpdateCustomerInput {
+  id: string;
+  payload: Partial<CreateCustomerInput>;
+}

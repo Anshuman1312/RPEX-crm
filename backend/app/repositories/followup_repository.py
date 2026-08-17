@@ -15,7 +15,7 @@ from decimal import Decimal
 from typing import List, Optional, Tuple
 from uuid import UUID
 
-from sqlalchemy import and_, or_, desc, asc, select
+from sqlalchemy import select, and_, func, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -26,6 +26,9 @@ from app.utils.enums import FollowUpStatus, FollowUpType, FollowUpOutcomeType, F
 
 class FollowUpRepository(BaseRepository[FollowUp]):
     """Repository for follow-up operations."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, FollowUp)
 
     async def get_by_number(self, followup_number: str) -> Optional[FollowUp]:
         """Get follow-up by number."""
@@ -279,6 +282,9 @@ class FollowUpRepository(BaseRepository[FollowUp]):
 class FollowUpTaskRepository(BaseRepository[FollowUpTask]):
     """Repository for follow-up task operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, FollowUpTask)
+
     async def get_followup_tasks(self, followup_id: UUID) -> List[FollowUpTask]:
         """Get all tasks for a follow-up."""
         query = (
@@ -329,6 +335,9 @@ class FollowUpTaskRepository(BaseRepository[FollowUpTask]):
 
 class FollowUpOutcomeRepository(BaseRepository[FollowUpOutcome]):
     """Repository for follow-up outcome operations."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, FollowUpOutcome)
 
     async def get_followup_outcomes(self, followup_id: UUID) -> List[FollowUpOutcome]:
         """Get all outcomes for a follow-up."""
@@ -389,6 +398,9 @@ class FollowUpOutcomeRepository(BaseRepository[FollowUpOutcome]):
 
 class FollowUpAttachmentRepository(BaseRepository[FollowUpAttachment]):
     """Repository for follow-up attachment operations."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, FollowUpAttachment)
 
     async def get_followup_attachments(self, followup_id: UUID) -> List[FollowUpAttachment]:
         """Get all attachments for a follow-up."""

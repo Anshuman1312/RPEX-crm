@@ -24,6 +24,9 @@ from app.utils.enums import NotificationType, NotificationChannel
 class NotificationRepository(BaseRepository[Notification]):
     """Repository for notification operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Notification)
+
     async def get_user_notifications(
         self,
         user_id: UUID,
@@ -194,6 +197,9 @@ class NotificationRepository(BaseRepository[Notification]):
 class NotificationPreferenceRepository(BaseRepository[NotificationPreference]):
     """Repository for notification preference operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, NotificationPreference)
+
     async def get_user_preferences(
         self, user_id: UUID
     ) -> List[NotificationPreference]:
@@ -264,6 +270,9 @@ class NotificationPreferenceRepository(BaseRepository[NotificationPreference]):
 
 class NotificationTemplateRepository(BaseRepository[NotificationTemplate]):
     """Repository for notification template operations."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, NotificationTemplate)
 
     async def get_by_name(self, name: str) -> Optional[NotificationTemplate]:
         """Get template by name."""

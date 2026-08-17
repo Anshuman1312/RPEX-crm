@@ -10,6 +10,8 @@ import {
   createFollowUpSchema,
   CreateFollowUpFormValues
 } from "@/features/followups/validation/followupSchemas";
+import { useGetLeadsQuery } from "@/features/leads/services";
+import { useGetCustomersQuery } from "@/features/customers/services";
 
 interface FollowUpCreateFormProps {
   isSubmitting: boolean;
@@ -25,6 +27,8 @@ export function FollowUpCreateForm({
   initialValues
 }: FollowUpCreateFormProps) {
   const session = useAppSelector((state) => state.auth.session);
+  const { data: leadsData } = useGetLeadsQuery();
+  const { data: customersData } = useGetCustomersQuery();
 
   const {
     register,
@@ -98,12 +102,34 @@ export function FollowUpCreateForm({
         </select>
       </FormField>
 
-      <FormField error={errors.lead_id?.message} id="followup-lead-id" label="Lead ID (UUID)">
-        <Input id="followup-lead-id" placeholder="Optional" {...register("lead_id")} />
+      <FormField error={errors.lead_id?.message} id="followup-lead-id" label="Lead" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-lead-id"
+          {...register("lead_id")}
+        >
+          <option value="">None (Select Lead)</option>
+          {leadsData?.items?.map(lead => (
+            <option key={lead.id} value={lead.id}>
+              {lead.fullName} ({lead.phone})
+            </option>
+          ))}
+        </select>
       </FormField>
 
-      <FormField error={errors.customer_id?.message} id="followup-customer-id" label="Customer ID (UUID)">
-        <Input id="followup-customer-id" placeholder="Optional" {...register("customer_id")} />
+      <FormField error={errors.customer_id?.message} id="followup-customer-id" label="Customer" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-customer-id"
+          {...register("customer_id")}
+        >
+          <option value="">None (Select Customer)</option>
+          {customersData?.items?.map(customer => (
+            <option key={customer.id} value={customer.id}>
+              {customer.first_name} {customer.last_name} ({customer.customer_number})
+            </option>
+          ))}
+        </select>
       </FormField>
 
       <FormField error={errors.is_critical?.message} id="followup-critical" label="Critical Follow-up">

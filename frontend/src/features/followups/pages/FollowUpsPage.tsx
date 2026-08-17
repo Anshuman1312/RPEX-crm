@@ -26,7 +26,7 @@ export function FollowUpsPage() {
   const { filters, search, setSearch, type, setType, priority, setPriority, status, setStatus } =
     useFollowUpFilters();
 
-  const { data, isLoading, isError, refetch } = useGetFollowUpsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetFollowUpsQuery(filters);
 
   const [createFollowUp, { isLoading: isCreatingFollowUp }] = useCreateFollowUpMutation();
   const [updateFollowUp, { isLoading: isUpdatingFollowUp }] = useUpdateFollowUpMutation();
@@ -266,7 +266,13 @@ export function FollowUpsPage() {
 
       <ConfirmDialog />
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Follow-up Queue" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Follow-up Queue"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

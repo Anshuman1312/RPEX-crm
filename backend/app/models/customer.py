@@ -187,7 +187,7 @@ class CustomerKYC(Base, BaseModelMixin, PrimaryKeyMixin, TimestampMixin):
             verified_by_user: User - User who verified
     """
 
-    __tablename__ = "customer_kyc"
+    __tablename__ = "customer_kycs"
 
     customer_id = Column(PG_UUID(as_uuid=True), ForeignKey("customers.id", ondelete="CASCADE"), nullable=False, index=True)
     

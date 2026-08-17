@@ -116,6 +116,9 @@ async def create_customer(
 
     await session.commit()
 
+    # Refetch with eager loaded relationships to avoid MissingGreenlet errors
+    customer = await service.get_customer(str(customer.id))
+
     logger.info(f"Customer created | id={customer.id} | number={customer.customer_number}")
 
     return created(
@@ -188,6 +191,9 @@ async def update_customer(
 
     await session.commit()
 
+    # Refetch with eager loaded relationships to avoid MissingGreenlet errors
+    customer = await service.get_customer(customer_id)
+
     logger.info(f"Customer updated | id={customer_id} | updated_by={current_user.id}")
 
     return ok(data=CustomerResponse.model_validate(customer).__dict__)
@@ -208,27 +214,29 @@ async def change_customer_status(
 
     await session.commit()
 
+    # Refetch with eager loaded relationships to avoid MissingGreenlet errors
+    customer = await service.get_customer(customer_id)
+
     logger.info(f"Customer status changed | id={customer_id} | status={request.status}")
 
     return ok(data=CustomerResponse.model_validate(customer).__dict__)
 
 
-@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_lead(
-    lead_id: str,
+@router.delete("/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_customer(
+    customer_id: str,
     current_user: User = Depends(get_current_user),
-    _=Depends(require_permission("leads.delete")),
+    _=Depends(require_permission("customers.delete")),
     session: AsyncSession = Depends(get_db_session),
-): # Remove '-> None' or keep it, but return a Response object
-    """Soft delete a lead."""
-    lead_service = LeadService(session)
-    await lead_service.delete_lead(lead_id)
+):
+    """Soft delete a customer."""
+    customer_service = CustomerService(session)
+    await customer_service.delete_customer(customer_id)
 
     await session.commit()
 
-    logger.info(f"Lead deleted | lead_id={lead_id} | deleted_by={current_user.id}")
+    logger.info(f"Customer deleted | customer_id={customer_id} | deleted_by={current_user.id}")
     
-    # Return an empty Response object explicitly
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

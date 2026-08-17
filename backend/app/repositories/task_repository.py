@@ -27,6 +27,9 @@ from app.utils.enums import TaskStatus, TaskPriority
 class TaskRepository(BaseRepository[Task]):
     """Repository for task operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Task)
+
     async def get_by_number(self, task_number: str) -> Optional[Task]:
         """Get task by number."""
         query = select(Task).where(
@@ -257,6 +260,9 @@ class TaskRepository(BaseRepository[Task]):
 class TaskChecklistRepository(BaseRepository[TaskChecklist]):
     """Repository for task checklist operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, TaskChecklist)
+
     async def get_task_checklists(self, task_id: UUID) -> List[TaskChecklist]:
         """Get all checklists for a task."""
         query = (
@@ -299,6 +305,9 @@ class TaskChecklistRepository(BaseRepository[TaskChecklist]):
 class TaskCommentRepository(BaseRepository[TaskComment]):
     """Repository for task comment operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, TaskComment)
+
     async def get_task_comments(self, task_id: UUID) -> List[TaskComment]:
         """Get all comments for a task."""
         query = (
@@ -318,6 +327,9 @@ class TaskCommentRepository(BaseRepository[TaskComment]):
 class TaskAttachmentRepository(BaseRepository[TaskAttachment]):
     """Repository for task attachment operations."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, TaskAttachment)
+
     async def get_task_attachments(self, task_id: UUID) -> List[TaskAttachment]:
         """Get all attachments for a task."""
         query = (
@@ -336,6 +348,9 @@ class TaskAttachmentRepository(BaseRepository[TaskAttachment]):
 
 class ActivityRepository(BaseRepository[Activity]):
     """Repository for activity log operations."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Activity)
 
     async def get_by_entity(
         self,

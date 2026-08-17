@@ -25,7 +25,7 @@ export function BookingsPage() {
     loanAssistanceRequired,
     setLoanAssistanceRequired
   } = useBookingFilters();
-  const { data, isLoading, isError, refetch } = useGetBookingsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetBookingsQuery(filters);
   const [createBooking, { isLoading: isCreatingBooking }] = useCreateBookingMutation();
 
   const columns = useMemo(
@@ -87,7 +87,13 @@ export function BookingsPage() {
       </Dialog>
 
       <div className="text-[#38263f] dark:text-[#c4afd3]">
-        <DataTable columns={columns} data={data?.items ?? []} title="Booking Pipeline" />
+        <DataTable
+          columns={columns}
+          data={data?.items ?? []}
+          title="Booking Pipeline"
+          onRefresh={refetch}
+          isRefreshing={isFetching}
+        />
       </div>
     </PageContainer>
   );
