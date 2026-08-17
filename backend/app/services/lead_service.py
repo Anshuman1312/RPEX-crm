@@ -23,6 +23,18 @@ from app.utils.filters import LeadFilterParams
 from app.utils.numbering import NumberingService, NumberingPrefix
 
 
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+def _make_naive(dt: Optional[datetime]) -> Optional[datetime]:
+    if dt is None:
+        return None
+    if dt.tzinfo is not None:
+        return dt.replace(tzinfo=None)
+    return dt
+
+
 class LeadService:
     """Lead management business logic."""
 
@@ -47,6 +59,7 @@ class LeadService:
         preferred_unit_type: Optional[str] = None,
         assigned_to_user_id: Optional[str] = None,
         created_by: Optional[str] = None,
+        next_followup_at: Optional[datetime] = None,
     ) -> Lead:
         """Create new lead."""
         # Generate lead number
@@ -68,6 +81,7 @@ class LeadService:
             preferred_unit_type=preferred_unit_type,
             assigned_to_user_id=uuid.UUID(assigned_to_user_id) if assigned_to_user_id else None,
             created_by=uuid.UUID(created_by) if created_by else None,
+            next_followup_at=_make_naive(next_followup_at),
         )
 
         # Create initial assignment if user specified
@@ -76,7 +90,7 @@ class LeadService:
                 lead_id=lead.id,
                 assigned_to_user_id=uuid.UUID(assigned_to_user_id),
                 assigned_by_user_id=uuid.UUID(created_by) if created_by else None,
-                assigned_at=datetime.now(timezone.utc),
+                assigned_at=_utc_now(),
                 notes="Initial assignment on lead creation",
             )
 
@@ -112,6 +126,9 @@ class LeadService:
         if "interested_in_project" in filtered_updates and filtered_updates["interested_in_project"]:
             filtered_updates["interested_in_project"] = uuid.UUID(filtered_updates["interested_in_project"])
 
+        if "next_followup_at" in filtered_updates:
+            filtered_updates["next_followup_at"] = _make_naive(filtered_updates["next_followup_at"])
+
         if filtered_updates:
             lead = await self.lead_repo.update(lead_id, **filtered_updates)
 
@@ -128,28 +145,18 @@ class LeadService:
         """
         lead = await self.lead_repo.get_or_404(lead_id, "Lead")
 
-        # Define allowed transitions
-        transitions = {
-            LeadStatus.NEW.value: [LeadStatus.CONTACTED.value, LeadStatus.LOST.value],
-            LeadStatus.CONTACTED.value: [LeadStatus.QUALIFIED.value, LeadStatus.LOST.value],
-            LeadStatus.QUALIFIED.value: [LeadStatus.PROPOSAL_SENT.value, LeadStatus.LOST.value],
-            LeadStatus.PROPOSAL_SENT.value: [LeadStatus.NEGOTIATION.value, LeadStatus.LOST.value],
-            LeadStatus.NEGOTIATION.value: [LeadStatus.CONVERTED.value, LeadStatus.LOST.value],
-            LeadStatus.CONVERTED.value: [LeadStatus.INACTIVE.value],
-            LeadStatus.LOST.value: [LeadStatus.CONTACTED.value],  # Can reopen lost leads
-            LeadStatus.INACTIVE.value: [LeadStatus.CONTACTED.value],
-        }
+        # Verify transition is allowed
+        allowed_statuses = [status.value for status in LeadStatus]
 
         # Validate transition
-        if lead.status not in transitions:
+        if lead.status not in allowed_statuses:
             raise InvalidStateTransitionException(
-                f"Cannot transition from unknown status '{lead.status}'"
+                "Lead", lead.status or "unknown", "unknown"
             )
 
-        if new_status not in transitions[lead.status]:
+        if new_status not in allowed_statuses:
             raise InvalidStateTransitionException(
-                f"Cannot transition from '{lead.status}' to '{new_status}'. "
-                f"Allowed: {', '.join(transitions[lead.status])}"
+                "Lead", lead.status, new_status
             )
 
         # Update status
@@ -157,7 +164,7 @@ class LeadService:
 
         # Handle conversion
         if new_status == LeadStatus.CONVERTED.value:
-            lead = await self.lead_repo.update(lead_id, conversion_date=datetime.now(timezone.utc))
+            lead = await self.lead_repo.update(lead_id, conversion_date=_utc_now())
 
         # Handle lost
         if new_status == LeadStatus.LOST.value:
@@ -171,7 +178,7 @@ class LeadService:
             subject=f"Status changed to {new_status}",
             description=notes,
             outcome=new_status,
-            activity_date=datetime.now(timezone.utc),
+            activity_date=_utc_now(),
         )
 
         await self.session.flush()
@@ -189,7 +196,7 @@ class LeadService:
         if active_assignment:
             await self.assignment_repo.update(
                 str(active_assignment.id),
-                unassigned_at=datetime.now(timezone.utc),
+                unassigned_at=_utc_now(),
             )
 
         # Create new assignment
@@ -197,7 +204,7 @@ class LeadService:
             lead_id=lead.id,
             assigned_to_user_id=uuid.UUID(assigned_to_user_id),
             assigned_by_user_id=uuid.UUID(assigned_by_user_id) if assigned_by_user_id else None,
-            assigned_at=datetime.now(timezone.utc),
+            assigned_at=_utc_now(),
             notes=notes,
         )
 
@@ -205,7 +212,7 @@ class LeadService:
         lead = await self.lead_repo.update(
             lead_id,
             assigned_to_user_id=uuid.UUID(assigned_to_user_id),
-            assignment_date=datetime.now(timezone.utc),
+            assignment_date=_utc_now(),
         )
 
         # Log activity
@@ -214,7 +221,7 @@ class LeadService:
             activity_type="assignment",
             subject=f"Assigned to user {assigned_to_user_id}",
             description=notes,
-            activity_date=datetime.now(timezone.utc),
+            activity_date=_utc_now(),
         )
 
         await self.session.flush()
@@ -235,23 +242,26 @@ class LeadService:
         # Verify lead exists
         lead = await self.lead_repo.get_or_404(lead_id, "Lead")
 
+        activity_date_naive = _make_naive(activity_date) or _utc_now()
+        next_followup_naive = _make_naive(next_followup)
+
         activity = await self.activity_repo.create(
             lead_id=lead.id,
             activity_type=activity_type,
             subject=subject,
             description=description,
             outcome=outcome,
-            activity_date=activity_date or datetime.now(timezone.utc),
-            next_followup=next_followup,
+            activity_date=activity_date_naive,
+            next_followup=next_followup_naive,
             performed_by_user_id=uuid.UUID(performed_by_user_id) if performed_by_user_id else None,
         )
 
         # Update lead's last activity timestamps
         await self.lead_repo.update(
             lead_id,
-            last_activity_at=datetime.now(timezone.utc),
-            last_contacted_at=activity_date or datetime.now(timezone.utc),
-            next_followup_at=next_followup,
+            last_activity_at=_utc_now(),
+            last_contacted_at=activity_date_naive,
+            next_followup_at=next_followup_naive,
         )
 
         await self.session.flush()

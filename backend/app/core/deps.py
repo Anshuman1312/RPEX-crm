@@ -61,7 +61,7 @@ async def get_current_permissions(
     current_user: CurrentUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> set[str]:
-    if current_user.role and current_user.role.name in {"ADMIN", "SUPER_ADMIN"}:
+    if current_user.role and current_user.role.name.upper() in {"ADMIN", "SUPER_ADMIN"}:
         rows = await db.execute(select(Permission.name))
         return set(rows.scalars().all())
 
@@ -85,8 +85,13 @@ def require_permissions(required_codes: set[str]):
     The actual FastAPI dependency factory.
     """
     async def permission_checker(
+        current_user: Annotated[User, Depends(get_current_user)],
         current_permissions: Annotated[set[str], Depends(get_current_permissions)]
     ) -> None:
+        # ADMIN and SUPER_ADMIN bypass all permission checks
+        if current_user.role and current_user.role.name.upper() in {"ADMIN", "SUPER_ADMIN"}:
+            return
+
         # Check if the user has ANY of the required codes
         if not required_codes.intersection(current_permissions):
             raise HTTPException(

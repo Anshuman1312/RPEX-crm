@@ -6,6 +6,7 @@ interface AxiosBaseQueryArgs {
   url: string;
   method: AxiosRequestConfig["method"];
   data?: AxiosRequestConfig["data"];
+  body?: AxiosRequestConfig["data"];
   params?: AxiosRequestConfig["params"];
 }
 
@@ -20,10 +21,11 @@ export const axiosBaseQuery =
     url,
     method,
     data,
+    body,
     params
   }) => {
     try {
-      const result = await http({ url, method, data, params });
+      const result = await http({ url, method, data: data || body, params });
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;

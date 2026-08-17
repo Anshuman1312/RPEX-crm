@@ -1,46 +1,43 @@
 import { SearchInput } from "@/components";
 import {
-  campaignChannelOptions,
+  campaignTypeOptions,
   campaignStatusOptions
 } from "@/features/campaigns/constants/campaignOptions";
-import {
-  CampaignChannel,
-  CampaignStatus
-} from "@/features/campaigns/types/campaign";
+import { CampaignStatus } from "@/features/campaigns/types/campaign";
 
 interface CampaignFiltersBarProps {
   search: string;
-  channel: CampaignChannel | "All";
+  type: string | "All";
   status: CampaignStatus | "All";
   onSearchChange: (value: string) => void;
-  onChannelChange: (value: CampaignChannel | "All") => void;
+  onTypeChange: (value: string) => void;
   onStatusChange: (value: CampaignStatus | "All") => void;
 }
 
 export function CampaignFiltersBar({
   search,
-  channel,
+  type,
   status,
   onSearchChange,
-  onChannelChange,
+  onTypeChange,
   onStatusChange
 }: CampaignFiltersBarProps) {
   return (
     <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
       <SearchInput
         onChange={onSearchChange}
-        placeholder="Search by campaign id, name, owner or channel"
+        placeholder="Search by campaign id, name, type or platform"
         value={search}
       />
 
       <select
         className="h-10 rounded-md border bg-background px-3 text-sm"
-        onChange={event => onChannelChange(event.target.value as CampaignChannel | "All")}
-        value={channel}
+        onChange={event => onTypeChange(event.target.value)}
+        value={type}
       >
-        {campaignChannelOptions.map(option => (
+        {campaignTypeOptions.map(option => (
           <option key={option} value={option}>
-            Channel: {option}
+            Type: {option}
           </option>
         ))}
       </select>

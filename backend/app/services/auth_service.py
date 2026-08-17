@@ -318,6 +318,7 @@ class UserService:
         department_id: str | None = None,
         designation_id: str | None = None,
         role_id: str | None = None,
+        created_by: uuid.UUID | None = None,
     ) -> User:
         """
         Create new user.
@@ -349,6 +350,7 @@ class UserService:
             role_id=uuid.UUID(role_id) if role_id else None,
             status="active",
             is_verified=False,  # Requires email verification
+            created_by=created_by,
         )
 
         await self.session.flush()
@@ -362,10 +364,30 @@ class UserService:
         """Fetch user with role and permissions (for auth checks)."""
         return await self.user_repo.get_with_role_and_permissions(uuid.UUID(user_id))
 
-    async def list_users(self, skip: int = 0, limit: int = 20) -> tuple[list[User], int]:
-        """List users with count."""
-        users = await self.user_repo.list(skip, limit)
-        count = await self.user_repo.count()
+    async def list_users(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+        search: str | None = None,
+        role_id: uuid.UUID | None = None,
+        department_id: uuid.UUID | None = None,
+        status: str | None = None,
+    ) -> tuple[list[User], int]:
+        """List users with count and eager relations."""
+        users = await self.user_repo.list_with_relations(
+            skip=skip,
+            limit=limit,
+            search=search,
+            role_id=role_id,
+            department_id=department_id,
+            status=status,
+        )
+        count = await self.user_repo.count_with_filters(
+            search=search,
+            role_id=role_id,
+            department_id=department_id,
+            status=status,
+        )
         return users, count
 
     async def change_password(self, user_id: str, old_password: str, new_password: str) -> User:

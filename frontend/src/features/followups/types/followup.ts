@@ -1,24 +1,57 @@
-export type FollowUpChannel = "Call" | "WhatsApp" | "Email" | "Meeting";
-export type FollowUpPriority = "Low" | "Medium" | "High";
-export type FollowUpStatus = "Pending" | "Done" | "Missed" | "Rescheduled";
+export type FollowUpType =
+  | "call"
+  | "email"
+  | "sms"
+  | "meeting"
+  | "site_visit"
+  | "video_call"
+  | "whatsapp"
+  | "other";
+
+export type FollowUpStatus = "scheduled" | "completed" | "cancelled" | "overdue";
+
+export interface FollowUpTaskRecord {
+  id: string;
+  task_type: string;
+  task_number: number;
+  title: string;
+  description?: string;
+  status: string;
+  scheduled_at?: string;
+  is_required: boolean;
+}
 
 export interface FollowUpRecord {
   id: string;
-  leadName: string;
-  owner: string;
-  scheduledAt: string;
-  channel: FollowUpChannel;
-  priority: FollowUpPriority;
+  followup_number: string;
+  type: FollowUpType;
+  subject: string;
+  description?: string;
+  scheduled_at: string;
+  completed_at?: string;
   status: FollowUpStatus;
-  notes: string;
-  updatedAt: string;
+  priority: number; // 0 = Low, 1 = Medium, 2 = High
+  is_critical: boolean;
+  notes?: string;
+  lead_id?: string;
+  customer_id?: string;
+  assigned_to_user_id?: string;
+  created_by_user_id?: string;
+  task_count?: number;
+  tasks?: FollowUpTaskRecord[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FollowUpFilters {
   search?: string;
-  channel?: FollowUpChannel | "All";
-  priority?: FollowUpPriority | "All";
+  type?: FollowUpType | "All";
+  priority?: "Low" | "Medium" | "High" | "All";
   status?: FollowUpStatus | "All";
+  lead_id?: string;
+  customer_id?: string;
+  assigned_to_user_id?: string;
+  is_critical?: boolean;
 }
 
 export interface FollowUpStats {
@@ -35,10 +68,21 @@ export interface FollowUpListResponse {
 }
 
 export interface CreateFollowUpInput {
-  leadName: string;
-  owner: string;
-  scheduledAt: string;
-  channel: FollowUpChannel;
-  priority: FollowUpPriority;
-  notes: string;
+  type: FollowUpType;
+  subject: string;
+  description?: string;
+  scheduled_at: string;
+  assigned_to_user_id?: string;
+  lead_id?: string;
+  customer_id?: string;
+  priority: number;
+  is_critical: boolean;
+  notes?: string;
+  tasks?: {
+    task_type: string;
+    title: string;
+    description?: string;
+    scheduled_at?: string;
+    is_required: boolean;
+  }[];
 }

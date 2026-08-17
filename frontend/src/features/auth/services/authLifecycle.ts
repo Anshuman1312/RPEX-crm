@@ -13,7 +13,6 @@ import {
   setAuthStatus,
   updateAccessToken
 } from "@/features/auth/store/authSlice";
-import { PermissionKey, routePermissionMap } from "@/config/permissions";
 
 interface RefreshResponse {
   access_token?: string;

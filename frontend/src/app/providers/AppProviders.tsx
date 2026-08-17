@@ -11,6 +11,8 @@ import {
   requestTokenRefresh
 } from "@/features/auth/services/authLifecycle";
 import { useThemeSync } from "@/core/theme/useThemeSync";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/core/api/queryClient";
 
 function BootstrapEffects() {
   const dispatch = useAppDispatch();
@@ -56,11 +58,13 @@ function BootstrapEffects() {
 export function AppProviders({ children }: PropsWithChildren) {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <BootstrapEffects />
-        <ErrorBoundary>{children}</ErrorBoundary>
-        <Toaster richColors closeButton position="top-right" />
-      </PersistGate>
+      <QueryClientProvider client={queryClient}>
+        <PersistGate loading={null} persistor={persistor}>
+          <BootstrapEffects />
+          <ErrorBoundary>{children}</ErrorBoundary>
+          <Toaster richColors closeButton position="top-right" />
+        </PersistGate>
+      </QueryClientProvider>
     </Provider>
   );
 }

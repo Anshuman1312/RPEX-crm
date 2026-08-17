@@ -83,6 +83,7 @@ class LeadListResponse(BaseModel):
     priority: str
     assigned_to_user_id: Optional[uuid.UUID] = None
     company_name: Optional[str] = None
+    budget: Optional[int] = None
     last_contacted_at: Optional[datetime] = None
     next_followup_at: Optional[datetime] = None
     created_at: datetime
@@ -106,6 +107,7 @@ class LeadCreate(BaseModel):
     interested_in_project: Optional[str] = None
     preferred_unit_type: Optional[str] = Field(None, max_length=50)
     assigned_to_user_id: Optional[str] = None
+    next_followup_at: Optional[datetime] = None
 
 
 class LeadUpdate(BaseModel):

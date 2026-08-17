@@ -1,42 +1,67 @@
 import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Button, DataTable, Dialog, ErrorState, LoadingState } from "@/components";
+import { RootState } from "@/app/store";
 import { buildEmployeeColumns } from "@/features/employees/components/employeeColumns";
 import { EmployeeCreateForm } from "@/features/employees/components/EmployeeCreateForm";
 import { EmployeeFiltersBar } from "@/features/employees/components/EmployeeFiltersBar";
 import { EmployeeStatsCards } from "@/features/employees/components/EmployeeStatsCards";
 import { useEmployeeFilters } from "@/features/employees/hooks/useEmployeeFilters";
+import { useGetRolesQuery } from "@/features/roles/services/roleApi";
 import {
   useCreateEmployeeMutation,
   useGetEmployeesQuery,
-  useUpdateEmployeeStatusMutation
+  useUpdateEmployeeMutation
 } from "@/features/employees/services/employeeApi";
-import { EmployeeStatus } from "@/features/employees/types/employee";
-import { CreateEmployeeFormValues } from "@/features/employees/validation/employeeSchemas";
 import { PageContainer } from "@/layouts/components/PageContainer";
 
 export function EmployeesPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const session = useSelector((state: RootState) => state.auth.session);
+  const isSuperAdmin = session?.role === "SUPER_ADMIN";
+
   const { filters, search, setSearch, department, setDepartment, status, setStatus } =
     useEmployeeFilters();
   const { data, isLoading, isError, refetch } = useGetEmployeesQuery(filters);
+  const { data: rolesData } = useGetRolesQuery();
+  const rolesList = rolesData?.items || [];
+
   const [createEmployee, { isLoading: isCreatingEmployee }] = useCreateEmployeeMutation();
-  const [updateEmployeeStatus] = useUpdateEmployeeStatusMutation();
+  const [updateEmployee] = useUpdateEmployeeMutation();
 
   const columns = useMemo(
     () =>
-      buildEmployeeColumns(async (employeeId: string, nextStatus: EmployeeStatus) => {
-        try {
-          await updateEmployeeStatus({ employeeId, status: nextStatus }).unwrap();
-          toast.success("Employee status updated");
-        } catch {
-          toast.error("Unable to update employee status");
-        }
-      }),
-    [updateEmployeeStatus]
+      buildEmployeeColumns(
+        async (employeeId: string, nextStatus: string) => {
+          try {
+            await updateEmployee({
+              employeeId,
+              payload: { status: nextStatus === "Active" ? "active" : "inactive" }
+            }).unwrap();
+            toast.success("Employee status updated");
+          } catch {
+            toast.error("Unable to update employee status");
+          }
+        },
+        async (employeeId: string, nextRoleId: string) => {
+          try {
+            await updateEmployee({
+              employeeId,
+              payload: { roleId: nextRoleId }
+            }).unwrap();
+            toast.success("Employee role updated");
+          } catch {
+            toast.error("Unable to update employee role");
+          }
+        },
+        !!isSuperAdmin,
+        rolesList
+      ),
+    [updateEmployee, isSuperAdmin, rolesList]
   );
 
-  const handleCreateEmployee = async (values: CreateEmployeeFormValues) => {
+  const handleCreateEmployee = async (values: any) => {
     try {
       await createEmployee(values).unwrap();
       toast.success("Employee created successfully");
@@ -49,9 +74,11 @@ export function EmployeesPage() {
   return (
     <PageContainer
       actions={
-        <Button onClick={() => setShowCreateForm(true)}>
-          Create Employee
-        </Button>
+        isSuperAdmin ? (
+          <Button onClick={() => setShowCreateForm(true)}>
+            Create Employee
+          </Button>
+        ) : null
       }
       description="Employee operations workspace with directory filters, lifecycle status, and onboarding intake."
       title="Employees"
@@ -68,8 +95,6 @@ export function EmployeesPage() {
       {data ? <EmployeeStatsCards stats={data.stats} /> : null}
 
       <EmployeeFiltersBar
-        department={department}
-        onDepartmentChange={setDepartment}
         onSearchChange={setSearch}
         onStatusChange={setStatus}
         search={search}

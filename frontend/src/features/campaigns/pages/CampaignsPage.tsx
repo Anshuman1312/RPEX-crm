@@ -8,36 +8,31 @@ import { CampaignStatsCards } from "@/features/campaigns/components/CampaignStat
 import { useCampaignFilters } from "@/features/campaigns/hooks/useCampaignFilters";
 import {
   useCreateCampaignMutation,
-  useGetCampaignsQuery,
-  useUpdateCampaignStatusMutation
+  useGetCampaignsQuery
 } from "@/features/campaigns/services/campaignApi";
-import { CampaignStatus } from "@/features/campaigns/types/campaign";
 import { CreateCampaignFormValues } from "@/features/campaigns/validation/campaignSchemas";
 import { PageContainer } from "@/layouts/components/PageContainer";
 
 export function CampaignsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const { filters, search, setSearch, channel, setChannel, status, setStatus } = useCampaignFilters();
+  const { filters, search, setSearch, type, setType, status, setStatus } = useCampaignFilters();
   const { data, isLoading, isError, refetch } = useGetCampaignsQuery(filters);
   const [createCampaign, { isLoading: isCreatingCampaign }] = useCreateCampaignMutation();
-  const [updateCampaignStatus] = useUpdateCampaignStatusMutation();
 
-  const columns = useMemo(
-    () =>
-      buildCampaignColumns(async (campaignId: string, nextStatus: CampaignStatus) => {
-        try {
-          await updateCampaignStatus({ campaignId, status: nextStatus }).unwrap();
-          toast.success("Campaign status updated");
-        } catch {
-          toast.error("Unable to update campaign status");
-        }
-      }),
-    [updateCampaignStatus]
-  );
+  const columns = useMemo(() => buildCampaignColumns(), []);
 
   const handleCreateCampaign = async (values: CreateCampaignFormValues) => {
     try {
-      await createCampaign(values).unwrap();
+      const payload = {
+        name: values.name,
+        type: values.type,
+        platform: values.platform,
+        budget: values.budget,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        extra_data: values.extra_data ? JSON.parse(values.extra_data) : {}
+      };
+      await createCampaign(payload).unwrap();
       toast.success("Campaign created successfully");
       setShowCreateForm(false);
     } catch {
@@ -47,11 +42,7 @@ export function CampaignsPage() {
 
   return (
     <PageContainer
-      actions={
-        <Button onClick={() => setShowCreateForm(true)}>
-          Create Campaign
-        </Button>
-      }
+      actions={<Button onClick={() => setShowCreateForm(true)}>Create Campaign</Button>}
       description="Campaign execution workspace with channel controls, budgets, and lead conversion visibility."
       title="Campaigns"
     >
@@ -67,8 +58,8 @@ export function CampaignsPage() {
       {data ? <CampaignStatsCards stats={data.stats} /> : null}
 
       <CampaignFiltersBar
-        channel={channel}
-        onChannelChange={setChannel}
+        type={type}
+        onTypeChange={setType}
         onSearchChange={setSearch}
         onStatusChange={setStatus}
         search={search}

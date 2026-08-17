@@ -97,9 +97,13 @@ async def create_lead(
         preferred_unit_type=request.preferred_unit_type,
         assigned_to_user_id=request.assigned_to_user_id,
         created_by=str(current_user.id),
+        next_followup_at=request.next_followup_at,
     )
 
     await session.commit()
+
+    # Re-fetch the lead with activities relationship preloaded to avoid MissingGreenlet lazy-loading error during Pydantic serialization
+    lead = await lead_service.get_lead(str(lead.id))
 
     logger.info(f"Lead created | lead_id={lead.id} | lead_number={lead.lead_number} | created_by={current_user.id}")
 
@@ -174,6 +178,9 @@ async def update_lead(
 
     await session.commit()
 
+    # Re-fetch the lead with activities relationship preloaded to avoid MissingGreenlet lazy-loading error during Pydantic serialization
+    lead = await lead_service.get_lead(lead_id)
+
     logger.info(f"Lead updated | lead_id={lead.id} | updated_by={current_user.id}")
 
     return ok(data=LeadResponse.model_validate(lead).__dict__)
@@ -193,6 +200,9 @@ async def update_lead_status(
     lead = await lead_service.transition_status(lead_id, request.status, request.notes)
 
     await session.commit()
+
+    # Re-fetch the lead with activities relationship preloaded to avoid MissingGreenlet lazy-loading error during Pydantic serialization
+    lead = await lead_service.get_lead(lead_id)
 
     logger.info(f"Lead status changed | lead_id={lead.id} | status={request.status} | changed_by={current_user.id}")
 
@@ -218,6 +228,9 @@ async def assign_lead(
     )
 
     await session.commit()
+
+    # Re-fetch the lead with activities relationship preloaded to avoid MissingGreenlet lazy-loading error during Pydantic serialization
+    lead = await lead_service.get_lead(lead_id)
 
     logger.info(
         f"Lead assigned | lead_id={lead.id} | assigned_to={request.assigned_to_user_id} | assigned_by={current_user.id}"

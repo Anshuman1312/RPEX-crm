@@ -4,37 +4,50 @@ import {
   RoleFilters,
   RoleListResponse,
   RoleRecord,
-  RoleStatus
+  RoleStatus,
+  RoleScope,
+  RoleStats
 } from "@/features/roles/types/role";
-import {
-  buildRoleListResponse,
-  createRoleRecord,
-  initialRoleRecords
-} from "@/features/roles/services/roleMockData";
-
-let inMemoryRoles: RoleRecord[] = [...initialRoleRecords];
-
-function applyFilters(records: RoleRecord[], filters?: RoleFilters): RoleRecord[] {
-  if (!filters) return records;
-  const search = filters.search?.trim().toLowerCase();
-  return records.filter(record => {
-    const searchMatch =
-      !search ||
-      [record.id, record.name, record.description].join(" ").toLowerCase().includes(search);
-    const scopeMatch =
-      !filters.scope || filters.scope === "All" || record.scope === filters.scope;
-    const statusMatch =
-      !filters.status || filters.status === "All" || record.status === filters.status;
-    return searchMatch && scopeMatch && statusMatch;
-  });
-}
 
 export const roleApi = rootApi.injectEndpoints({
   endpoints: builder => ({
     getRoles: builder.query<RoleListResponse, RoleFilters | void>({
-      queryFn: async filters => ({
-        data: buildRoleListResponse(applyFilters(inMemoryRoles, filters ?? undefined))
+      query: () => ({
+        url: "/users/roles",
+        method: "GET"
       }),
+      transformResponse: (response: any): RoleListResponse => {
+        const items: RoleRecord[] = (response.data || []).map((r: any) => {
+          let scope: RoleScope = "Organization";
+          if (r.code === "SUPER_ADMIN" || r.code === "ADMIN") {
+            scope = "System";
+          }
+          return {
+            id: r.id,
+            name: r.name,
+            description: r.description || "",
+            scope,
+            status: (r.status || "Active") as RoleStatus,
+            assignedUsers: r.assignedUsers || 0,
+            permissions: r.permissions || [],
+            createdAt: r.createdAt || new Date().toISOString().slice(0, 10),
+            updatedAt: r.updatedAt || new Date().toISOString().slice(0, 10)
+          };
+        });
+
+        const stats: RoleStats = {
+          total: items.length,
+          active: items.filter(item => item.status === "Active").length,
+          system: items.filter(item => item.scope === "System").length,
+          inactive: items.filter(item => item.status === "Inactive").length
+        };
+
+        return {
+          items,
+          total: items.length,
+          stats
+        };
+      },
       providesTags: result =>
         result
           ? [
@@ -45,24 +58,21 @@ export const roleApi = rootApi.injectEndpoints({
     }),
 
     createRole: builder.mutation<RoleRecord, CreateRoleInput>({
-      queryFn: async payload => {
-        const record = createRoleRecord(payload, inMemoryRoles.length + 1);
-        inMemoryRoles = [record, ...inMemoryRoles];
-        return { data: record };
-      },
+      query: payload => ({
+        url: "/users/roles",
+        method: "POST",
+        body: payload
+      }),
       invalidatesTags: [{ type: "Roles", id: "LIST" }]
     }),
 
     updateRoleStatus: builder.mutation<RoleRecord, { roleId: string; status: RoleStatus }>({
-      queryFn: async ({ roleId, status }) => {
-        const record = inMemoryRoles.find(r => r.id === roleId);
-        if (!record)
-          return { error: { status: 404, data: { message: "Role not found" } } };
-        record.status = status;
-        record.updatedAt = new Date().toISOString().slice(0, 10);
-        return { data: record };
-      },
-      invalidatesTags: (_r, _e, arg) => [
+      query: ({ roleId, status }) => ({
+        url: `/users/roles/${roleId}/status`,
+        method: "PATCH",
+        body: { status }
+      }),
+      invalidatesTags: (_result, _error, arg) => [
         { type: "Roles", id: arg.roleId },
         { type: "Roles", id: "LIST" }
       ]

@@ -3,58 +3,52 @@ import {
   CreateCustomerInput,
   CustomerFilters,
   CustomerListResponse,
-  CustomerRecord
+  CustomerRecord,
+  UpdateCustomerInput
 } from "@/features/customers/types/customer";
-import {
-  buildCustomerListResponse,
-  createCustomerRecord,
-  initialCustomerRecords
-} from "@/features/customers/services/customerMockData";
-
-let inMemoryCustomers: CustomerRecord[] = [...initialCustomerRecords];
-
-function applyFilters(
-  records: CustomerRecord[],
-  filters?: CustomerFilters | void
-): CustomerRecord[] {
-  if (!filters) {
-    return records;
-  }
-
-  const f = filters as CustomerFilters;
-  const search = f.search?.trim().toLowerCase();
-
-  return records.filter((record) => {
-    const searchMatch =
-      !search ||
-      [
-        record.id,
-        record.name,
-        record.email,
-        record.phone,
-        record.alternatePhone || "",
-        record.occupation || "",
-        record.address || "",
-        record.remarks || ""
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(search);
-
-    const purposeMatch = !f.purpose || f.purpose === "All" || record.purpose === f.purpose;
-    const propertyTypeMatch =
-      !f.propertyType || f.propertyType === "All" || record.propertyType === f.propertyType;
-
-    return searchMatch && purposeMatch && propertyTypeMatch;
-  });
-}
 
 export const customerApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
     getCustomers: builder.query<CustomerListResponse, CustomerFilters | void>({
-      queryFn: async (filters) => {
-        const filtered = applyFilters(inMemoryCustomers, filters);
-        return { data: buildCustomerListResponse(filtered) };
+      queryFn: async (filters, api, extraOptions, baseQuery) => {
+        const params: Record<string, string | number> = {};
+        if (filters) {
+          if (filters.search) params.search = filters.search;
+          if (filters.statuses) params.statuses = filters.statuses;
+          if (filters.customer_types) params.customer_types = filters.customer_types;
+        }
+
+        // Fetch list of customers
+        const listResult = await baseQuery({
+          url: "/customers",
+          method: "GET",
+          params
+        });
+
+        if (listResult.error) {
+          return { error: listResult.error as any };
+        }
+
+        const listEnvelope = listResult.data as any;
+        const items = listEnvelope?.data || [];
+        const total = listEnvelope?.pagination?.total ?? items.length;
+
+        // Fetch overview stats
+        const statsResult = await baseQuery({
+          url: "/customers/stats/overview",
+          method: "GET"
+        });
+
+        const statsEnvelope = statsResult.data as any;
+        const stats = statsEnvelope?.data || { by_status: {}, by_type: {}, total: 0 };
+
+        return {
+          data: {
+            items,
+            total,
+            stats
+          }
+        };
       },
       providesTags: (result) =>
         result
@@ -66,14 +60,41 @@ export const customerApi = rootApi.injectEndpoints({
     }),
 
     createCustomer: builder.mutation<CustomerRecord, CreateCustomerInput>({
-      queryFn: async (payload) => {
-        const nextRecord = createCustomerRecord(payload, inMemoryCustomers.length + 1);
-        inMemoryCustomers = [nextRecord, ...inMemoryCustomers];
-        return { data: nextRecord };
-      },
+      query: (payload) => ({
+        url: "/customers",
+        method: "POST",
+        data: payload
+      }),
+      transformResponse: (response: any) => response.data,
+      invalidatesTags: [{ type: "Customers", id: "LIST" }]
+    }),
+
+    updateCustomer: builder.mutation<CustomerRecord, UpdateCustomerInput>({
+      query: ({ id, payload }) => ({
+        url: `/customers/${id}`,
+        method: "PATCH",
+        data: payload
+      }),
+      transformResponse: (response: any) => response.data,
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Customers", id },
+        { type: "Customers", id: "LIST" }
+      ]
+    }),
+
+    deleteCustomer: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/customers/${id}`,
+        method: "DELETE"
+      }),
       invalidatesTags: [{ type: "Customers", id: "LIST" }]
     })
   })
 });
 
-export const { useGetCustomersQuery, useCreateCustomerMutation } = customerApi;
+export const {
+  useGetCustomersQuery,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation
+} = customerApi;

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -86,6 +86,95 @@ class UserRepository(BaseRepository[User]):
         )
         result = await self.session.execute(query)
         return result.scalars().all()
+
+    async def list_with_relations(
+        self,
+        skip: int = 0,
+        limit: int = 20,
+        search: str | None = None,
+        role_id: uuid.UUID | None = None,
+        department_id: uuid.UUID | None = None,
+        status: str | None = None,
+    ) -> list[User]:
+        """List users with eager relations loaded and filter params."""
+        import uuid as py_uuid
+        from sqlalchemy import func
+        
+        query = (
+            select(self.model)
+            .outerjoin(Role, self.model.role_id == Role.id)
+            .where(
+                and_(
+                    self.model.is_deleted == False,
+                    or_(Role.id == None, Role.code != "SUPER_ADMIN")
+                )
+            )
+        )
+        
+        if search:
+            search_pattern = f"%{search.lower()}%"
+            query = query.where(
+                (func.lower(self.model.full_name).like(search_pattern)) |
+                (func.lower(self.model.email).like(search_pattern)) |
+                (func.lower(self.model.employee_code).like(search_pattern))
+            )
+        if role_id:
+            query = query.where(self.model.role_id == role_id)
+        if department_id:
+            query = query.where(self.model.department_id == department_id)
+        if status:
+            query = query.where(func.lower(self.model.status) == status.lower())
+
+        query = (
+            query.options(
+                selectinload(self.model.role),
+                selectinload(self.model.department),
+                selectinload(self.model.designation),
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
+
+    async def count_with_filters(
+        self,
+        search: str | None = None,
+        role_id: uuid.UUID | None = None,
+        department_id: uuid.UUID | None = None,
+        status: str | None = None,
+    ) -> int:
+        """Count users with filter params."""
+        from sqlalchemy import func
+        
+        query = (
+            select(func.count())
+            .select_from(self.model)
+            .outerjoin(Role, self.model.role_id == Role.id)
+            .where(
+                and_(
+                    self.model.is_deleted == False,
+                    or_(Role.id == None, Role.code != "SUPER_ADMIN")
+                )
+            )
+        )
+        
+        if search:
+            search_pattern = f"%{search.lower()}%"
+            query = query.where(
+                (func.lower(self.model.full_name).like(search_pattern)) |
+                (func.lower(self.model.email).like(search_pattern)) |
+                (func.lower(self.model.employee_code).like(search_pattern))
+            )
+        if role_id:
+            query = query.where(self.model.role_id == role_id)
+        if department_id:
+            query = query.where(self.model.department_id == department_id)
+        if status:
+            query = query.where(func.lower(self.model.status) == status.lower())
+
+        result = await self.session.execute(query)
+        return result.scalar() or 0
 
     async def get_first_user_by_role(self, role_name: str) -> User | None:
         """Get the first active user with the specified role."""

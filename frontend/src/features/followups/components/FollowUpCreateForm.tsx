@@ -1,110 +1,168 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button, FormField, FormSection, Input } from "@/components";
+import { Button, FormField, Input } from "@/components";
+import { Textarea } from "@/components/ui/textarea";
+import { useAppSelector } from "@/hooks/redux";
 import {
-  followUpChannelOptions,
-  followUpPriorityOptions
+  followUpTypeOptions,
 } from "@/features/followups/constants/followupOptions";
 import {
   createFollowUpSchema,
   CreateFollowUpFormValues
 } from "@/features/followups/validation/followupSchemas";
+import { useGetLeadsQuery } from "@/features/leads/services";
+import { useGetCustomersQuery } from "@/features/customers/services";
 
 interface FollowUpCreateFormProps {
   isSubmitting: boolean;
   onCancel: () => void;
   onSubmit: (values: CreateFollowUpFormValues) => Promise<void>;
+  initialValues?: CreateFollowUpFormValues;
 }
 
 export function FollowUpCreateForm({
   isSubmitting,
   onCancel,
-  onSubmit
+  onSubmit,
+  initialValues
 }: FollowUpCreateFormProps) {
+  const session = useAppSelector((state) => state.auth.session);
+  const { data: leadsData } = useGetLeadsQuery();
+  const { data: customersData } = useGetCustomersQuery();
+
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<CreateFollowUpFormValues>({
     resolver: zodResolver(createFollowUpSchema),
-    defaultValues: {
-      leadName: "",
-      owner: "",
-      scheduledAt: "",
-      channel: "Call",
-      priority: "Medium",
+    defaultValues: initialValues || {
+      type: "call",
+      subject: "",
+      description: "",
+      scheduled_at: "",
+      assigned_to_user_id: session?.userId || "",
+      lead_id: "",
+      customer_id: "",
+      priority: 1, // Medium
+      is_critical: false,
       notes: ""
     }
   });
 
   return (
-    <FormSection
-      description="Track and schedule lead follow-ups with channel, priority, and ownership controls."
-      title="Create Follow-up"
-    >
-      <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-        <FormField error={errors.leadName?.message} id="followup-lead" label="Lead Name" required>
-          <Input id="followup-lead" {...register("leadName")} />
-        </FormField>
+    <form className="grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+      <FormField error={errors.subject?.message} id="followup-subject" label="Subject" required>
+        <Input id="followup-subject" {...register("subject")} />
+      </FormField>
 
-        <FormField error={errors.owner?.message} id="followup-owner" label="Owner" required>
-          <Input id="followup-owner" {...register("owner")} />
-        </FormField>
-
-        <FormField
-          error={errors.scheduledAt?.message}
-          id="followup-scheduled-at"
-          label="Next Follow-up Date & Time"
-          required
+      <FormField error={errors.type?.message} id="followup-type" label="Type" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm capitalize"
+          id="followup-type"
+          {...register("type")}
         >
-          <Input id="followup-scheduled-at" type="datetime-local" {...register("scheduledAt")} />
-        </FormField>
+          {followUpTypeOptions
+            .filter(option => option !== "All")
+            .map(option => (
+              <option key={option} value={option}>
+                {option.replace("_", " ")}
+              </option>
+            ))}
+        </select>
+      </FormField>
 
-        <FormField error={errors.channel?.message} id="followup-channel" label="Follow-up Mode" required>
-          <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="followup-channel"
-            {...register("channel")}
-          >
-            {followUpChannelOptions
-              .filter(option => option !== "All")
-              .map(option => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-          </select>
-        </FormField>
+      <FormField error={errors.description?.message} id="followup-description" label="Description">
+        <Input id="followup-description" {...register("description")} />
+      </FormField>
 
-        <FormField error={errors.priority?.message} id="followup-priority" label="Priority" required>
-          <select
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            id="followup-priority"
-            {...register("priority")}
-          >
-            {followUpPriorityOptions
-              .filter(option => option !== "All")
-              .map(option => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-          </select>
-        </FormField>
+      <FormField
+        error={errors.scheduled_at?.message}
+        id="followup-scheduled-at"
+        label="Scheduled Date & Time"
+        required
+      >
+        <Input id="followup-scheduled-at" type="datetime-local" {...register("scheduled_at")} />
+      </FormField>
 
-        <FormField error={errors.notes?.message} id="followup-notes" label="Follow-up Notes" required>
-          <Input id="followup-notes" {...register("notes")} />
-        </FormField>
+      <FormField error={errors.assigned_to_user_id?.message} id="followup-owner" label="Assigned Owner" required>
+        <Input id="followup-owner" readOnly value={session?.name || "System Admin"} />
+        <input type="hidden" {...register("assigned_to_user_id")} />
+      </FormField>
 
-        <div className="col-span-full flex justify-end gap-2">
-          <Button onClick={onCancel} type="button" variant="outline">
-            Cancel
-          </Button>
-          <Button disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Creating..." : "Create Follow-up"}
-          </Button>
-        </div>
-      </form>
-    </FormSection>
+      <FormField error={errors.priority?.message} id="followup-priority" label="Priority" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-priority"
+          {...register("priority")}
+        >
+          <option value={0}>Low</option>
+          <option value={1}>Medium</option>
+          <option value={2}>High</option>
+        </select>
+      </FormField>
+
+      <FormField error={errors.lead_id?.message} id="followup-lead-id" label="Lead" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-lead-id"
+          {...register("lead_id")}
+        >
+          <option value="">None (Select Lead)</option>
+          {leadsData?.items?.map(lead => (
+            <option key={lead.id} value={lead.id}>
+              {lead.fullName} ({lead.phone})
+            </option>
+          ))}
+        </select>
+      </FormField>
+
+      <FormField error={errors.customer_id?.message} id="followup-customer-id" label="Customer" required>
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-customer-id"
+          {...register("customer_id")}
+        >
+          <option value="">None (Select Customer)</option>
+          {customersData?.items?.map(customer => (
+            <option key={customer.id} value={customer.id}>
+              {customer.first_name} {customer.last_name} ({customer.customer_number})
+            </option>
+          ))}
+        </select>
+      </FormField>
+
+      <FormField error={errors.is_critical?.message} id="followup-critical" label="Critical Follow-up">
+        <select
+          className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          id="followup-critical"
+          {...register("is_critical", { setValueAsBoolean: true })}
+        >
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </FormField>
+
+      <div className="col-span-full">
+        <FormField error={errors.notes?.message} id="followup-notes" label="Follow-up Notes">
+          <Textarea id="followup-notes" {...register("notes")} />
+        </FormField>
+      </div>
+
+      <div className="col-span-full flex justify-end gap-2 mt-2">
+        <Button onClick={onCancel} type="button" variant="outline">
+          Cancel
+        </Button>
+        <Button disabled={isSubmitting} type="submit">
+          {isSubmitting
+            ? initialValues
+              ? "Saving..."
+              : "Creating..."
+            : initialValues
+              ? "Save Changes"
+              : "Create Follow-up"}
+        </Button>
+      </div>
+    </form>
   );
 }

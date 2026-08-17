@@ -1,4 +1,4 @@
-export type LeadStage = "New" | "Qualified" | "Negotiation" | "Won" | "Future Perspective";
+export type LeadStatus = "New" | "Qualified" | "Negotiation" | "Won" | "Future Perspective";
 export type LeadSource =
   | "Facebook"
   | "Instagram"
@@ -16,21 +16,21 @@ export type LeadPriority = "Hot" | "Warm" | "Cold";
 
 export interface LeadRecord {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
   phone: string;
   source: LeadSource;
-  stage: LeadStage;
+  status: LeadStatus;
   priority: LeadPriority;
-  owner: string;
+  assignedToUserId: string;
   budget: number;
-  nextFollowUp: string;
+  nextFollowupAt: string;
   createdAt: string;
 }
 
 export interface LeadFilters {
   search?: string;
-  stage?: LeadStage | "All";
+  status?: LeadStatus | "All";
   source?: LeadSource | "All";
 }
 
@@ -48,13 +48,14 @@ export interface LeadListResponse {
 }
 
 export interface CreateLeadInput {
-  name: string;
+  fullName: string;
   email: string;
   phone: string;
   source: LeadSource;
   priority: LeadPriority;
-  owner: string;
+  assignedToUserId: string;
   budget: number;
-  nextFollowUp: string;
-  stage: LeadStage;
+  nextFollowupAt: string;
+  status: LeadStatus;
 }
+

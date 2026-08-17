@@ -1,4 +1,4 @@
-import { Building2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button, ScrollArea } from "@/components";
 import { cn } from "@/utils/cn";
@@ -33,7 +33,7 @@ export function SidebarNav({
     >
       <div className="flex h-16 items-center justify-between border-b px-4 shrink-0">
         <div className="flex items-center gap-2">
-          <Building2 className="h-5 w-5 text-primary" />
+          <img src="/logo.png" alt="RPEX CRM Logo" className="h-6 w-6 object-contain" />
           {!collapsed && <span className="text-sm font-semibold">RPEX CRM</span>}
         </div>
         <Button variant="ghost" size="sm" onClick={onToggleCollapse}>

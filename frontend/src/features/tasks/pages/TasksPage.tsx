@@ -18,7 +18,7 @@ import { PageContainer } from "@/layouts/components/PageContainer";
 export function TasksPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { filters, search, setSearch, priority, setPriority, status, setStatus } = useTaskFilters();
-  const { data, isLoading, isError, refetch } = useGetTasksQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetTasksQuery(filters);
   const [createTask, { isLoading: isCreatingTask }] = useCreateTaskMutation();
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
 
@@ -88,7 +88,13 @@ export function TasksPage() {
         />
       </Dialog>
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Task Board" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Task Board"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

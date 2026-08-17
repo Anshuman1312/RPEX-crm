@@ -15,7 +15,7 @@ export function KpiCard({ title, value, change, positive = true, icon: Icon = Tr
     <Card>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <CardTitle className="text-sm text-muted-foreground">{title}</CardTitle>
-        <div className="grid h-8 w-8 place-items-center rounded-md bg-primary/10 text-primary">
+        <div className="grid h-8 w-8 place-items-center rounded-md bg-muted text-muted-foreground/60">
           <Icon className="h-4 w-4" />
         </div>
       </CardHeader>

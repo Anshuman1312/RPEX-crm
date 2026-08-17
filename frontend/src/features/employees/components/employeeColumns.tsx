@@ -9,7 +9,10 @@ const statusToneMap: Record<EmployeeStatus, "success" | "warning" | "info"> = {
 };
 
 export function buildEmployeeColumns(
-  onStatusChange: (employeeId: string, status: EmployeeStatus) => void
+  onStatusChange: (employeeId: string, status: string) => void,
+  onRoleChange: (employeeId: string, roleId: string) => void,
+  isSuperAdmin: boolean,
+  rolesList: Array<{ id: string; name: string }>
 ): ColumnDef<EmployeeRecord>[] {
   return [
     {
@@ -25,16 +28,29 @@ export function buildEmployeeColumns(
       header: "Email"
     },
     {
-      accessorKey: "department",
-      header: "Department"
-    },
-    {
-      accessorKey: "band",
-      header: "Band"
-    },
-    {
-      accessorKey: "manager",
-      header: "Manager"
+      accessorKey: "roleName",
+      header: "Role",
+      cell: ({ row }) => {
+        const currentRoleId = row.original.roleId;
+        const currentRoleName = row.original.roleName || "No Role";
+        if (isSuperAdmin) {
+          return (
+            <select
+              className="h-8 rounded border bg-background px-2 text-xs"
+              onChange={event => onRoleChange(row.original.id, event.target.value)}
+              value={currentRoleId || ""}
+            >
+              <option value="">No Role</option>
+              {rolesList.map(r => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          );
+        }
+        return <span className="text-sm">{currentRoleName}</span>;
+      }
     },
     {
       accessorKey: "status",
@@ -42,19 +58,21 @@ export function buildEmployeeColumns(
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <StatusBadge label={row.original.status} tone={statusToneMap[row.original.status]} />
-          <select
-            className="h-8 rounded border bg-background px-2 text-xs"
-            onChange={event =>
-              onStatusChange(row.original.id, event.target.value as EmployeeStatus)
-            }
-            value={row.original.status}
-          >
-            {(["Active", "On Leave", "Inactive"] as EmployeeStatus[]).map(status => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
+          {isSuperAdmin && (
+            <select
+              className="h-8 rounded border bg-background px-2 text-xs"
+              onChange={event =>
+                onStatusChange(row.original.id, event.target.value)
+              }
+              value={row.original.status}
+            >
+              {(["Active", "Inactive"] as string[]).map(status => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       )
     },

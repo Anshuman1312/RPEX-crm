@@ -16,6 +16,9 @@ from app.utils.filters import SortDirection
 class CustomerRepository(BaseRepository[Customer]):
     """Repository for Customer entity with advanced filtering."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, Customer)
+
     async def get_by_customer_number(self, customer_number: str) -> Optional[Customer]:
         """Get customer by customer number."""
         stmt = select(Customer).where(Customer.customer_number == customer_number)
@@ -213,6 +216,9 @@ class CustomerRepository(BaseRepository[Customer]):
 class CustomerAddressRepository(BaseRepository[CustomerAddress]):
     """Repository for Customer addresses."""
 
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, CustomerAddress)
+
     async def get_customer_addresses(self, customer_id: str) -> List[CustomerAddress]:
         """Get all addresses for a customer."""
         stmt = (
@@ -248,6 +254,9 @@ class CustomerAddressRepository(BaseRepository[CustomerAddress]):
 
 class CustomerKYCRepository(BaseRepository[CustomerKYC]):
     """Repository for Customer KYC documents."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, CustomerKYC)
 
     async def get_customer_documents(self, customer_id: str) -> List[CustomerKYC]:
         """Get all KYC documents for a customer."""
@@ -304,6 +313,9 @@ class CustomerKYCRepository(BaseRepository[CustomerKYC]):
 
 class CustomerPreferenceRepository(BaseRepository[CustomerPreference]):
     """Repository for Customer preferences."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, CustomerPreference)
 
     async def get_by_customer(self, customer_id: str) -> Optional[CustomerPreference]:
         """Get preferences for a customer."""

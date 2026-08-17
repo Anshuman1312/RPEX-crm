@@ -57,8 +57,8 @@ class BookingService:
         self.approval_repo = BookingApprovalRepository(session)
         self.cancellation_repo = BookingCancellationRepository(session)
         self.possession_repo = PossessionRepository(session)
-        self.unit_repo = UnitRepository(session, Unit)
-        self.customer_repo = CustomerRepository(session, Customer)
+        self.unit_repo = UnitRepository(session)
+        self.customer_repo = CustomerRepository(session)
         self.user_repo = UserRepository(session)
         self.numbering_service = NumberingService(session)
 

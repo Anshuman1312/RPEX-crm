@@ -1,4 +1,4 @@
-﻿import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -38,7 +38,7 @@ export function LoginPage() {
         password: values.password
       }).unwrap();
 
-      const { accessToken, refreshToken, session, rememberMe } = result;
+      const { accessToken, refreshToken, session } = result;
 
       tokenStorage.persistAuth({
         accessToken,

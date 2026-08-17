@@ -1,6 +1,6 @@
-import { LeadPriority, LeadSource, LeadStage } from "@/features/leads/types/lead";
+import { LeadPriority, LeadSource, LeadStatus } from "@/features/leads/types/lead";
 
-export const leadStageOptions: Array<LeadStage | "All"> = [
+export const leadStatusOptions: Array<LeadStatus | "All"> = [
   "All",
   "New",
   "Qualified",
@@ -9,19 +9,20 @@ export const leadStageOptions: Array<LeadStage | "All"> = [
   "Future Perspective"
 ];
 
+
 export const leadSourceOptions: Array<LeadSource | "All"> = [
   "All",
-  "Facebook",
-  "Instagram",
-  "Google Ads",
+  //"Facebook",
+ // "Instagram",
+ // "Google Ads",
   "Website",
-  "WhatsApp",
+  //"WhatsApp",
   "Walk-in",
   "Referral",
   "Channel Partner",
   "Client Reference",
   "Exhibition/Event",
-  "JustDial",
+  //"JustDial",
   "Other"
 ];
 

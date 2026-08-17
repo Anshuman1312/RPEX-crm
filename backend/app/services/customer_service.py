@@ -28,10 +28,10 @@ class CustomerService:
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.customer_repo = CustomerRepository(session, Customer)
-        self.address_repo = CustomerAddressRepository(session, CustomerAddress)
-        self.kyc_repo = CustomerKYCRepository(session, CustomerKYC)
-        self.preference_repo = CustomerPreferenceRepository(session, CustomerPreference)
+        self.customer_repo = CustomerRepository(session)
+        self.address_repo = CustomerAddressRepository(session)
+        self.kyc_repo = CustomerKYCRepository(session)
+        self.preference_repo = CustomerPreferenceRepository(session)
         self.numbering_service = NumberingService(session)
 
     # ── Customer CRUD ──────────────────────────────────────────────────────
@@ -81,6 +81,20 @@ class CustomerService:
             ConflictException: If email or phone already exists
             ValidationException: If validation fails
         """
+        # Normalize empty strings to None
+        if gstin == "":
+            gstin = None
+        if pan == "":
+            pan = None
+        if alternate_phone == "":
+            alternate_phone = None
+        if company_name == "":
+            company_name = None
+        if preferred_contact_method == "":
+            preferred_contact_method = None
+        if notes == "":
+            notes = None
+
         # Check for duplicate email
         existing_by_email = await self.customer_repo.get_by_email(email)
         if existing_by_email:
@@ -177,6 +191,11 @@ class CustomerService:
         customer = await self.customer_repo.get_by_id(customer_id)
         if not customer or customer.is_deleted:
             raise NotFoundException(f"Customer {customer_id} not found")
+
+        # Normalize empty strings to None
+        for key in ["gstin", "pan", "alternate_phone", "company_name", "preferred_contact_method", "notes"]:
+            if key in kwargs and kwargs[key] == "":
+                kwargs[key] = None
 
         # Check for email uniqueness if email is being updated
         if "email" in kwargs and kwargs["email"]:

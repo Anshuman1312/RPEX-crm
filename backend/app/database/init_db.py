@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 
 from app.database.base import Base
 from app.database.postgres import engine
-from app.models.user import Role
+import uuid
+from app.models.user import Role, Department, Designation
 import app.models  # noqa: F401  # register all models on Base metadata
 
 
@@ -28,6 +29,57 @@ async def _bootstrap_roles(conn) -> None:
     logger.info(f"Bootstrapped {len(core_roles)} core system roles")
 
 
+async def _bootstrap_departments_designations(conn) -> None:
+    sales_dept_id = uuid.UUID("11111111-1111-1111-1111-111111111111")
+    ops_dept_id = uuid.UUID("22222222-2222-2222-2222-222222222222")
+    fin_dept_id = uuid.UUID("33333333-3333-3333-3333-333333333333")
+    mktg_dept_id = uuid.UUID("44444444-4444-4444-4444-444444444444")
+    hr_dept_id = uuid.UUID("55555555-5555-5555-5555-555555555555")
+
+    core_departments = [
+        {"id": sales_dept_id, "name": "Sales", "code": "SALES", "is_active": True},
+        {"id": ops_dept_id, "name": "Operations", "code": "OPERATIONS", "is_active": True},
+        {"id": fin_dept_id, "name": "Finance", "code": "FINANCE", "is_active": True},
+        {"id": mktg_dept_id, "name": "Marketing", "code": "MARKETING", "is_active": True},
+        {"id": hr_dept_id, "name": "HR", "code": "HR", "is_active": True},
+    ]
+
+    dept_stmt = pg_insert(Department).values(core_departments)
+    dept_stmt = dept_stmt.on_conflict_do_nothing(index_elements=[Department.name])
+    await conn.execute(dept_stmt)
+
+    core_designations = [
+        {"id": uuid.UUID("11111111-1111-1111-1111-222222222221"), "name": "Associate", "code": "ASSOCIATE", "department_id": sales_dept_id, "level": 1, "is_active": True},
+        {"id": uuid.UUID("11111111-1111-1111-1111-222222222222"), "name": "Senior", "code": "SENIOR", "department_id": sales_dept_id, "level": 2, "is_active": True},
+        {"id": uuid.UUID("11111111-1111-1111-1111-222222222223"), "name": "Lead", "code": "LEAD", "department_id": sales_dept_id, "level": 3, "is_active": True},
+        {"id": uuid.UUID("11111111-1111-1111-1111-222222222224"), "name": "Manager", "code": "MANAGER", "department_id": sales_dept_id, "level": 4, "is_active": True},
+
+        {"id": uuid.UUID("22222222-2222-2222-2222-222222222221"), "name": "Associate", "code": "ASSOCIATE", "department_id": ops_dept_id, "level": 1, "is_active": True},
+        {"id": uuid.UUID("22222222-2222-2222-2222-222222222222"), "name": "Senior", "code": "SENIOR", "department_id": ops_dept_id, "level": 2, "is_active": True},
+        {"id": uuid.UUID("22222222-2222-2222-2222-222222222223"), "name": "Lead", "code": "LEAD", "department_id": ops_dept_id, "level": 3, "is_active": True},
+        {"id": uuid.UUID("22222222-2222-2222-2222-222222222224"), "name": "Manager", "code": "MANAGER", "department_id": ops_dept_id, "level": 4, "is_active": True},
+
+        {"id": uuid.UUID("33333333-3333-3333-3333-222222222221"), "name": "Associate", "code": "ASSOCIATE", "department_id": fin_dept_id, "level": 1, "is_active": True},
+        {"id": uuid.UUID("33333333-3333-3333-3333-222222222222"), "name": "Senior", "code": "SENIOR", "department_id": fin_dept_id, "level": 2, "is_active": True},
+        {"id": uuid.UUID("33333333-3333-3333-3333-222222222223"), "name": "Lead", "code": "LEAD", "department_id": fin_dept_id, "level": 3, "is_active": True},
+        {"id": uuid.UUID("33333333-3333-3333-3333-222222222224"), "name": "Manager", "code": "MANAGER", "department_id": fin_dept_id, "level": 4, "is_active": True},
+
+        {"id": uuid.UUID("44444444-4444-4444-4444-222222222221"), "name": "Associate", "code": "ASSOCIATE", "department_id": mktg_dept_id, "level": 1, "is_active": True},
+        {"id": uuid.UUID("44444444-4444-4444-4444-222222222222"), "name": "Senior", "code": "SENIOR", "department_id": mktg_dept_id, "level": 2, "is_active": True},
+        {"id": uuid.UUID("44444444-4444-4444-4444-222222222223"), "name": "Lead", "code": "LEAD", "department_id": mktg_dept_id, "level": 3, "is_active": True},
+        {"id": uuid.UUID("44444444-4444-4444-4444-222222222224"), "name": "Manager", "code": "MANAGER", "department_id": mktg_dept_id, "level": 4, "is_active": True},
+
+        {"id": uuid.UUID("55555555-5555-5555-5555-222222222221"), "name": "Associate", "code": "ASSOCIATE", "department_id": hr_dept_id, "level": 1, "is_active": True},
+        {"id": uuid.UUID("55555555-5555-5555-5555-222222222222"), "name": "Senior", "code": "SENIOR", "department_id": hr_dept_id, "level": 2, "is_active": True},
+        {"id": uuid.UUID("55555555-5555-5555-5555-222222222223"), "name": "Lead", "code": "LEAD", "department_id": hr_dept_id, "level": 3, "is_active": True},
+        {"id": uuid.UUID("55555555-5555-5555-5555-222222222224"), "name": "Manager", "code": "MANAGER", "department_id": hr_dept_id, "level": 4, "is_active": True},
+    ]
+
+    desig_stmt = pg_insert(Designation).values(core_designations)
+    desig_stmt = desig_stmt.on_conflict_do_nothing(index_elements=["code", "department_id"])
+    await conn.execute(desig_stmt)
+
+
 async def init_db() -> None:
     """
     Create all tables defined in SQLAlchemy models.
@@ -38,6 +90,7 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         await _bootstrap_roles(conn)
+        await _bootstrap_departments_designations(conn)
     logger.info("Database tables initialised.")
 
 

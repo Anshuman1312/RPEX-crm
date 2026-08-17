@@ -18,7 +18,7 @@ import { PageContainer } from "@/layouts/components/PageContainer";
 export function ProjectsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { filters, search, setSearch, phase, setPhase, health, setHealth } = useProjectFilters();
-  const { data, isLoading, isError, refetch } = useGetProjectsQuery(filters);
+  const { data, isLoading, isFetching, isError, refetch } = useGetProjectsQuery(filters);
   const [createProject, { isLoading: isCreatingProject }] = useCreateProjectMutation();
   const [updateProjectHealth] = useUpdateProjectHealthMutation();
 
@@ -88,7 +88,13 @@ export function ProjectsPage() {
         />
       </Dialog>
 
-      <DataTable columns={columns} data={data?.items ?? []} title="Project Portfolio" />
+      <DataTable
+        columns={columns}
+        data={data?.items ?? []}
+        title="Project Portfolio"
+        onRefresh={refetch}
+        isRefreshing={isFetching}
+      />
     </PageContainer>
   );
 }

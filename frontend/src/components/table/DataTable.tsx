@@ -10,7 +10,7 @@ import {
   VisibilityState
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { ArrowUpDown, ChevronDown } from "lucide-react";
+import { ArrowUpDown, ChevronDown, RotateCw } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,8 @@ interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   globalSearchPlaceholder?: string;
   compact?: boolean;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 export function DataTable<TData>({
@@ -29,7 +31,9 @@ export function DataTable<TData>({
   data,
   columns,
   globalSearchPlaceholder = "Search records...",
-  compact = false
+  compact = false,
+  onRefresh,
+  isRefreshing = false
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -101,6 +105,18 @@ export function DataTable<TData>({
             placeholder={globalSearchPlaceholder}
             value={globalFilter}
           />
+          {onRefresh ? (
+            <Button
+              className="h-9 w-9 p-0"
+              disabled={isRefreshing}
+              onClick={onRefresh}
+              size="sm"
+              title="Refresh table data"
+              variant="outline"
+            >
+              <RotateCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+            </Button>
+          ) : null}
           <Button onClick={exportCsv} size="sm" variant="outline">
             Export CSV
           </Button>

@@ -6,18 +6,23 @@ export interface EmployeeRecord {
   id: string;
   fullName: string;
   email: string;
-  department: EmployeeDepartment;
-  band: EmployeeBand;
+  department: string;
+  band: string;
   manager: string;
   status: EmployeeStatus;
   joiningDate: string;
   updatedAt: string;
+  // Database fields
+  roleName?: string;
+  roleId?: string;
+  departmentId?: string;
+  designationId?: string;
 }
 
 export interface EmployeeFilters {
   search?: string;
-  department?: EmployeeDepartment | "All";
-  status?: EmployeeStatus | "All";
+  department?: string;
+  status?: string;
 }
 
 export interface EmployeeStats {
@@ -36,8 +41,10 @@ export interface EmployeeListResponse {
 export interface CreateEmployeeInput {
   fullName: string;
   email: string;
-  department: EmployeeDepartment;
-  band: EmployeeBand;
-  manager: string;
-  joiningDate: string;
+  password?: string;
+  phone?: string;
+  departmentId?: string;
+  designationId?: string;
+  roleId?: string;
+  employeeCode?: string;
 }
